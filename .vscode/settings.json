@@ -1,0 +1,38 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always",
+  },
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.importModuleSpecifierEnding": "auto",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "eslint.validate": [
+    "typescript",
+    "typescriptreact",
+    "javascript",
+    "javascriptreact"
+  ],
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "file": ".github/copilot-commit-message-instructions.md"
+    }
+  ],
+  "emmet.includeLanguages": {
+    "javascriptreact": "html",
+    "typescriptreact": "html"
+  },
+  "workbench.colorCustomizations": {
+    "commandCenter.border": "#15202b99",
+    "sash.hoverBorder": "#fbc85c",
+    "statusBar.background": "#fbc85c",
+    "statusBar.foreground": "#15202b",
+    "statusBarItem.hoverBackground": "#fab72a",
+    "statusBarItem.remoteBackground": "#fbc85c",
+    "statusBarItem.remoteForeground": "#15202b",
+    "titleBar.activeBackground": "#fbc85c",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveBackground": "#fbc85c99",
+    "titleBar.inactiveForeground": "#15202b99"
+  },
+  "chat.useAgentsMdFile": true,
+  "chat.useNestedAgentsMdFiles": true
+}

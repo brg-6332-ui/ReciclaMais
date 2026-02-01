@@ -1,0 +1,22 @@
+[
+    {
+        "value": "all",
+        "label": "Todos os Tipos"
+    },
+    {
+        "value": "plastic",
+        "label": "Plástico"
+    },
+    {
+        "value": "glass",
+        "label": "Vidro"
+    },
+    {
+        "value": "paper",
+        "label": "Papel"
+    },
+    {
+        "value": "metal",
+        "label": "Metal"
+    }
+]
