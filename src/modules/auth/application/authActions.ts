@@ -6,26 +6,30 @@ async function openPopupAndWait(url: string, timeout = 60_000) {
 
   const start = Date.now()
   return new Promise<void>((resolve, reject) => {
-    const timer = setInterval(async () => {
-      if (popup.closed) {
-        clearInterval(timer)
-        // check if session exists
-        const { data } = await supabase.auth.getSession()
-        if (data?.session) {
-          resolve()
-        } else {
-          reject(new Error('Janela de autenticação fechada pelo utilizador'))
+    const timer = setInterval(() => {
+      void (async () => {
+        if (popup.closed) {
+          clearInterval(timer)
+          // check if session exists
+          const { data } = await supabase.auth.getSession()
+          if (data?.session) {
+            resolve()
+          } else {
+            reject(new Error('Janela de autenticação fechada pelo utilizador'))
+          }
+          return
         }
-        return
-      }
-      if (Date.now() - start > timeout) {
-        clearInterval(timer)
-        try {
-          popup.close()
-        } catch {}
-        reject(new Error('Tempo de autenticação esgotado'))
-      }
-      // otherwise keep waiting
+        if (Date.now() - start > timeout) {
+          clearInterval(timer)
+          try {
+            popup.close()
+          } catch (err) {
+            void err
+          }
+          reject(new Error('Tempo de autenticação esgotado'))
+        }
+        // otherwise keep waiting
+      })()
     }, 500)
   })
 }
@@ -33,9 +37,12 @@ async function openPopupAndWait(url: string, timeout = 60_000) {
 export const authActions = {
   loginWithGoogle: async () => {
     // Request an OAuth URL and open it in a popup so we don't force a full-page redirect
-    const { data, error } = await supabase.auth.signInWithOAuth({ provider: 'google' })
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    })
     if (error) throw error
-    if (!data?.url) throw new Error('Não foi possível iniciar autenticação com Google')
+    if (!data?.url)
+      throw new Error('Não foi possível iniciar autenticação com Google')
     await openPopupAndWait(data.url)
   },
 
@@ -48,7 +55,11 @@ export const authActions = {
     return data
   },
 
-  signUpWithEmail: async (email: string, password: string, options?: { redirectTo?: string }) => {
+  signUpWithEmail: async (
+    email: string,
+    password: string,
+    options?: { redirectTo?: string },
+  ) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,

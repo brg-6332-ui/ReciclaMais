@@ -31,7 +31,8 @@ function ModalErrorFallback(error: Error, _: () => void) {
       <div>
         <h3 class="font-bold">Erro no conteúdo do modal</h3>
         <div class="text-xs">
-          Ocorreu um erro ao carregar o conteúdo do modal. Por favor, tente novamente.
+          Ocorreu um erro ao carregar o conteúdo do modal. Por favor, tente
+          novamente.
         </div>
       </div>
     </div>

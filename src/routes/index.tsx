@@ -180,7 +180,7 @@ const Home = () => {
               </p>
               <A href="/auth">
                 <Button size="lg" class="shadow-xl text-white">
-                  Criar Conta Grátis
+                  Criar Conta Gratuita
                 </Button>
               </A>
             </CardContent>

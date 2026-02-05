@@ -161,7 +161,9 @@ const Dashboard = () => {
           dashboard.reFetch()
         } catch (err) {
           console.error('Erro ao remover atividade:', err)
-          toast.error('Falha ao remover a atividade. Tente novamente mais tarde.')
+          toast.error(
+            'Falha ao remover a atividade. Tente novamente mais tarde.',
+          )
         } finally {
           setDeletingId(null)
         }

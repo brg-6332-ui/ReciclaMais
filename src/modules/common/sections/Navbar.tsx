@@ -94,7 +94,7 @@ export function Navbar() {
 
               <A
                 href="/collection-points"
-                title="Pontos de recolha"
+                title="Pontos de Recolha"
                 aria-current={
                   isActive('/collection-points') ? 'page' : undefined
                 }
@@ -109,7 +109,7 @@ export function Navbar() {
 
               <A
                 href="/recycling-guide"
-                title="Guia de reciclagem"
+                title="Guia de Reciclagem"
                 aria-current={isActive('/recycling-guide') ? 'page' : undefined}
                 class={`flex-1 text-center justify-items-center rounded-lg p-2 px-3 transition duration-150 ease-in-out transform ${
                   isActive('/recycling-guide')
@@ -301,7 +301,7 @@ export function Navbar() {
               class="flex items-center gap-3 px-3 py-2 rounded-md text-base-content hover:bg-base-200 active:scale-95 active:opacity-90 transition-transform duration-150"
             >
               <MapPinIcon class="h-5 w-5" />
-              <span>Pontos de recolha</span>
+              <span>Pontos de Recolha</span>
             </A>
             <A
               href="/recycling-guide"
@@ -309,7 +309,7 @@ export function Navbar() {
               class="flex items-center gap-3 px-3 py-2 rounded-md text-base-content hover:bg-base-200 active:scale-95 active:opacity-90 transition-transform duration-150"
             >
               <BookOpenIcon class="h-5 w-5" />
-              <span>Guia de reciclagem</span>
+              <span>Guia de Reciclagem</span>
             </A>
             <A
               href="/about"

@@ -111,13 +111,13 @@ const Auth = () => {
             <TabsContent value="login">
               <Card class="shadow-lg">
                 <CardHeader>
-                          <CardTitle>Iniciar sessão</CardTitle>
-                          <CardDescription>
-                            Inicie sessão com o seu email e palavra-passe
-                          </CardDescription>
+                  <CardTitle>Iniciar sessão</CardTitle>
+                  <CardDescription>
+                    Inicie sessão com o seu email e palavra-passe
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleLogin} class="space-y-4">
+                  <form onSubmit={(e) => void handleLogin(e)} class="space-y-4">
                     <div class="space-y-2">
                       <Label for="login-email">Email</Label>
                       <Input
@@ -156,7 +156,7 @@ const Auth = () => {
                       <Button
                         type="button"
                         class="w-full  text-primary-content"
-                        onClick={handleGoogle}
+                        onClick={() => void handleGoogle()}
                         disabled={isLoading()}
                       >
                         {isLoading() ? 'A autenticar...' : 'Entrar com Google'}
@@ -176,7 +176,10 @@ const Auth = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleRegister} class="space-y-4">
+                  <form
+                    onSubmit={(e) => void handleRegister(e)}
+                    class="space-y-4"
+                  >
                     <div class="space-y-2">
                       <Label for="register-name">Nome Completo</Label>
                       <Input
@@ -219,7 +222,9 @@ const Auth = () => {
                       />
                     </div>
                     <div class="space-y-2">
-                      <Label for="register-confirm">Confirmar palavra-passe</Label>
+                      <Label for="register-confirm">
+                        Confirmar palavra-passe
+                      </Label>
                       <Input
                         id="register-confirm"
                         type="password"
