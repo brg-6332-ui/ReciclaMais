@@ -31,7 +31,7 @@ const Auth = () => {
     setIsLoading(true)
     try {
       await authActions.signInWithEmail(loginEmail(), loginPassword())
-      toast.success('Login realizado com sucesso!')
+      toast.success('Sessão iniciada com sucesso!')
       window.location.href = '/' // redirect to home on success
     } catch (err) {
       toast.error(
@@ -45,7 +45,7 @@ const Auth = () => {
   const handleRegister = async (e: Event) => {
     e.preventDefault()
     if (registerPassword() !== registerConfirm()) {
-      toast.error('As passwords não coincidem')
+      toast.error('As palavras-passe não coincidem')
       return
     }
     setIsLoading(true)
@@ -111,10 +111,10 @@ const Auth = () => {
             <TabsContent value="login">
               <Card class="shadow-lg">
                 <CardHeader>
-                  <CardTitle>Entrar na Conta</CardTitle>
-                  <CardDescription>
-                    Entre com o seu email e password
-                  </CardDescription>
+                          <CardTitle>Iniciar sessão</CardTitle>
+                          <CardDescription>
+                            Inicie sessão com o seu email e palavra-passe
+                          </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleLogin} class="space-y-4">
@@ -132,7 +132,7 @@ const Auth = () => {
                       />
                     </div>
                     <div class="space-y-2">
-                      <Label for="login-password">Password</Label>
+                      <Label for="login-password">Palavra-passe</Label>
                       <Input
                         id="login-password"
                         type="password"
@@ -204,7 +204,7 @@ const Auth = () => {
                       />
                     </div>
                     <div class="space-y-2">
-                      <Label for="register-password">Password</Label>
+                      <Label for="register-password">Palavra-passe</Label>
                       <Input
                         id="register-password"
                         type="password"
@@ -219,7 +219,7 @@ const Auth = () => {
                       />
                     </div>
                     <div class="space-y-2">
-                      <Label for="register-confirm">Confirmar Password</Label>
+                      <Label for="register-confirm">Confirmar palavra-passe</Label>
                       <Input
                         id="register-confirm"
                         type="password"

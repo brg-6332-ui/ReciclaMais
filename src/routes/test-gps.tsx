@@ -40,15 +40,15 @@ export default function TestGPS() {
       <div class="container mx-auto px-4">
         <div class="mb-12 text-center">
           <h1 class="text-4xl md:text-5xl font-bold mb-4">
-            Test GPS Positions
+            Posições GPS de teste
           </h1>
           <p class="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Displaying fetched GPS positions from the backend
+            A apresentar as posições GPS obtidas do servidor
           </p>
         </div>
 
         <div>
-          <h2 class="text-2xl font-semibold mb-4">Fetched GPS Positions:</h2>
+          <h2 class="text-2xl font-semibold mb-4">Posições GPS obtidas:</h2>
           <ul class="list-disc list-inside">
             {time().toISOString().replace('T', ' ').replace('Z', '')}
             <pre>{JSON.stringify(gpsPositions(), null, 2)}</pre>

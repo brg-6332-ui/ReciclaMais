@@ -77,8 +77,8 @@ export function SearchInput(props: SearchInputProps) {
       <button
         class={`p-1 rounded-full hover:bg-base-400 text-muted-foreground ${isCompact() ? 'mr-1' : 'mr-2'}`}
         onClick={() => props.onUseLocationClick?.()}
-        aria-label="Use my location"
-        title="Usar minha localização"
+        aria-label="Usar a minha localização"
+        title="Usar a minha localização"
         disabled={
           !props.onUseLocationClick || (props.loading ? props.loading() : false)
         }
@@ -108,7 +108,7 @@ export function SearchInput(props: SearchInputProps) {
         <button
           class={`ml-3 bg-primary-500 text-black rounded-full ${isCompact() ? 'p-1' : 'p-2'} hover:opacity-95`}
           onClick={() => props.onSearch?.(props.value())}
-          aria-label="search"
+          aria-label="Pesquisar"
         >
           <SearchIcon class={`${isCompact() ? 'h-4 w-4' : 'h-4 w-4'}`} />
         </button>

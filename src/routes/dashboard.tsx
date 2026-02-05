@@ -145,7 +145,7 @@ const Dashboard = () => {
   }
 
   const handleDeleteActivity = (id: number) => {
-    openConfirmModal('Tem certeza que deseja remover esta atividade?', {
+    openConfirmModal('Tem a certeza de que pretende remover esta atividade?', {
       title: 'Remover atividade',
       confirmText: 'Remover',
       cancelText: 'Cancelar',
@@ -161,7 +161,7 @@ const Dashboard = () => {
           dashboard.reFetch()
         } catch (err) {
           console.error('Erro ao remover atividade:', err)
-          toast.error('Falha ao remover atividade. Tente novamente mais tarde.')
+          toast.error('Falha ao remover a atividade. Tente novamente mais tarde.')
         } finally {
           setDeletingId(null)
         }
@@ -181,19 +181,19 @@ const Dashboard = () => {
                   É necessário iniciar sessão
                 </h2>
                 <p class="mb-6 text-sm text-slate-500">
-                  Faça login para ver o seu dashboard e as suas atividades.
+                  Inicie sessão para ver o seu painel e as suas atividades.
                 </p>
                 <Show when={() => isAuthConfirmed() === null}>
                   <p class="text-xs text-slate-400 mt-2">
-                    Verificando sessão...
+                    A verificar sessão...
                   </p>
                 </Show>
                 <div class="flex justify-center gap-3">
                   <A href="/auth">
-                    <Button variant="hero">Logar</Button>
+                    <Button variant="hero">Iniciar sessão</Button>
                   </A>
                   <A href="/">
-                    <Button variant="outline">Voltar para início</Button>
+                    <Button variant="outline">Voltar ao Início</Button>
                   </A>
                 </div>
               </CardContent>
@@ -226,7 +226,7 @@ const Dashboard = () => {
                 <p class="text-xs text-slate-500">
                   <Show
                     when={dashboard.state() === 'success'}
-                    fallback="Carregando..."
+                    fallback="A carregar..."
                   >
                     {dashboard.recentActivities().length} atividades
                   </Show>
@@ -369,7 +369,7 @@ const Dashboard = () => {
             <Card class="rounded-xl border border-slate-200/60 bg-base-50 shadow-sm">
               <CardContent class="flex items-center justify-center p-12">
                 <Loader2 class="mr-3 h-5 w-5 animate-spin text-emerald-600" />
-                <p class="text-slate-500">Carregando atividades...</p>
+                <p class="text-slate-500">A carregar atividades...</p>
               </CardContent>
             </Card>
           </Show>
@@ -411,7 +411,7 @@ const Dashboard = () => {
                         <Recycle class="h-6 w-6 text-slate-400" />
                       </div>
                       <p class="mb-4 text-sm text-slate-500">
-                        Nenhuma atividade registrada ainda.
+                        Nenhuma atividade registada ainda.
                       </p>
                       <Button variant="hero" onClick={handleAddRecycling}>
                         Adicionar primeira reciclagem
