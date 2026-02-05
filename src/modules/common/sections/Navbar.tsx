@@ -15,6 +15,8 @@ import { ThemeSwapButton } from '~/modules/theme/ui/ThemeSwapButton'
 export function Navbar() {
   const location = useLocation()
 
+  const { authState } = useAuthState()
+
   const isActive = (path: string) => location.pathname === path
   const [mobileOpen, setMobileOpen] = createSignal(false)
   let mobileMenuRef: HTMLDivElement | undefined
@@ -111,11 +113,11 @@ export function Navbar() {
               </A>
 
               <A
-                href="/dashboard"
-                title="Informações"
-                aria-current={isActive('/dashboard') ? 'page' : undefined}
+                href="/about"
+                title="Sobre"
+                aria-current={isActive('/about') ? 'page' : undefined}
                 class={`flex-1 text-center justify-items-center rounded-lg p-2 px-3 transition duration-150 ease-in-out transform ${
-                  isActive('/dashboard')
+                  isActive('/about')
                     ? 'bg-primary-300'
                     : 'bg-transparent hover:bg-primary-200/30 hover:scale-105 active:scale-95'
                 }`}
@@ -169,6 +171,68 @@ export function Navbar() {
 
             {/* desktop actions */}
             <div class="hidden md:flex items-center gap-6">
+              {/* Dashboard icon shown on the right side when user is authenticated */}
+              <Show
+                when={
+                  authState().isAuthenticated && authState().session !== null
+                }
+              >
+                <A
+                  href="/dashboard"
+                  title="Dashboard"
+                  aria-current={isActive('/dashboard') ? 'page' : undefined}
+                  class={`rounded-lg p-2 px-3 transition duration-150 ease-in-out transform ${
+                    isActive('/dashboard')
+                      ? 'bg-primary-300'
+                      : 'bg-transparent hover:bg-primary-200/30 hover:scale-105 active:scale-95'
+                  }`}
+                >
+                  {/* simple dashboard/grid icon */}
+                  <svg
+                    class="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect
+                      x="3"
+                      y="3"
+                      width="8"
+                      height="8"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      rx="1"
+                    />
+                    <rect
+                      x="13"
+                      y="3"
+                      width="8"
+                      height="8"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      rx="1"
+                    />
+                    <rect
+                      x="3"
+                      y="13"
+                      width="8"
+                      height="8"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      rx="1"
+                    />
+                    <rect
+                      x="13"
+                      y="13"
+                      width="8"
+                      height="8"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      rx="1"
+                    />
+                  </svg>
+                </A>
+              </Show>
               <div class="active:scale-95 active:opacity-90 transition-transform duration-150">
                 <ThemeSwapButton />
               </div>
@@ -240,13 +304,65 @@ export function Navbar() {
               <span>Guia de reciclagem</span>
             </A>
             <A
-              href="/dashboard"
+              href="/about"
               onClick={() => setMobileOpen(false)}
               class="flex items-center gap-3 px-3 py-2 rounded-md text-base-content hover:bg-base-200 active:scale-95 active:opacity-90 transition-transform duration-150"
             >
               <InfoIcon class="h-5 w-5" />
-              <span>Informações</span>
+              <span>Sobre</span>
             </A>
+            <Show when={() => authState().isAuthenticated}>
+              <A
+                href="/dashboard"
+                onClick={() => setMobileOpen(false)}
+                class="flex items-center gap-3 px-3 py-2 rounded-md text-base-content hover:bg-base-200 active:scale-95 active:opacity-90 transition-transform duration-150"
+              >
+                <svg
+                  class="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    x="3"
+                    y="3"
+                    width="8"
+                    height="8"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    rx="1"
+                  />
+                  <rect
+                    x="13"
+                    y="3"
+                    width="8"
+                    height="8"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    rx="1"
+                  />
+                  <rect
+                    x="3"
+                    y="13"
+                    width="8"
+                    height="8"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    rx="1"
+                  />
+                  <rect
+                    x="13"
+                    y="13"
+                    width="8"
+                    height="8"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    rx="1"
+                  />
+                </svg>
+                <span>Dashboard</span>
+              </A>
+            </Show>
           </nav>
 
           <div class="mt-6 px-4">

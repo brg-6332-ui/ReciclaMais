@@ -29,9 +29,9 @@ function isValidUrl(value: string) {
 
 function EditProfileModal(props: EditProfileModalProps) {
   const { authState } = useAuthState()
-  const stateAny = authState() as any
-  const metadata = stateAny.isAuthenticated
-    ? (stateAny.session?.user?.user_metadata as
+  const state = authState()
+  const metadata = state.isAuthenticated
+    ? (state.session?.user?.user_metadata as
         | Record<string, unknown>
         | undefined)
     : undefined
@@ -93,7 +93,7 @@ function EditProfileModal(props: EditProfileModalProps) {
       return parts[0].substring(0, 2).toUpperCase()
     }
     // fallback to email
-    const email = (stateAny?.session?.user?.email as string | undefined) ?? ''
+    const email = state.session?.user?.email ?? ''
     if (email) {
       const parts = email.split('@')[0].split(/[._-]/)
       if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase()
