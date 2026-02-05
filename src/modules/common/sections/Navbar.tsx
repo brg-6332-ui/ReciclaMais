@@ -1,5 +1,12 @@
 import { A, useLocation } from '@solidjs/router'
-import { BookOpenIcon, InfoIcon, MapPinIcon, RecycleIcon } from 'lucide-solid'
+import {
+  BookOpenIcon,
+  InfoIcon,
+  LogOut as LogOutIcon,
+  MapPinIcon,
+  RecycleIcon,
+  User as UserIcon,
+} from 'lucide-solid'
 import { createEffect, createSignal, onCleanup, onMount, Show } from 'solid-js'
 
 import logo from '~/assets/logo.png'
@@ -567,19 +574,21 @@ function GoogleLoginButton(props: { text?: string; textClass?: string } = {}) {
           <Show when={open()}>
             <div
               ref={(el) => (menuRef = el)}
-              class="absolute right-0 mt-2 w-40 bg-base-500 border border-base-300 rounded-md shadow-lg overflow-hidden z-50"
+              class="absolute right-0 mt-2 w-44 bg-base-50 border border-base-200 rounded-lg shadow-lg overflow-hidden z-50 ring-1 ring-base-200"
             >
               <A
                 href="/dashboard"
-                class="block px-4 py-2 text-sm text-base-content hover:bg-base-500 active:opacity-90"
+                class="flex items-center gap-3 px-4 py-3 text-sm text-base-content hover:bg-base-200 transition-colors duration-150"
               >
-                Perfil
+                <UserIcon class="h-4 w-4 text-muted-foreground" />
+                <span>Dashboard</span>
               </A>
               <button
                 onClick={handleLogout}
-                class="w-full text-left block px-4 py-2 text-sm text-base-content hover:bg-base-500 active:opacity-90"
+                class="flex items-center gap-3 w-full text-left px-4 py-3 text-sm text-base-content hover:bg-base-200 transition-colors duration-150"
               >
-                Sair
+                <LogOutIcon class="h-4 w-4 text-muted-foreground" />
+                <span>Sair</span>
               </button>
             </div>
           </Show>

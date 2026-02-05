@@ -51,7 +51,9 @@ const Auth = () => {
     setIsLoading(true)
     try {
       await authActions.signUpWithEmail(registerEmail(), registerPassword())
-      toast.success('Conta criada com sucesso! Verifique o seu email para confirmar.')
+      toast.success(
+        'Conta criada com sucesso! Verifique o seu email para confirmar.',
+      )
       window.location.href = '/' // optionally redirect
     } catch (err) {
       toast.error(
@@ -97,9 +99,13 @@ const Auth = () => {
 
         <div class="w-full">
           <Tabs defaultValue="login">
-            <TabsList class="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Entrar</TabsTrigger>
-              <TabsTrigger value="register">Registar</TabsTrigger>
+            <TabsList class="w-full flex gap-4 justify-between bg-base-100 ">
+              <div class="flex-1 text-center m-0 bg-base-200 rounded-full ">
+                <TabsTrigger value="login">Entrar</TabsTrigger>
+              </div>
+              <div class="flex-1 text-center bg-base-200 rounded-full">
+                <TabsTrigger value="register">Registar</TabsTrigger>
+              </div>
             </TabsList>
 
             <TabsContent value="login">
@@ -114,14 +120,16 @@ const Auth = () => {
                   <form onSubmit={handleLogin} class="space-y-4">
                     <div class="space-y-2">
                       <Label for="login-email">Email</Label>
-                        <Input
-                          id="login-email"
-                          type="email"
-                          placeholder="seu@email.com"
-                          required
-                          value={loginEmail()}
-                          onInput={(e) => setLoginEmail((e.target as HTMLInputElement).value)}
-                        />
+                      <Input
+                        id="login-email"
+                        type="email"
+                        placeholder="seu@email.com"
+                        required
+                        value={loginEmail()}
+                        onInput={(e) =>
+                          setLoginEmail((e.target as HTMLInputElement).value)
+                        }
+                      />
                     </div>
                     <div class="space-y-2">
                       <Label for="login-password">Password</Label>
@@ -131,15 +139,26 @@ const Auth = () => {
                         placeholder="••••••••"
                         required
                         value={loginPassword()}
-                        onInput={(e) => setLoginPassword((e.target as HTMLInputElement).value)}
+                        onInput={(e) =>
+                          setLoginPassword((e.target as HTMLInputElement).value)
+                        }
                       />
                     </div>
-                    <Button type="submit" class="w-full" disabled={isLoading()}>
+                    <Button
+                      type="submit"
+                      class="w-full text-primary-content"
+                      disabled={isLoading()}
+                    >
                       {isLoading() ? 'A entrar...' : 'Entrar'}
                     </Button>
 
-                    <div class="mt-3">
-                      <Button type="button" class="w-full" onClick={handleGoogle} disabled={isLoading()}>
+                    <div class="">
+                      <Button
+                        type="button"
+                        class="w-full  text-primary-content"
+                        onClick={handleGoogle}
+                        disabled={isLoading()}
+                      >
                         {isLoading() ? 'A autenticar...' : 'Entrar com Google'}
                       </Button>
                     </div>
@@ -166,7 +185,9 @@ const Auth = () => {
                         placeholder="João Silva"
                         required
                         value={registerName()}
-                        onInput={(e) => setRegisterName((e.target as HTMLInputElement).value)}
+                        onInput={(e) =>
+                          setRegisterName((e.target as HTMLInputElement).value)
+                        }
                       />
                     </div>
                     <div class="space-y-2">
@@ -177,7 +198,9 @@ const Auth = () => {
                         placeholder="seu@email.com"
                         required
                         value={registerEmail()}
-                        onInput={(e) => setRegisterEmail((e.target as HTMLInputElement).value)}
+                        onInput={(e) =>
+                          setRegisterEmail((e.target as HTMLInputElement).value)
+                        }
                       />
                     </div>
                     <div class="space-y-2">
@@ -188,7 +211,11 @@ const Auth = () => {
                         placeholder="••••••••"
                         required
                         value={registerPassword()}
-                        onInput={(e) => setRegisterPassword((e.target as HTMLInputElement).value)}
+                        onInput={(e) =>
+                          setRegisterPassword(
+                            (e.target as HTMLInputElement).value,
+                          )
+                        }
                       />
                     </div>
                     <div class="space-y-2">
@@ -199,10 +226,18 @@ const Auth = () => {
                         placeholder="••••••••"
                         required
                         value={registerConfirm()}
-                        onInput={(e) => setRegisterConfirm((e.target as HTMLInputElement).value)}
+                        onInput={(e) =>
+                          setRegisterConfirm(
+                            (e.target as HTMLInputElement).value,
+                          )
+                        }
                       />
                     </div>
-                    <Button type="submit" class="w-full" disabled={isLoading()}>
+                    <Button
+                      type="submit"
+                      class="w-full text-primary-content"
+                      disabled={isLoading()}
+                    >
                       {isLoading() ? 'A criar conta...' : 'Criar Conta'}
                     </Button>
                   </form>
