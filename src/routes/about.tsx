@@ -14,8 +14,9 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-solid'
-import { createSignal, For, Show } from 'solid-js'
+import { createSignal, For, Show, onMount, onCleanup } from 'solid-js'
 import { Motion, Presence } from 'solid-motionone'
+import { type JSX } from 'solid-js'
 
 import { Button } from '~/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card'
@@ -90,6 +91,63 @@ function HeroShapes() {
 }
 
 /**
+ * In-view Motion wrapper
+ * Renders a Motion element of the specified tag and only applies the `animate`
+ * properties when the element enters the viewport. Uses IntersectionObserver so
+ * animations are scroll-driven rather than firing all at page load.
+ */
+function InViewMotion(props: {
+  tag?: 'div' | 'li' | 'form' | 'section'
+  class?: string
+  initial?: Record<string, unknown>
+  animate?: Record<string, unknown>
+  transition?: Record<string, unknown>
+  threshold?: number
+  rootMargin?: string
+  children?: JSX.Element
+}) {
+  const [inView, setInView] = createSignal(false)
+  let el: HTMLElement | HTMLLIElement | HTMLFormElement | null = null
+
+  onMount(() => {
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setInView(true)
+            obs.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: props.threshold ?? 0.15, rootMargin: props.rootMargin ?? '0px' },
+    )
+    if (el) obs.observe(el)
+    onCleanup(() => obs.disconnect())
+  })
+
+  const MotionTag =
+    props.tag === 'li'
+      ? (Motion as any).li
+      : props.tag === 'form'
+      ? (Motion as any).form
+      : props.tag === 'section'
+      ? (Motion as any).section
+      : (Motion as any).div
+
+  return (
+    <MotionTag
+      ref={(r: any) => (el = r)}
+      class={props.class}
+      initial={props.initial}
+      animate={inView() ? props.animate : undefined}
+      transition={props.transition}
+    >
+      {props.children}
+    </MotionTag>
+  )
+}
+
+/**
  * Section 1 - Hero
  */
 function HeroSection() {
@@ -98,7 +156,8 @@ function HeroSection() {
       <div class="container mx-auto px-6 py-20">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
-          <Motion.div
+          <InViewMotion
+            tag="div"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
@@ -115,17 +174,18 @@ function HeroSection() {
               Recicla+ conecta cidadãos, tecnologia e pontos de recolha para
               tornar a reciclagem acessível, transparente e impactante.
             </p>
-          </Motion.div>
+          </InViewMotion>
 
           {/* Abstract Visual */}
-          <Motion.div
+          <InViewMotion
+            tag="div"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.3 }}
             class="hidden lg:block h-[400px]"
           >
             <HeroShapes />
-          </Motion.div>
+          </InViewMotion>
         </div>
       </div>
     </section>
@@ -150,7 +210,8 @@ function ProblemSection() {
 
       <div class="container mx-auto px-6">
         <div class="max-w-3xl lg:ml-16">
-          <Motion.div
+          <InViewMotion
+            tag="div"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -163,20 +224,21 @@ function ProblemSection() {
               participação cidadã e reduzem a eficácia dos sistemas de recolha
               seletiva.
             </p>
-          </Motion.div>
+          </InViewMotion>
 
           <ul class="space-y-4">
             <For each={challenges}>
               {(challenge, index) => (
-                <Motion.li
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 + index() * 0.1 }}
-                  class="flex items-start gap-4"
-                >
-                  <span class="shrink-0 w-2 h-2 mt-2.5 rounded-full bg-primary-500" />
-                  <span class="text-base-content/80">{challenge}</span>
-                </Motion.li>
+                    <InViewMotion
+                      tag="li"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: 0.2 + index() * 0.1 }}
+                      class="flex items-start gap-4"
+                    >
+                      <span class="shrink-0 w-2 h-2 mt-2.5 rounded-full bg-primary-500" />
+                      <span class="text-base-content/80">{challenge}</span>
+                    </InViewMotion>
               )}
             </For>
           </ul>
@@ -193,7 +255,8 @@ function PlatformDiagram() {
   return (
     <div class="relative h-[400px] flex flex-col items-center justify-center gap-6">
       {/* User Layer */}
-      <Motion.div
+      <InViewMotion
+        tag="div"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
@@ -201,13 +264,14 @@ function PlatformDiagram() {
       >
         <Users class="w-6 h-6 text-accent-700" />
         <span class="font-medium text-accent-700">Utilizador</span>
-      </Motion.div>
+      </InViewMotion>
 
       {/* Connector */}
       <div class="w-px h-8 bg-primary-300" />
 
       {/* Platform Layer */}
-      <Motion.div
+      <InViewMotion
+        tag="div"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, delay: 0.4 }}
@@ -217,13 +281,14 @@ function PlatformDiagram() {
         <span class="font-semibold text-primary-700 text-lg">
           Plataforma Digital
         </span>
-      </Motion.div>
+      </InViewMotion>
 
       {/* Connector */}
       <div class="w-px h-8 bg-primary-300" />
 
       {/* Collection Points Layer */}
-      <Motion.div
+      <InViewMotion
+        tag="div"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.6 }}
@@ -231,7 +296,7 @@ function PlatformDiagram() {
       >
         <MapPin class="w-6 h-6 text-secondary-700" />
         <span class="font-medium text-secondary-700">Pontos de Recolha</span>
-      </Motion.div>
+      </InViewMotion>
     </div>
   )
 }
@@ -245,7 +310,8 @@ function ProjectSection() {
       <div class="container mx-auto px-6">
         <div class="grid lg:grid-cols-2 gap-16 items-center">
           {/* Text Content */}
-          <Motion.div
+          <InViewMotion
+            tag="div"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7 }}
@@ -267,7 +333,7 @@ function ProjectSection() {
               consciente. O objetivo é tornar a reciclagem parte natural do
               quotidiano, removendo barreiras e criando transparência.
             </p>
-          </Motion.div>
+          </InViewMotion>
 
           {/* Diagram - Sticky on scroll */}
           <div class="lg:sticky lg:top-24">
@@ -313,7 +379,8 @@ function HowItWorksSection() {
   return (
     <section class="py-24 bg-base-100">
       <div class="container mx-auto px-6">
-        <Motion.div
+        <InViewMotion
+          tag="div"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -326,7 +393,7 @@ function HowItWorksSection() {
             Quatro passos simples para começar a reciclar de forma mais
             eficiente
           </p>
-        </Motion.div>
+        </InViewMotion>
 
         {/* Desktop: Horizontal layout */}
         <div class="hidden md:flex items-start justify-between relative">
@@ -335,7 +402,8 @@ function HowItWorksSection() {
 
           <For each={steps}>
             {(step, index) => (
-              <Motion.div
+              <InViewMotion
+                tag="div"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index() * 0.15 }}
@@ -353,7 +421,7 @@ function HowItWorksSection() {
                 <p class="text-sm text-text-500 max-w-[180px]">
                   {step.description}
                 </p>
-              </Motion.div>
+              </InViewMotion>
             )}
           </For>
         </div>
@@ -362,7 +430,8 @@ function HowItWorksSection() {
         <div class="md:hidden space-y-8">
           <For each={steps}>
             {(step, index) => (
-              <Motion.div
+              <InViewMotion
+                tag="div"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: index() * 0.1 }}
@@ -380,7 +449,7 @@ function HowItWorksSection() {
                   </h3>
                   <p class="text-sm text-text-500">{step.description}</p>
                 </div>
-              </Motion.div>
+              </InViewMotion>
             )}
           </For>
         </div>
@@ -420,7 +489,8 @@ function UserRoleSection() {
   return (
     <section class="py-24 bg-linear-to-br from-accent-100 via-base-100 to-primary-50">
       <div class="container mx-auto px-6">
-        <Motion.div
+        <InViewMotion
+          tag="div"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -432,12 +502,13 @@ function UserRoleSection() {
           <p class="text-text-500 max-w-2xl mx-auto">
             A reciclagem eficaz depende da participação ativa de cada cidadão
           </p>
-        </Motion.div>
+          </InViewMotion>
 
         <div class="grid md:grid-cols-3 gap-8">
           <For each={roles}>
             {(role, index) => (
-              <Motion.div
+              <InViewMotion
+                tag="div"
                 initial={{ opacity: 0, y: 40, rotate: role.rotation }}
                 animate={{ opacity: 1, y: 0, rotate: role.rotation }}
                 transition={{ duration: 0.6, delay: index() * 0.15 }}
@@ -453,7 +524,7 @@ function UserRoleSection() {
                     <p class="text-text-500">{role.description}</p>
                   </CardContent>
                 </Card>
-              </Motion.div>
+              </InViewMotion>
             )}
           </For>
         </div>
@@ -502,7 +573,8 @@ function PrinciplesSection() {
   return (
     <section class="py-24 bg-base-200">
       <div class="container mx-auto px-6">
-        <Motion.div
+        <InViewMotion
+          tag="div"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -514,12 +586,13 @@ function PrinciplesSection() {
           <p class="text-text-500 max-w-2xl mx-auto">
             Valores que guiam o desenvolvimento e operação da plataforma
           </p>
-        </Motion.div>
+        </InViewMotion>
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           <For each={principles}>
             {(principle, index) => (
-              <Motion.div
+              <InViewMotion
+                tag="div"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: index() * 0.08 }}
@@ -532,7 +605,7 @@ function PrinciplesSection() {
                   {principle.label}
                 </h3>
                 <p class="text-xs text-text-500">{principle.description}</p>
-              </Motion.div>
+              </InViewMotion>
             )}
           </For>
         </div>
@@ -562,7 +635,8 @@ function ContactSection() {
   return (
     <section class="py-24 bg-base-100">
       <div class="container mx-auto px-6">
-        <Motion.div
+        <InViewMotion
+          tag="div"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -583,12 +657,11 @@ function ContactSection() {
                 <Show
                   when={formState() === 'success'}
                   fallback={
-                    <Motion.form
+                    <InViewMotion
+                      tag="form"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      onSubmit={handleSubmit}
                       class="space-y-6"
                     >
                       <div class="space-y-2">
@@ -632,13 +705,13 @@ function ContactSection() {
                         <MessageCircle class="w-4 h-4 mr-2" />
                         Enviar Mensagem
                       </Button>
-                    </Motion.form>
+                    </InViewMotion>
                   }
                 >
-                  <Motion.div
+                  <InViewMotion
+                    tag="div"
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
                     transition={{ duration: 0.4 }}
                     class="text-center py-8"
                   >
@@ -657,12 +730,12 @@ function ContactSection() {
                     >
                       Enviar Outra Mensagem
                     </Button>
-                  </Motion.div>
+                  </InViewMotion>
                 </Show>
               </Presence>
             </CardContent>
           </Card>
-        </Motion.div>
+        </InViewMotion>
       </div>
     </section>
   )
