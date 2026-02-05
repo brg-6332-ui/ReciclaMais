@@ -35,10 +35,10 @@ export function openConfirmModal(
   try {
     return modalManager.openModal({
       type: 'confirmation',
-      title: options.title ?? 'Confirm Action',
+      title: options.title ?? 'Confirmação',
       message,
-      confirmText: options.confirmText ?? 'Confirm',
-      cancelText: options.cancelText ?? 'Cancel',
+      confirmText: options.confirmText ?? 'Confirmar',
+      cancelText: options.cancelText ?? 'Cancelar',
       onConfirm: options.onConfirm,
       onCancel: options.onCancel,
       priority: options.priority ?? 'normal',

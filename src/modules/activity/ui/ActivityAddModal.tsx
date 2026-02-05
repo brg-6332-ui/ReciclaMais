@@ -248,7 +248,7 @@ function ActivityAddModal(props: ActivityAddModalProps) {
           disabled={!isFormValid() || state() === 'submitting'}
         >
           <Show when={state() === 'submitting'} fallback="Confirmar Reciclagem">
-            Enviando...
+            A enviar...
           </Show>
         </Button>
       </div>

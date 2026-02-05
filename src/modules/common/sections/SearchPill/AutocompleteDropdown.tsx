@@ -48,7 +48,7 @@ export function AutocompleteDropdown(props: AutocompleteDropdownProps) {
           fallback={
             <Show when={props.loading()}>
               <div class="px-4 py-3 text-sm text-muted-foreground">
-                Carregando...
+                A carregar...
               </div>
             </Show>
           }

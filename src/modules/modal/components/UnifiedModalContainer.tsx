@@ -72,7 +72,7 @@ function ModalRenderer(props: ModalState) {
               <Show when={props.type === 'error' && props.errorDetails.stack}>
                 <details class="mt-2">
                   <summary class="cursor-pointer text-sm">
-                    Show technical details
+                    Mostrar detalhes técnicos
                   </summary>
                   <pre class="mt-2 text-xs bg-base-500 p-3 rounded border border-base-300 overflow-auto max-h-40">
                     {props.type === 'error' ? props.errorDetails.stack : ''}
@@ -127,8 +127,8 @@ function ModalRenderer(props: ModalState) {
             }}
           >
             {props.type === 'confirmation'
-              ? (resolveStringValue(props.cancelText) ?? 'Cancel')
-              : 'Cancel'}
+              ? (resolveStringValue(props.cancelText) ?? 'Cancelar')
+              : 'Cancelar'}
           </button>
           <button
             type="button"
@@ -141,8 +141,8 @@ function ModalRenderer(props: ModalState) {
             }}
           >
             {props.type === 'confirmation'
-              ? (resolveStringValue(props.confirmText) ?? 'Confirm')
-              : 'Confirm'}
+              ? (resolveStringValue(props.confirmText) ?? 'Confirmar')
+              : 'Confirmar'}
           </button>
         </Modal.Footer>
       </Show>

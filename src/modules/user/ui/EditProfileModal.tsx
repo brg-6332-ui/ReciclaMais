@@ -154,7 +154,7 @@ function EditProfileModal(props: EditProfileModalProps) {
           Cancelar
         </Button>
         <Button type="submit" variant="hero" disabled={submitting()}>
-          {submitting() ? 'Enviando...' : 'Salvar'}
+          {submitting() ? 'A enviar...' : 'Guardar'}
         </Button>
       </div>
     </form>

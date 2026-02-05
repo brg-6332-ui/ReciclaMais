@@ -29,9 +29,9 @@ function ModalErrorFallback(error: Error, _: () => void) {
         />
       </svg>
       <div>
-        <h3 class="font-bold">Modal Content Error</h3>
+        <h3 class="font-bold">Erro no conteúdo do modal</h3>
         <div class="text-xs">
-          An error occurred while loading the modal content. Please try again.
+          Ocorreu um erro ao carregar o conteúdo do modal. Por favor, tente novamente.
         </div>
       </div>
     </div>
