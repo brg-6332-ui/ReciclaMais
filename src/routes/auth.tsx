@@ -1,6 +1,6 @@
 import { A } from '@solidjs/router'
 import { Recycle } from 'lucide-solid'
-import { createSignal, onMount } from 'solid-js'
+import { createSignal } from 'solid-js'
 import { toast } from 'solid-toast'
 
 import { Button } from '~/components/ui/button'
@@ -18,34 +18,64 @@ import { authActions } from '~/modules/auth/application/authActions'
 
 const Auth = () => {
   const [isLoading, setIsLoading] = createSignal(false)
+  const [loginEmail, setLoginEmail] = createSignal('')
+  const [loginPassword, setLoginPassword] = createSignal('')
 
-  const handleLogin = (e: Event) => {
+  const [registerName, setRegisterName] = createSignal('')
+  const [registerEmail, setRegisterEmail] = createSignal('')
+  const [registerPassword, setRegisterPassword] = createSignal('')
+  const [registerConfirm, setRegisterConfirm] = createSignal('')
+
+  const handleLogin = async (e: Event) => {
     e.preventDefault()
     setIsLoading(true)
-    // Simulate login
-    setTimeout(() => {
-      setIsLoading(false)
+    try {
+      await authActions.signInWithEmail(loginEmail(), loginPassword())
       toast.success('Login realizado com sucesso!')
-    }, 1500)
-  }
-
-  const handleRegister = (e: Event) => {
-    e.preventDefault()
-    setIsLoading(true)
-    // Simulate registration
-    setTimeout(() => {
-      setIsLoading(false)
-      toast.success('Conta criada com sucesso! Bem-vindo!')
-    }, 1500)
-  }
-
-  onMount(() => {
-    void authActions.loginWithGoogle().catch((error) => {
+      window.location.href = '/' // redirect to home on success
+    } catch (err) {
       toast.error(
-        `Erro ao autenticar com Google: ${error instanceof Error ? error.message : String(error)}`,
+        `Erro ao autenticar: ${err instanceof Error ? err.message : String(err)}`,
       )
-    })
-  })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleRegister = async (e: Event) => {
+    e.preventDefault()
+    if (registerPassword() !== registerConfirm()) {
+      toast.error('As passwords não coincidem')
+      return
+    }
+    setIsLoading(true)
+    try {
+      await authActions.signUpWithEmail(registerEmail(), registerPassword())
+      toast.success('Conta criada com sucesso! Verifique o seu email para confirmar.')
+      window.location.href = '/' // optionally redirect
+    } catch (err) {
+      toast.error(
+        `Erro ao registar: ${err instanceof Error ? err.message : String(err)}`,
+      )
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleGoogle = async () => {
+    setIsLoading(true)
+    try {
+      await authActions.loginWithGoogle()
+      toast.success('Autenticação com Google concluída')
+      window.location.href = '/'
+    } catch (err) {
+      toast.error(
+        `Erro ao autenticar com Google: ${err instanceof Error ? err.message : String(err)}`,
+      )
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div class="min-h-screen flex items-center justify-center py-12 px-4">
@@ -84,12 +114,14 @@ const Auth = () => {
                   <form onSubmit={handleLogin} class="space-y-4">
                     <div class="space-y-2">
                       <Label for="login-email">Email</Label>
-                      <Input
-                        id="login-email"
-                        type="email"
-                        placeholder="seu@email.com"
-                        required
-                      />
+                        <Input
+                          id="login-email"
+                          type="email"
+                          placeholder="seu@email.com"
+                          required
+                          value={loginEmail()}
+                          onInput={(e) => setLoginEmail((e.target as HTMLInputElement).value)}
+                        />
                     </div>
                     <div class="space-y-2">
                       <Label for="login-password">Password</Label>
@@ -98,11 +130,19 @@ const Auth = () => {
                         type="password"
                         placeholder="••••••••"
                         required
+                        value={loginPassword()}
+                        onInput={(e) => setLoginPassword((e.target as HTMLInputElement).value)}
                       />
                     </div>
                     <Button type="submit" class="w-full" disabled={isLoading()}>
                       {isLoading() ? 'A entrar...' : 'Entrar'}
                     </Button>
+
+                    <div class="mt-3">
+                      <Button type="button" class="w-full" onClick={handleGoogle} disabled={isLoading()}>
+                        {isLoading() ? 'A autenticar...' : 'Entrar com Google'}
+                      </Button>
+                    </div>
                   </form>
                 </CardContent>
               </Card>
@@ -125,6 +165,8 @@ const Auth = () => {
                         type="text"
                         placeholder="João Silva"
                         required
+                        value={registerName()}
+                        onInput={(e) => setRegisterName((e.target as HTMLInputElement).value)}
                       />
                     </div>
                     <div class="space-y-2">
@@ -134,6 +176,8 @@ const Auth = () => {
                         type="email"
                         placeholder="seu@email.com"
                         required
+                        value={registerEmail()}
+                        onInput={(e) => setRegisterEmail((e.target as HTMLInputElement).value)}
                       />
                     </div>
                     <div class="space-y-2">
@@ -143,6 +187,8 @@ const Auth = () => {
                         type="password"
                         placeholder="••••••••"
                         required
+                        value={registerPassword()}
+                        onInput={(e) => setRegisterPassword((e.target as HTMLInputElement).value)}
                       />
                     </div>
                     <div class="space-y-2">
@@ -152,6 +198,8 @@ const Auth = () => {
                         type="password"
                         placeholder="••••••••"
                         required
+                        value={registerConfirm()}
+                        onInput={(e) => setRegisterConfirm((e.target as HTMLInputElement).value)}
                       />
                     </div>
                     <Button type="submit" class="w-full" disabled={isLoading()}>
