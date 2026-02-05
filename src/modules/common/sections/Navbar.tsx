@@ -152,7 +152,7 @@ export function Navbar() {
             {/* hamburger visible only on mobile */}
             <div class="md:hidden">
               <button
-                aria-label="Open menu"
+                aria-label="Abrir menu"
                 aria-expanded={mobileOpen()}
                 onClick={(e) => {
                   e.preventDefault()
@@ -265,7 +265,7 @@ export function Navbar() {
               <img src={logo} alt="Recicla+" class="h-8" />
             </A>
             <button
-              aria-label="Close menu"
+              aria-label="Fechar menu"
               onClick={() => setMobileOpen(false)}
               class="p-2 rounded-md active:scale-95 active:opacity-90 transition-transform duration-150"
             >
