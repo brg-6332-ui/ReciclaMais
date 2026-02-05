@@ -1,12 +1,9 @@
 import {
   Calendar,
   Gift,
-  Leaf,
   Loader2,
   Recycle,
-  Search,
   Trash2,
-  TrendingUp,
   User,
   Weight,
 } from 'lucide-solid'
@@ -143,16 +140,6 @@ const Dashboard = () => {
           </div>
 
           <div class="flex items-center gap-2">
-            {/* Search - Desktop only */}
-            <div class="hidden items-center rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-sm lg:flex lg:w-64">
-              <Search class="mr-2 h-4 w-4 text-slate-400" />
-              <input
-                class="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
-                placeholder="Procurar atividades..."
-                aria-label="Pesquisar"
-              />
-            </div>
-
             <Button
               variant="hero"
               onClick={handleAddRecycling}
@@ -215,35 +202,63 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Secondary KPI - CO₂ Poupado */}
+          {/* Secondary KPI - Reciclado este mês */}
           <Card class="rounded-xl border border-slate-200/60 bg-white shadow-sm">
             <CardContent class="p-4 sm:p-5">
               <div class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50">
-                <Leaf class="h-4 w-4 text-emerald-600" />
+                <Calendar class="h-4 w-4 text-emerald-600" />
               </div>
               <p class="mb-0.5 text-xs font-medium text-slate-500">
-                CO₂ Poupado
+                Reciclado este mês
               </p>
-              <p class="text-2xl font-bold text-emerald-600 sm:text-3xl">
-                {dashboard.stats().co2Saved.toFixed(1)}
-                <span class="text-lg font-medium text-slate-400">kg</span>
-              </p>
+              <div class="flex items-baseline gap-2">
+                <p class="text-2xl font-bold text-emerald-600 sm:text-3xl">
+                  {dashboard.stats().recycledThisMonth.toFixed(1)}
+                  <span class="text-lg font-medium text-slate-400">kg</span>
+                </p>
+                <Show
+                  when={
+                    dashboard.stats().recycledThisMonthDeltaPercent !== null
+                  }
+                >
+                  <span
+                    class="ml-2 rounded-md px-2 py-0.5 text-xs font-medium"
+                    classList={{
+                      'bg-emerald-100 text-emerald-800':
+                        dashboard.stats().recycledThisMonthDeltaPercent! > 0,
+                      'bg-slate-100 text-slate-700':
+                        dashboard.stats().recycledThisMonthDeltaPercent! === 0,
+                      'bg-red-100 text-red-700':
+                        dashboard.stats().recycledThisMonthDeltaPercent! < 0,
+                    }}
+                  >
+                    {dashboard.stats().recycledThisMonthDeltaPercent! > 0
+                      ? '▲'
+                      : dashboard.stats().recycledThisMonthDeltaPercent! < 0
+                        ? '▼'
+                        : ''}
+                    {Math.abs(
+                      dashboard.stats().recycledThisMonthDeltaPercent!,
+                    ).toFixed(1)}
+                    %
+                  </span>
+                </Show>
+              </div>
             </CardContent>
           </Card>
 
-          {/* Secondary KPI - Taxa Reciclagem (hidden on mobile, visible on larger screens) */}
+          {/* Secondary KPI - Frequência de reciclagem (entregas este mês) */}
           <Card class="col-span-2 rounded-xl border border-slate-200/60 bg-white shadow-sm lg:col-span-1 lg:hidden xl:block">
             <CardContent class="flex items-center gap-4 p-4 sm:p-5 lg:block">
               <div class="mb-0 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 lg:mb-3">
-                <TrendingUp class="h-4 w-4 text-slate-600" />
+                <Calendar class="h-4 w-4 text-slate-600" />
               </div>
               <div>
                 <p class="mb-0.5 text-xs font-medium text-slate-500">
-                  Taxa Reciclagem
+                  Entregas este mês
                 </p>
                 <p class="text-2xl font-bold text-slate-700 sm:text-3xl">
-                  {dashboard.stats().recyclingRate}
-                  <span class="text-lg font-medium text-slate-400">%</span>
+                  {dashboard.stats().deliveriesThisMonth}
                 </p>
               </div>
             </CardContent>

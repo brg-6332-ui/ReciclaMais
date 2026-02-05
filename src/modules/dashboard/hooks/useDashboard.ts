@@ -1,9 +1,6 @@
 import { createEffect, createSignal, onCleanup } from 'solid-js'
 
-import {
-  CO2_RATES,
-  type MaterialType,
-} from '~/modules/activity/domain/activity'
+import type { MaterialType } from '~/modules/activity/domain/activity'
 import { useAuthState } from '~/modules/auth/application/authState'
 import type {
   DashboardActivity,
@@ -18,17 +15,12 @@ import { supabase } from '~/shared/infrastructure/supabase/supabase'
  */
 const EMPTY_STATS: DashboardStats = {
   totalRecycled: 0,
+  recycledThisMonth: 0,
+  recycledThisMonthDeltaPercent: null,
+  deliveriesThisMonth: 0,
   totalRewards: 0,
-  co2Saved: 0,
-  recyclingRate: 0,
-}
-
-/**
- * Calculates CO2 saved based on material and grams.
- */
-function calculateCO2Saved(material: string, grams: number): number {
-  const rate = CO2_RATES[material as MaterialType] ?? 0
-  return grams * rate
+  distributionPercent: {},
+  lastRecyclingDate: null,
 }
 
 /**
@@ -69,12 +61,25 @@ export function useDashboard() {
 
       if (!isMounted) return
 
-      // Calculate stats
+      // Calculate stats based on directly measurable data
       let totalGrams = 0
       let totalRewards = 0
-      let totalCO2 = 0
 
       const recentActivities: DashboardActivity[] = []
+
+      // For monthly comparisons
+      const now = new Date()
+      const currentMonth = now.getMonth()
+      const currentYear = now.getFullYear()
+      const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+      const prevMonth = prev.getMonth()
+      const prevYear = prev.getFullYear()
+
+      let gramsThisMonth = 0
+      let gramsPrevMonth = 0
+      let deliveriesThisMonth = 0
+
+      const distributionGrams: Partial<Record<MaterialType, number>> = {}
 
       for (const activity of activities) {
         const grams = activity.grams ?? 0
@@ -83,7 +88,9 @@ export function useDashboard() {
 
         totalGrams += grams
         totalRewards += reward
-        totalCO2 += calculateCO2Saved(material, grams)
+
+        // Distribution by material (by grams)
+        distributionGrams[material] = (distributionGrams[material] ?? 0) + grams
 
         // Only include first 10 for recent activities
         if (recentActivities.length < 10) {
@@ -96,23 +103,58 @@ export function useDashboard() {
             location: activity.location_id || undefined,
           })
         }
+
+        // Parse date safely
+        const date = new Date(activity.date)
+        if (!isNaN(date.getTime())) {
+          const m = date.getMonth()
+          const y = date.getFullYear()
+          if (m === currentMonth && y === currentYear) {
+            gramsThisMonth += grams
+            deliveriesThisMonth += 1
+          } else if (m === prevMonth && y === prevYear) {
+            gramsPrevMonth += grams
+          }
+        }
       }
 
-      // Calculate recycling rate (mock: based on activity frequency)
-      const recyclingRate =
-        activities.length > 0 ? Math.min(100, activities.length * 10) : 0
+      // Convert distribution to percent
+      const distributionPercent: Partial<Record<MaterialType, number>> = {}
+      if (totalGrams > 0) {
+        for (const k in distributionGrams) {
+          const key = k as MaterialType
+          const g = distributionGrams[key] ?? 0
+          distributionPercent[key] = Math.round((g / totalGrams) * 1000) / 10 // 0.1% precision
+        }
+      }
+
+      // Last recycling date: first activity in ordered list (activities ordered desc)
+      const lastRecyclingDate =
+        activities.length > 0 ? activities[0].date : null
+
+      // Calculate month-over-month percent change if previous month has data
+      const recycledThisMonthKg = Math.round((gramsThisMonth / 1000) * 10) / 10
+      const recycledPrevMonthKg = Math.round((gramsPrevMonth / 1000) * 10) / 10
+      const deltaPercent =
+        recycledPrevMonthKg > 0
+          ? Math.round(
+              ((recycledThisMonthKg - recycledPrevMonthKg) /
+                recycledPrevMonthKg) *
+                1000,
+            ) / 10
+          : null
 
       const stats: DashboardStats = {
-        totalRecycled: Math.round(totalGrams / 10) / 100, // Convert to kg with 2 decimals
+        totalRecycled: Math.round((totalGrams / 1000) * 10) / 10, // kg with 0.1 precision
+        recycledThisMonth: recycledThisMonthKg,
+        recycledThisMonthDeltaPercent: deltaPercent,
+        deliveriesThisMonth,
         totalRewards: Math.round(totalRewards * 100) / 100,
-        co2Saved: Math.round(totalCO2 / 10) / 100, // Convert to kg with 2 decimals
-        recyclingRate,
+        distributionPercent,
+        lastRecyclingDate,
       }
 
-      setData({
-        stats,
-        recentActivities,
-      })
+      setData({ stats, recentActivities })
 
       setState('success')
     } catch (err) {
