@@ -123,10 +123,10 @@ export function Footer() {
 
           <div>
             <h3 class="font-semibold mb-4">Redes Sociais</h3>
-            <div class="flex gap-3">
+            <div class="flex gap-3 ">
               <a
                 href="#"
-                class="h-10 w-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm"
+                class="h-10 w-10 rounded-full bg-base-50 flex items-center justify-center hover:bg-primary-400 hover:text-primary-content transition-all duration-300 shadow-sm"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -145,7 +145,7 @@ export function Footer() {
               </a>
               <a
                 href="#"
-                class="h-10 w-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm"
+                class="h-10 w-10 rounded-full bg-base-50 flex items-center justify-center hover:bg-primary-400 hover:text-primary-content transition-all duration-300 shadow-sm"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +164,7 @@ export function Footer() {
               </a>
               <a
                 href="#"
-                class="h-10 w-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm"
+                class="h-10 w-10 rounded-full bg-base-50 flex items-center justify-center hover:bg-primary-400 hover:text-primary-content transition-all duration-300 shadow-sm"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -185,7 +185,7 @@ export function Footer() {
               </a>
               <a
                 href="#"
-                class="h-10 w-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm"
+                class="h-10 w-10 rounded-full bg-base-50 flex items-center justify-center hover:bg-primary-400 hover:text-primary-content transition-all duration-300 shadow-sm"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
