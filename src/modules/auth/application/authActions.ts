@@ -8,5 +8,8 @@ export const authActions = {
   },
   logout: async () => {
     await supabase.auth.signOut()
+    if (window?.location) {
+      window.location.href = '/'
+    }
   },
 }
