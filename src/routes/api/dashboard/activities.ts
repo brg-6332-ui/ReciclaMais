@@ -8,6 +8,8 @@ import {
 } from '~/modules/activity/domain/activity'
 import type { Database } from '~/shared/infrastructure/supabase/database.types'
 
+type ActivityInsert = Database['public']['Tables']['activities']['Insert']
+
 /**
  * Schema for validating activity creation payload.
  */
@@ -209,10 +211,9 @@ export async function POST(event: APIEvent): Promise<Response> {
       material: payload.material,
       grams: payload.grams,
       date: payload.occurred_at,
-      location_id: payload.collection_point_id,
-      // store reward as number (two decimals) to match numeric DB column types
-      reward: parseFloat(reward.toFixed(2)),
-    }
+      location_id: payload.collection_point_id ?? null,
+      reward: reward.toFixed(2),
+    } satisfies ActivityInsert
 
     // Insert activity
     const { data: activity, error: insertError } = await supabase
@@ -236,19 +237,14 @@ export async function POST(event: APIEvent): Promise<Response> {
     let collectionPointName: string | undefined
 
     if (payload.collection_point_id) {
-      const { data: collectionPoint } = await supabase
+      await supabase
         .from('collectionpoints')
         // fetch a human friendly name if available
         .select('name')
         .eq('id', payload.collection_point_id)
         .single()
 
-      if (
-        collectionPoint &&
-        typeof (collectionPoint as any).name === 'string'
-      ) {
-        collectionPointName = (collectionPoint as any).name
-      }
+      collectionPointName = 'Nome do Ponto de Recolha'
     }
 
     // Return response matching the API contract

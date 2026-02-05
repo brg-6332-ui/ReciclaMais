@@ -21,7 +21,7 @@ export type Database = {
           date: string
           grams: number
           id: number
-          location_id: string
+          location_id: string | null
           material: string
           reward: string | null
           user_id: string
@@ -31,7 +31,7 @@ export type Database = {
           date: string
           grams: number
           id?: number
-          location_id: string
+          location_id?: string | null
           material: string
           reward?: string | null
           user_id: string
@@ -41,7 +41,7 @@ export type Database = {
           date?: string
           grams?: number
           id?: number
-          location_id?: string
+          location_id?: string | null
           material?: string
           reward?: string | null
           user_id?: string

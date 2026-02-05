@@ -2,12 +2,15 @@ import {
   Calendar,
   Gift,
   Leaf,
+  Loader2,
   Recycle,
+  Search,
   Trash2,
   TrendingUp,
   Weight,
 } from 'lucide-solid'
 import { createSignal, For, Show } from 'solid-js'
+import { toast } from 'solid-toast'
 
 import { Avatar, AvatarFallback } from '~/components/ui/avatar'
 import { Badge } from '~/components/ui/badge'
@@ -23,6 +26,7 @@ import type { MaterialType } from '~/modules/activity/domain/activity'
 import { openActivityAddModal } from '~/modules/activity/ui/ActivityAddModal'
 import { useAuthState } from '~/modules/auth/application/authState'
 import { useDashboard } from '~/modules/dashboard/hooks/useDashboard'
+import { openConfirmModal } from '~/modules/modal/helpers/modalHelpers'
 import { supabase } from '~/shared/infrastructure/supabase/supabase'
 
 /**
@@ -81,43 +85,49 @@ const Dashboard = () => {
     })
   }
 
-  const handleDeleteActivity = async (id: number) => {
-    // confirm deletion with the user
-
-    if (!confirm('Tem certeza que deseja remover esta atividade?')) return
-
-    try {
-      setDeletingId(id)
-      const { error } = await supabase.from('activities').delete().eq('id', id)
-      if (error) throw error
-      dashboard.reFetch()
-    } catch (err) {
-      console.error('Erro ao remover atividade:', err)
-
-      alert('Falha ao remover atividade. Tente novamente mais tarde.')
-    } finally {
-      setDeletingId(null)
-    }
+  const handleDeleteActivity = (id: number) => {
+    openConfirmModal('Tem certeza que deseja remover esta atividade?', {
+      title: 'Remover atividade',
+      confirmText: 'Remover',
+      cancelText: 'Cancelar',
+      async onConfirm() {
+        try {
+          setDeletingId(id)
+          const { error } = await supabase
+            .from('activities')
+            .delete()
+            .eq('id', id)
+          if (error) throw error
+          toast.success('Atividade removida com sucesso')
+          dashboard.reFetch()
+        } catch (err) {
+          console.error('Erro ao remover atividade:', err)
+          toast.error('Falha ao remover atividade. Tente novamente mais tarde.')
+        } finally {
+          setDeletingId(null)
+        }
+      },
+    })
   }
 
   return (
-    <div class="min-h-screen py-12">
-      <div class="container mx-auto px-4">
+    <div class="min-h-screen py-12 bg-[rgb(250,250,247)]">
+      <div class="container mx-auto px-6 max-w-5xl">
         {/* User Header */}
         <div class="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div class="flex items-center gap-4">
-            <Avatar class="h-16 w-16">
-              <AvatarFallback class="bg-linear-to-br from-primary-500 to-accent-500 text-primary-950 text-xl">
+            <Avatar class="h-16 w-16 rounded-xl ring-1 ring-emerald-100 shadow-sm">
+              <AvatarFallback class="bg-emerald-100 text-emerald-800 text-xl font-semibold">
                 {userInitials()}
               </AvatarFallback>
             </Avatar>
             <div>
-              <h1 class="text-3xl font-bold">
+              <h1 class="text-3xl font-extrabold text-emerald-800 leading-tight">
                 <Show when={authState().isAuthenticated} fallback="Visitante">
                   {userEmail().split('@')[0]}
                 </Show>
               </h1>
-              <p class="text-muted-foreground">
+              <p class="text-sm text-muted-foreground mt-1">
                 <Show
                   when={dashboard.state() === 'success'}
                   fallback="Carregando..."
@@ -127,11 +137,28 @@ const Dashboard = () => {
               </p>
             </div>
           </div>
-          <div class="flex gap-4">
-            <Button variant="outline" onClick={handleAddRecycling}>
-              Adicionar Reciclagem
-            </Button>
-            <Button variant="outline">Editar Perfil</Button>
+
+          <div class="flex items-center gap-4 w-full md:w-auto">
+            <div class="hidden md:flex items-center bg-white rounded-lg shadow-sm border border-gray-100 px-3 py-2 w-80">
+              <Search class="h-4 w-4 text-muted-foreground mr-2" />
+              <input
+                class="w-full text-sm bg-transparent outline-none placeholder:text-muted-foreground"
+                placeholder="Procurar atividades, materiais..."
+                aria-label="Pesquisar"
+              />
+            </div>
+
+            <div class="flex items-center gap-3">
+              <Button variant="hero" onClick={handleAddRecycling} class="shadow-[0_6px_14px_rgba(34,197,94,0.12)]">
+                Adicionar Reciclagem
+              </Button>
+              <Button variant="outline" class="hidden sm:inline-flex">
+                Editar Perfil
+              </Button>
+              <Button variant="ghost" size="icon" aria-label="Navegação">
+                <TrendingUp class="h-4 w-4 text-muted-foreground" />
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -287,7 +314,14 @@ const Dashboard = () => {
                               void handleDeleteActivity(activity.id)
                             }
                           >
-                            <Trash2 class="h-4 w-4 text-destructive" />
+                            <Show
+                              when={deletingId() === activity.id}
+                              fallback={
+                                <Trash2 class="h-4 w-4 text-destructive" />
+                              }
+                            >
+                              <Loader2 class="h-4 w-4 text-destructive animate-spin" />
+                            </Show>
                           </Button>
                         </div>
                       </div>
