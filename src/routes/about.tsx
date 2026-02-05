@@ -14,9 +14,16 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-solid'
-import { createSignal, For, Show, onMount, onCleanup } from 'solid-js'
-import { Motion, Presence } from 'solid-motionone'
+import {
+  createMemo,
+  createSignal,
+  For,
+  onCleanup,
+  onMount,
+  Show,
+} from 'solid-js'
 import { type JSX } from 'solid-js'
+import { Motion, Presence } from 'solid-motionone'
 
 import { Button } from '~/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card'
@@ -99,12 +106,13 @@ function HeroShapes() {
 function InViewMotion(props: {
   tag?: 'div' | 'li' | 'form' | 'section'
   class?: string
-  initial?: Record<string, unknown>
-  animate?: Record<string, unknown>
-  transition?: Record<string, unknown>
+  initial?: unknown
+  animate?: unknown
+  transition?: unknown
   threshold?: number
   rootMargin?: string
   children?: JSX.Element
+  onSubmit?: (e: Event) => void
 }) {
   const [inView, setInView] = createSignal(false)
   let el: HTMLElement | HTMLLIElement | HTMLFormElement | null = null
@@ -119,32 +127,98 @@ function InViewMotion(props: {
           }
         })
       },
-      { threshold: props.threshold ?? 0.15, rootMargin: props.rootMargin ?? '0px' },
+      {
+        threshold: props.threshold ?? 0.15,
+        rootMargin: props.rootMargin ?? '0px',
+      },
     )
     if (el) obs.observe(el)
     onCleanup(() => obs.disconnect())
   })
 
-  const MotionTag =
-    props.tag === 'li'
-      ? (Motion as any).li
-      : props.tag === 'form'
-      ? (Motion as any).form
-      : props.tag === 'section'
-      ? (Motion as any).section
-      : (Motion as any).div
+  const tag = createMemo(() => props.tag ?? 'div')
+  const node = createMemo(() => {
+    if (tag() === 'li') {
+      return (
+        <Motion.li
+          ref={(r: unknown) =>
+            (el = r as HTMLElement | HTMLLIElement | HTMLFormElement | null)
+          }
+          class={props.class}
+          // @ts-ignore - motion types are complex and come from an optional package
+          initial={props.initial}
+          // @ts-ignore - motion types are complex and come from an optional package
+          animate={inView() ? props.animate : undefined}
+          // @ts-ignore - motion types are complex and come from an optional package
+          transition={props.transition}
+        >
+          {props.children}
+        </Motion.li>
+      )
+    }
 
-  return (
-    <MotionTag
-      ref={(r: any) => (el = r)}
-      class={props.class}
-      initial={props.initial}
-      animate={inView() ? props.animate : undefined}
-      transition={props.transition}
-    >
-      {props.children}
-    </MotionTag>
-  )
+    if (tag() === 'form') {
+      return (
+        <Motion.form
+          ref={(r: unknown) =>
+            (el = r as HTMLElement | HTMLLIElement | HTMLFormElement | null)
+          }
+          class={props.class}
+          // @ts-ignore - motion types are complex and come from an optional package
+          initial={props.initial}
+          // @ts-ignore - motion types are complex and come from an optional package
+          animate={inView() ? props.animate : undefined}
+          // @ts-ignore - motion types are complex and come from an optional package
+          transition={props.transition}
+          onSubmit={props.onSubmit}
+        >
+          {props.children}
+        </Motion.form>
+      )
+    }
+
+    if (tag() === 'section') {
+      return (
+        <Motion.section
+          ref={(r: unknown) =>
+            (el = r as HTMLElement | HTMLLIElement | HTMLFormElement | null)
+          }
+          class={props.class}
+          // @ts-ignore - motion types are complex and come from an optional package
+          initial={props.initial}
+          // @ts-ignore - motion types are complex and come from an optional package
+          animate={inView() ? props.animate : undefined}
+          // @ts-ignore - motion types are complex and come from an optional package
+          transition={props.transition}
+        >
+          {props.children}
+        </Motion.section>
+      )
+    }
+
+    return (
+      <Motion.div
+        ref={(r: unknown) =>
+          (el = r as HTMLElement | HTMLLIElement | HTMLFormElement | null)
+        }
+        class={props.class}
+        // @ts-ignore - motion types are complex and come from an optional package
+        initial={props.initial}
+        // @ts-ignore - motion types are complex and come from an optional package
+        animate={inView() ? props.animate : undefined}
+        // @ts-ignore - motion types are complex and come from an optional package
+        transition={props.transition}
+      >
+        {props.children}
+      </Motion.div>
+    )
+  })
+
+  // Using the memoized node here is intentional — the component needs a
+  // memoized JSX node that depends on `tag`. Disable the solid/reactivity
+  // rule for this single usage.
+  // eslint-disable-next-line solid/reactivity
+  return node()
 }
 
 /**
@@ -229,16 +303,16 @@ function ProblemSection() {
           <ul class="space-y-4">
             <For each={challenges}>
               {(challenge, index) => (
-                    <InViewMotion
-                      tag="li"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: 0.2 + index() * 0.1 }}
-                      class="flex items-start gap-4"
-                    >
-                      <span class="shrink-0 w-2 h-2 mt-2.5 rounded-full bg-primary-500" />
-                      <span class="text-base-content/80">{challenge}</span>
-                    </InViewMotion>
+                <InViewMotion
+                  tag="li"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 + index() * 0.1 }}
+                  class="flex items-start gap-4"
+                >
+                  <span class="shrink-0 w-2 h-2 mt-2.5 rounded-full bg-primary-500" />
+                  <span class="text-base-content/80">{challenge}</span>
+                </InViewMotion>
               )}
             </For>
           </ul>
@@ -502,7 +576,7 @@ function UserRoleSection() {
           <p class="text-text-500 max-w-2xl mx-auto">
             A reciclagem eficaz depende da participação ativa de cada cidadão
           </p>
-          </InViewMotion>
+        </InViewMotion>
 
         <div class="grid md:grid-cols-3 gap-8">
           <For each={roles}>
@@ -659,6 +733,7 @@ function ContactSection() {
                   fallback={
                     <InViewMotion
                       tag="form"
+                      onSubmit={handleSubmit}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3 }}
