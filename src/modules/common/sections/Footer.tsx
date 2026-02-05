@@ -210,7 +210,7 @@ export function Footer() {
 
         <div class="border-t mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p class="text-sm text-muted-foreground text-center md:text-left">
-            © 2024 EcoRewards. Todos os direitos reservados.
+            © 2025-2026 EcoRecicla. Todos os direitos reservados.
           </p>
           <div class="flex gap-6 text-sm text-muted-foreground">
             <A class="hover:text-primary transition-colors" href="/termos">
