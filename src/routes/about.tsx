@@ -145,11 +145,11 @@ function InViewMotion(props: {
             (el = r as HTMLElement | HTMLLIElement | HTMLFormElement | null)
           }
           class={props.class}
-          // @ts-ignore - motion types are complex and come from an optional package
+          // @ts-expect-error - motion types are complex and may be absent in some envs
           initial={props.initial}
-          // @ts-ignore - motion types are complex and come from an optional package
+          // @ts-expect-error - motion types are complex and may be absent in some envs
           animate={inView() ? props.animate : undefined}
-          // @ts-ignore - motion types are complex and come from an optional package
+          // @ts-expect-error - motion types are complex and may be absent in some envs
           transition={props.transition}
         >
           {props.children}
@@ -164,11 +164,11 @@ function InViewMotion(props: {
             (el = r as HTMLElement | HTMLLIElement | HTMLFormElement | null)
           }
           class={props.class}
-          // @ts-ignore - motion types are complex and come from an optional package
+          // @ts-expect-error - motion types are complex and may be absent in some envs
           initial={props.initial}
-          // @ts-ignore - motion types are complex and come from an optional package
+          // @ts-expect-error - motion types are complex and may be absent in some envs
           animate={inView() ? props.animate : undefined}
-          // @ts-ignore - motion types are complex and come from an optional package
+          // @ts-expect-error - motion types are complex and may be absent in some envs
           transition={props.transition}
           onSubmit={props.onSubmit}
         >
@@ -184,11 +184,11 @@ function InViewMotion(props: {
             (el = r as HTMLElement | HTMLLIElement | HTMLFormElement | null)
           }
           class={props.class}
-          // @ts-ignore - motion types are complex and come from an optional package
+          // @ts-expect-error - motion types are complex and may be absent in some envs
           initial={props.initial}
-          // @ts-ignore - motion types are complex and come from an optional package
+          // @ts-expect-error - motion types are complex and may be absent in some envs
           animate={inView() ? props.animate : undefined}
-          // @ts-ignore - motion types are complex and come from an optional package
+          // @ts-expect-error - motion types are complex and may be absent in some envs
           transition={props.transition}
         >
           {props.children}
@@ -202,11 +202,11 @@ function InViewMotion(props: {
           (el = r as HTMLElement | HTMLLIElement | HTMLFormElement | null)
         }
         class={props.class}
-        // @ts-ignore - motion types are complex and come from an optional package
+        // @ts-expect-error - motion types are complex and may be absent in some envs
         initial={props.initial}
-        // @ts-ignore - motion types are complex and come from an optional package
+        // @ts-expect-error - motion types are complex and may be absent in some envs
         animate={inView() ? props.animate : undefined}
-        // @ts-ignore - motion types are complex and come from an optional package
+        // @ts-expect-error - motion types are complex and may be absent in some envs
         transition={props.transition}
       >
         {props.children}
