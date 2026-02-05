@@ -149,7 +149,11 @@ const Dashboard = () => {
             </div>
 
             <div class="flex items-center gap-3">
-              <Button variant="hero" onClick={handleAddRecycling} class="shadow-[0_6px_14px_rgba(34,197,94,0.12)]">
+              <Button
+                variant="hero"
+                onClick={handleAddRecycling}
+                class="shadow-[0_6px_14px_rgba(34,197,94,0.12)]"
+              >
                 Adicionar Reciclagem
               </Button>
               <Button variant="outline" class="hidden sm:inline-flex">
@@ -164,57 +168,66 @@ const Dashboard = () => {
 
         {/* Stats Grid */}
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card class="shadow-md">
-            <CardHeader class="pb-3">
-              <CardDescription class="flex items-center gap-2">
-                <Weight class="h-4 w-4" />
-                Total Reciclado
+          <Card class="shadow-sm lg:col-span-2 rounded-2xl border-[0.5px]">
+            <CardHeader class="pb-1">
+              <CardDescription class="flex items-center gap-3">
+                <Weight class="h-5 w-5 text-emerald-600" />
+                <div class="text-sm text-muted-foreground">Total Reciclado</div>
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div class="text-3xl font-bold text-primary-500">
-                {dashboard.stats().totalRecycled.toFixed(1)}kg
+            <CardContent class="pt-2">
+              <div class="text-5xl md:text-6xl font-extrabold text-emerald-700 leading-none">
+                {dashboard.stats().totalRecycled.toFixed(1)}
+                <span class="text-xl font-medium text-muted-foreground">
+                  kg
+                </span>
               </div>
+              <p class="mt-2 text-sm text-muted-foreground max-w-prose">
+                Impacto positivo: obrigado por contribuir para comunidades mais
+                limpas.
+              </p>
             </CardContent>
           </Card>
 
-          <Card class="shadow-md">
-            <CardHeader class="pb-3">
-              <CardDescription class="flex items-center gap-2">
-                <Gift class="h-4 w-4" />
-                Recompensas Totais
+          <Card class="shadow-sm rounded-xl border-[0.5px]">
+            <CardHeader class="pb-1">
+              <CardDescription class="flex items-center gap-3">
+                <Gift class="h-5 w-5 text-amber-500" />
+                <div class="text-sm text-muted-foreground">
+                  Recompensas Totais
+                </div>
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div class="text-3xl font-bold text-accent-500">
+            <CardContent class="pt-2">
+              <div class="text-3xl font-bold text-amber-600">
                 {dashboard.stats().totalRewards.toFixed(2)}€
               </div>
             </CardContent>
           </Card>
 
-          <Card class="shadow-md">
-            <CardHeader class="pb-3">
-              <CardDescription class="flex items-center gap-2">
-                <Leaf class="h-4 w-4" />
-                CO₂ Poupado
+          <Card class="shadow-sm rounded-xl border-[0.5px]">
+            <CardHeader class="pb-1">
+              <CardDescription class="flex items-center gap-3">
+                <Leaf class="h-5 w-5 text-emerald-600" />
+                <div class="text-sm text-muted-foreground">CO₂ Poupado</div>
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div class="text-3xl font-bold text-success">
+            <CardContent class="pt-2">
+              <div class="text-3xl font-bold text-emerald-600">
                 {dashboard.stats().co2Saved.toFixed(1)}kg
               </div>
             </CardContent>
           </Card>
 
-          <Card class="shadow-md">
-            <CardHeader class="pb-3">
-              <CardDescription class="flex items-center gap-2">
-                <TrendingUp class="h-4 w-4" />
-                Taxa Reciclagem
+          <Card class="shadow-sm rounded-xl border-[0.5px]">
+            <CardHeader class="pb-1">
+              <CardDescription class="flex items-center gap-3">
+                <TrendingUp class="h-5 w-5 text-muted-foreground" />
+                <div class="text-sm text-muted-foreground">Taxa Reciclagem</div>
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div class="text-3xl font-bold text-primary-500">
+            <CardContent class="pt-2">
+              <div class="text-3xl font-bold text-emerald-700">
                 {dashboard.stats().recyclingRate}%
               </div>
             </CardContent>
@@ -274,10 +287,10 @@ const Dashboard = () => {
                 <div class="space-y-4">
                   <For each={dashboard.recentActivities()}>
                     {(activity) => (
-                      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border bg-card hover:shadow-md transition-shadow">
+                      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-transparent bg-white/60 hover:shadow-md transition-shadow">
                         <div class="flex items-start gap-4">
-                          <div class="h-12 w-12 rounded-lg bg-primary-500/10 flex items-center justify-center shrink-0">
-                            <Recycle class="h-6 w-6 text-primary-500" />
+                          <div class="h-12 w-12 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
+                            <Recycle class="h-6 w-6 text-emerald-600" />
                           </div>
                           <div>
                             <div class="flex items-center gap-2 mb-1">
@@ -285,7 +298,7 @@ const Dashboard = () => {
                                 {MATERIAL_LABELS[activity.type] ??
                                   activity.type}
                               </Badge>
-                              <span class="font-semibold">
+                              <span class="font-semibold text-emerald-700">
                                 {activity.amount.toFixed(2)}kg
                               </span>
                             </div>
@@ -296,15 +309,20 @@ const Dashboard = () => {
                             </Show>
                             <div class="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                               <Calendar class="h-3 w-3" />
-                              {formatDate(activity.date)}
+                              {formatDate(activity.date)} •
+                              <span class="ml-1 font-mono text-xs text-muted-foreground">
+                                {String(activity.id).slice(0, 8)}…
+                              </span>
                             </div>
                           </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                          <Gift class="h-4 w-4 text-accent-500" />
-                          <span class="font-bold text-accent-500 text-lg">
-                            {activity.reward.toFixed(2)}€
-                          </span>
+                        <div class="flex items-center gap-3">
+                          <div class="flex items-center gap-2">
+                            <Gift class="h-4 w-4 text-amber-500" />
+                            <span class="font-bold text-amber-600 text-lg">
+                              {activity.reward.toFixed(2)}€
+                            </span>
+                          </div>
                           <Button
                             variant="ghost"
                             size="icon"
