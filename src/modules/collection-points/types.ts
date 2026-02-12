@@ -4,6 +4,8 @@
 export interface CollectionPoint {
   /** Unique identifier for the collection point */
   id: number
+  /** Stable key shared between list and map (slug / placeId / name) */
+  key: string
   /** Name of the collection point */
   name: string
   /** Company or organization operating the collection point */
@@ -18,6 +20,10 @@ export interface CollectionPoint {
   rating: number
   /** Types of waste accepted (plastic, glass, paper, metal, etc.) */
   types: string[]
+  /** Latitude of the collection point */
+  lat: number
+  /** Longitude of the collection point */
+  lng: number
 }
 
 /**

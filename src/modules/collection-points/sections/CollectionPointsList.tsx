@@ -5,6 +5,10 @@ import { CollectionPointCard } from './CollectionPointCard'
 
 interface CollectionPointsListProps {
   points: Accessor<CollectionPoint[]>
+  /** Currently selected point key */
+  selectedKey?: Accessor<string | null>
+  /** Callback when user selects a point */
+  onSelect?: (point: CollectionPoint) => void
 }
 
 /**
@@ -15,7 +19,13 @@ export function CollectionPointsList(props: CollectionPointsListProps) {
   return (
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       <For each={props.points()}>
-        {(point) => <CollectionPointCard point={point} />}
+        {(point) => (
+          <CollectionPointCard
+            point={point}
+            selected={props.selectedKey?.() === point.key}
+            onSelect={props.onSelect}
+          />
+        )}
       </For>
     </div>
   )

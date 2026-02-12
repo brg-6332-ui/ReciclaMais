@@ -20,6 +20,12 @@ export function CollectionPointsMap(props: {
   placeId?: string | null
   lat?: number | null
   lng?: number | null
+  /** Key of the currently selected point for highlighting */
+  selectedKey?: string | null
+  /** Callback when a collection-point marker is clicked */
+  onPointSelect?: (key: string) => void
+  /** Callback when a GPS marker is clicked */
+  onGpsSelect?: (lat: number, lng: number) => void
 }) {
   const [features] = useFeatures()
   const { mapRef, setMapRef, bounds, zoom } = useMapRefSignals()
@@ -40,6 +46,34 @@ export function CollectionPointsMap(props: {
       maxZoom: 12,
     }),
   )
+
+  /** Derive a stable key from a feature's properties (mirrors the list key). */
+  const featureKey = (feature: Supercluster.PointFeature<POIBasic>): string => {
+    const p = feature.properties
+    return p.slug ?? (p.id ? String(p.id) : '') ?? ''
+  }
+
+  // Pan + zoom to the selected point when selectedKey changes
+  createEffect(() => {
+    const key = props.selectedKey
+    if (!key) return
+    const map = mapRef()
+    if (!map) return
+
+    const match = features.features.find((f) => {
+      const p = f.properties
+      const k = p.slug ?? (p.id ? String(p.id) : '') ?? ''
+      return k === key
+    })
+    if (!match) return
+    const [lng, lat] = match.geometry.coordinates
+    map.panTo({ lat, lng })
+    // Only zoom in if the current zoom is too far out
+    const currentZoom = map.getZoom() ?? 14
+    if (currentZoom < 15) {
+      map.setZoom(16)
+    }
+  })
 
   const zoomToPlaceId = (placeId: string) => {
     const service = placesService()
@@ -125,6 +159,10 @@ export function CollectionPointsMap(props: {
           <DynamicFeatureClusterMarker
             featureOrCluster={featureOrCluster()}
             zoomToCluster={zoomToCluster}
+            selectedKey={props.selectedKey ?? null}
+            onPointSelect={(key) => props.onPointSelect?.(key)}
+            onGpsSelect={(lat, lng) => props.onGpsSelect?.(lat, lng)}
+            featureKey={featureKey}
           />
         )}
       </Key>
@@ -139,6 +177,10 @@ function DynamicFeatureClusterMarker(props: {
   zoomToCluster?: (
     featureOrCluster: Supercluster.ClusterFeature<Supercluster.ClusterProperties>,
   ) => void
+  selectedKey?: string | null
+  onPointSelect?: (key: string) => void
+  onGpsSelect?: (lat: number, lng: number) => void
+  featureKey: (feature: Supercluster.PointFeature<POIBasic>) => string
 }) {
   const isCluster = () =>
     (props.featureOrCluster.properties as Record<string, unknown>).cluster
@@ -162,11 +204,24 @@ function DynamicFeatureClusterMarker(props: {
         {(() => {
           const feature =
             props.featureOrCluster as Supercluster.PointFeature<POIBasic>
+          const key = props.featureKey(feature)
 
           return feature.properties.type === 'gps' ? (
-            <GpsFeatureMarker feature={feature} />
+            <GpsFeatureMarker
+              feature={feature}
+              onClick={() => {
+                const [lng, lat] = feature.geometry.coordinates
+                props.onGpsSelect?.(lat, lng)
+              }}
+            />
           ) : (
-            <FeatureMarker feature={feature} />
+            <FeatureMarker
+              feature={feature}
+              selected={key === props.selectedKey}
+              onClick={() => {
+                props.onPointSelect?.(key)
+              }}
+            />
           )
         })()}
       </Show>
@@ -208,6 +263,7 @@ function ClusterMarker(props: {
 
 function FeatureMarker(props: {
   feature: Supercluster.PointFeature<POIBasic>
+  selected?: boolean
   onClick?: () => void
 }) {
   const position = () => {
@@ -215,15 +271,36 @@ function FeatureMarker(props: {
     return { lat, lng }
   }
   return (
-    <AdvancedMarker position={position()} onClick={props.onClick}>
-      <div class="flex items-center justify-center">
+    <AdvancedMarker
+      position={position()}
+      onClick={props.onClick}
+      zIndex={props.selected ? 999 : undefined}
+    >
+      <div class="flex items-center justify-center transition-transform duration-200">
         <div
-          class="relative rounded-full shadow-md flex items-center justify-center"
-          style="width:40px;height:40px"
+          class="relative rounded-full shadow-md flex items-center justify-center transition-all duration-200"
+          style={{
+            width: props.selected ? '52px' : '40px',
+            height: props.selected ? '52px' : '40px',
+          }}
         >
-          <div class="absolute inset-0 rounded-full bg-marker-background-single" />
-          <div class="relative z-10 text-marker-icon-single flex items-center justify-center">
-            <Leaf class="w-5 h-5" />
+          {/* Selection glow ring */}
+          <Show when={props.selected}>
+            <div class="absolute -inset-1.5 rounded-full bg-primary-400/30 animate-pulse" />
+          </Show>
+          <div
+            class={`absolute inset-0 rounded-full ${
+              props.selected
+                ? 'bg-primary-600 ring-2 ring-primary-300'
+                : 'bg-marker-background-single'
+            }`}
+          />
+          <div
+            class={`relative z-10 flex items-center justify-center ${
+              props.selected ? 'text-white' : 'text-marker-icon-single'
+            }`}
+          >
+            <Leaf class={props.selected ? 'w-6 h-6' : 'w-5 h-5'} />
           </div>
         </div>
       </div>
@@ -241,7 +318,7 @@ function GpsFeatureMarker(props: {
   }
   return (
     <AdvancedMarker position={position()} onClick={props.onClick}>
-      <div class="flex items-center justify-center">
+      <div class="flex items-center justify-center cursor-pointer">
         <div
           class="relative rounded-full shadow-md flex items-center justify-center"
           style="width:40px;height:40px"

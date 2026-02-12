@@ -1,4 +1,10 @@
-import { createResource, createSignal, For } from 'solid-js'
+import {
+  createEffect,
+  createMemo,
+  createResource,
+  createSignal,
+  For,
+} from 'solid-js'
 
 import { Select, SelectItem } from '~/components/ui/select'
 import { useCollectionPointsFilter } from '~/modules/collection-points/hooks/useCollectionPointsFilter'
@@ -27,6 +33,7 @@ async function fetchCollectionPoints(): Promise<CollectionPoint[]> {
 
   return features.map((f, idx) => {
     const props = f.properties ?? {}
+    const coords = f.geometry?.coordinates ?? [0, 0]
     const wTypesRaw: unknown = props.wasteTypes ?? []
     const types = Array.isArray(wTypesRaw) ? (wTypesRaw as string[]) : []
     const name = props.name ?? props.slug ?? `Ponto ${idx + 1}`
@@ -35,9 +42,12 @@ async function fetchCollectionPoints(): Promise<CollectionPoint[]> {
     const phone = props.phone ?? ''
     const schedule = props.schedule ?? ''
     const rating = Number(props.rating) || 4.0
+    const key =
+      props.slug ?? (props.id ? String(props.id) : null) ?? name ?? String(idx)
 
     return {
       id: idx + 1,
+      key,
       name,
       company,
       address,
@@ -45,12 +55,15 @@ async function fetchCollectionPoints(): Promise<CollectionPoint[]> {
       schedule,
       rating,
       types,
+      lat: coords[1],
+      lng: coords[0],
     } as CollectionPoint
   })
 }
 
 export default function CollectionPoints() {
   const [selectedType, setSelectedType] = createSignal<string>('all')
+  const [selectedKey, setSelectedKey] = createSignal<string | null>(null)
 
   const {
     userLat,
@@ -74,9 +87,33 @@ export default function CollectionPoints() {
 
   const filteredPoints = useCollectionPointsFilter(pointsAccessor, selectedType)
 
+  const selectedPoint = createMemo(
+    () => pointsAccessor().find((p) => p.key === selectedKey()) ?? null,
+  )
+
+  // When exiting fullscreen, close the details panel
+  createEffect(() => {
+    if (!isFullscreen()) {
+      setSelectedKey(null)
+    }
+  })
+
   const handleLocationSelect = (lat: number, lng: number) => {
     setUserLat(lat)
     setUserLng(lng)
+  }
+
+  /** Called when a card in the list or a map marker is clicked. */
+  const handleSelectPoint = (pointOrKey: CollectionPoint | string) => {
+    const key = typeof pointOrKey === 'string' ? pointOrKey : pointOrKey.key
+    setSelectedKey(key)
+    if (!isFullscreen()) {
+      setIsFullscreen(true)
+    }
+  }
+
+  const handleCloseDetails = () => {
+    setSelectedKey(null)
   }
 
   return (
@@ -99,6 +136,10 @@ export default function CollectionPoints() {
           onPlaceSelected={setPlaceId}
           onLocationSelect={handleLocationSelect}
           onFullscreenToggle={setIsFullscreen}
+          selectedPoint={selectedPoint}
+          selectedKey={selectedKey}
+          onCloseDetails={handleCloseDetails}
+          onSelectPoint={handleSelectPoint}
         />
 
         {/* Filter */}
@@ -118,7 +159,11 @@ export default function CollectionPoints() {
           </Select>
         </div>
 
-        <CollectionPointsList points={filteredPoints} />
+        <CollectionPointsList
+          points={filteredPoints}
+          selectedKey={selectedKey}
+          onSelect={handleSelectPoint}
+        />
       </div>
     </div>
   )

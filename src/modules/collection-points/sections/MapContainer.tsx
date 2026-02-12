@@ -2,10 +2,16 @@ import { CrosshairIcon, Loader2, Maximize, Minimize } from 'lucide-solid'
 import { Accessor, createMemo, createSignal, Setter, Show } from 'solid-js'
 
 import { Card } from '~/components/ui/card'
+import type { CollectionPoint } from '~/modules/collection-points/types'
 import { SearchPill } from '~/modules/common/sections/SearchPill/SearchPill'
 import { useGeolocation } from '~/modules/map/hooks/useGeolocation'
 import { CollectionPointsMap } from '~/modules/map/sections/CollectionPointsMap'
 import { cn } from '~/utils/cn'
+
+import {
+  CollectionPointDetailsPanel,
+  GpsPointDetailsPanel,
+} from './CollectionPointDetailsPanel'
 
 interface MapContainerProps {
   placeId: Accessor<string | null>
@@ -17,6 +23,14 @@ interface MapContainerProps {
   onPlaceSelected: Setter<string | null>
   onLocationSelect: (lat: number, lng: number) => void
   onFullscreenToggle: Setter<boolean>
+  /** Currently selected collection point (null = none) */
+  selectedPoint?: Accessor<CollectionPoint | null>
+  /** Currently selected point key for map marker highlighting */
+  selectedKey?: Accessor<string | null>
+  /** Callback when the details panel is closed */
+  onCloseDetails?: () => void
+  /** Callback when a map marker is clicked */
+  onSelectPoint?: (key: string) => void
 }
 
 /**
@@ -28,6 +42,12 @@ export function MapContainer(props: MapContainerProps) {
   const [locError, setLocError] = createSignal<string | null>(null)
   // reference to the card element for Fullscreen API
   const [cardRef, setCardRef] = createSignal<HTMLElement | null>(null)
+  // GPS marker panel state
+  const [gpsPoint, setGpsPoint] = createSignal<{
+    lat: number
+    lng: number
+  } | null>(null)
+  const isGpsOpen = () => gpsPoint() !== null
   // Show the pulsing hint until the user interacts with a FAB once.
   // Persist in localStorage so it doesn't reappear on reloads.
   const storageKey = 'reciclamais.fabPulseSeen'
@@ -189,7 +209,24 @@ export function MapContainer(props: MapContainerProps) {
         search={props.search()}
         lat={props.userLat()}
         lng={props.userLng()}
+        selectedKey={props.selectedKey?.() ?? null}
+        onPointSelect={(key) => props.onSelectPoint?.(key)}
+        onGpsSelect={(lat, lng) => setGpsPoint({ lat, lng })}
       />
+
+      {/* Details panel (only rendered in fullscreen) */}
+      <Show when={isFullscreen()}>
+        <CollectionPointDetailsPanel
+          selectedPoint={props.selectedPoint ?? (() => null)}
+          onClose={() => props.onCloseDetails?.()}
+        />
+        <GpsPointDetailsPanel
+          lat={() => gpsPoint()?.lat ?? null}
+          lng={() => gpsPoint()?.lng ?? null}
+          open={isGpsOpen}
+          onClose={() => setGpsPoint(null)}
+        />
+      </Show>
 
       {/* Mobile FABs: locate + fullscreen toggle */}
       <div

@@ -10,12 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card'
+import { cn } from '~/utils/cn'
 
 import { useTypeMetadata } from '../hooks/useTypeMetadata'
 import type { CollectionPoint } from '../types'
 
 interface CollectionPointCardProps {
   point: CollectionPoint
+  /** Whether this card is currently selected */
+  selected?: boolean
+  /** Callback when user selects this point */
+  onSelect?: (point: CollectionPoint) => void
 }
 
 /**
@@ -25,8 +30,18 @@ interface CollectionPointCardProps {
 export function CollectionPointCard(props: CollectionPointCardProps) {
   const { getTypeColor, getTypeLabel } = useTypeMetadata()
 
+  const handleSelect = () => {
+    props.onSelect?.(props.point)
+  }
+
   return (
-    <Card class="shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <Card
+      class={cn(
+        'shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer',
+        props.selected && 'ring-2 ring-primary-500 shadow-xl -translate-y-1',
+      )}
+      onClick={handleSelect}
+    >
       <CardHeader>
         <div class="flex items-start justify-between">
           <div class="flex-1">
@@ -69,7 +84,7 @@ export function CollectionPointCard(props: CollectionPointCardProps) {
           </div>
         </div>
 
-        <Button class="w-full" variant="outline">
+        <Button class="w-full" variant="outline" onClick={handleSelect}>
           Ver Detalhes
         </Button>
       </CardContent>
