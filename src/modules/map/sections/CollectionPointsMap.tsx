@@ -1,5 +1,5 @@
 import { Key } from '@solid-primitives/keyed'
-import { Leaf, RadioIcon, Recycle } from 'lucide-solid'
+import { MapPinIcon, RadioIcon, Recycle } from 'lucide-solid'
 import { AdvancedMarker, Map } from 'solid-google-maps'
 import { createEffect, Show } from 'solid-js'
 import Supercluster from 'supercluster'
@@ -300,7 +300,7 @@ function FeatureMarker(props: {
               props.selected ? 'text-white' : 'text-marker-icon-single'
             }`}
           >
-            <Leaf class={props.selected ? 'w-6 h-6' : 'w-5 h-5'} />
+            <MapPinIcon class={props.selected ? 'w-6 h-6' : 'w-5 h-5'} />
           </div>
         </div>
       </div>

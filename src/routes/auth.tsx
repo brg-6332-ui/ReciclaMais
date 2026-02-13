@@ -88,7 +88,7 @@ const Auth = () => {
               <Recycle class="h-7 w-7 text-primary-950" />
             </div>
             <span class="font-bold text-2xl bg-linear-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">
-              EcoRewards
+              ReciclaMais
             </span>
           </A>
           <h1 class="text-3xl font-bold">Bem-vindo</h1>
