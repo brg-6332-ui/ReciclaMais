@@ -102,7 +102,7 @@ const Home = () => {
               <div class="absolute inset-0 bg-linear-to-br from-primary-500/20 to-accent-500/20 rounded-3xl blur-3xl" />
               <img
                 src={heroImage}
-                alt="Pessoas reciclando felizes"
+                alt="Pessoas a reciclar felizes"
                 class="relative rounded-3xl shadow-2xl w-full h-40 sm:h-64 md:h-auto object-cover"
               />
             </div>

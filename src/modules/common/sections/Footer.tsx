@@ -19,7 +19,7 @@ export function Footer() {
               </span>
             </div>
             <p class="text-sm text-muted-foreground">
-              Transformando reciclagem em recompensas. Juntos por um planeta
+              A transformar reciclagem em recompensas. Juntos por um planeta
               mais sustentável.
             </p>
           </div>

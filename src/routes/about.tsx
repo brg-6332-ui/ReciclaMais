@@ -395,17 +395,17 @@ function ProjectSection() {
               O Projeto Recicla+
             </h2>
             <p class="text-lg text-text-500">
-              Recicla+ é uma plataforma digital que simplifica a reciclagem
-              conectando cidadãos aos pontos de recolha mais próximos. Através
-              de uma interface intuitiva, os utilizadores podem localizar
+              Recicla+ é uma plataforma digital que simplifica a reciclagem ao
+              conectar cidadãos aos pontos de recolha mais próximos. Através de
+              uma interface intuitiva, os utilizadores podem localizar
               ecopontos, aprender sobre separação de resíduos e acompanhar o
               impacto das suas ações.
             </p>
             <p class="text-text-500">
               A plataforma atua como ponte entre a comunidade e a infraestrutura
-              de reciclagem existente, promovendo participação ativa e
+              de reciclagem existente, ao promover participação ativa e
               consciente. O objetivo é tornar a reciclagem parte natural do
-              quotidiano, removendo barreiras e criando transparência.
+              quotidiano, ao remover barreiras e criar transparência.
             </p>
           </InViewMotion>
 
