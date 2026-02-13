@@ -12,6 +12,7 @@ import {
   CollectionPointDetailsPanel,
   GpsPointDetailsPanel,
 } from './CollectionPointDetailsPanel'
+import { WasteFilterChips } from './WasteFilterChips'
 
 interface MapContainerProps {
   placeId: Accessor<string | null>
@@ -31,6 +32,12 @@ interface MapContainerProps {
   onCloseDetails?: () => void
   /** Callback when a map marker is clicked */
   onSelectPoint?: (key: string) => void
+  /** Active waste type filter */
+  wasteFilter?: Accessor<string | null>
+  /** Callback to clear the waste filter */
+  onClearWasteFilter?: () => void
+  /** Callback when waste filter changes (from in-map search) */
+  onWasteFilterChange?: Setter<string | null>
 }
 
 /**
@@ -192,6 +199,7 @@ export function MapContainer(props: MapContainerProps) {
           <SearchPill
             onPlaceSelected={props.onPlaceSelected}
             onUseLocationClick={props.onLocationSelect}
+            onWasteTypeSelected={(wt) => props.onWasteFilterChange?.(wt)}
           />
         </div>
 
@@ -200,8 +208,25 @@ export function MapContainer(props: MapContainerProps) {
             onSearch={props.onSearchChange}
             onPlaceSelected={props.onPlaceSelected}
             onUseLocationClick={props.onLocationSelect}
+            onWasteTypeSelected={(wt) => props.onWasteFilterChange?.(wt)}
           />
         </div>
+
+        {/* Waste filter chips overlay */}
+        <Show when={props.wasteFilter?.()}>
+          <div class="absolute top-16 left-3 z-60 hidden md:block">
+            <WasteFilterChips
+              wasteFilter={props.wasteFilter!}
+              onClear={() => props.onClearWasteFilter?.()}
+            />
+          </div>
+          <div class="absolute top-16 left-0 right-0 z-60 md:hidden flex justify-center px-4">
+            <WasteFilterChips
+              wasteFilter={props.wasteFilter!}
+              onClear={() => props.onClearWasteFilter?.()}
+            />
+          </div>
+        </Show>
       </Show>
 
       <CollectionPointsMap
@@ -212,6 +237,7 @@ export function MapContainer(props: MapContainerProps) {
         selectedKey={props.selectedKey?.() ?? null}
         onPointSelect={(key) => props.onSelectPoint?.(key)}
         onGpsSelect={(lat, lng) => setGpsPoint({ lat, lng })}
+        wasteFilter={props.wasteFilter?.() ?? null}
       />
 
       {/* Details panel (only rendered in fullscreen) */}

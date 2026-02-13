@@ -1,5 +1,17 @@
-import { createEffect, createResource, createSignal, Suspense } from 'solid-js'
+import {
+  createEffect,
+  createMemo,
+  createResource,
+  createSignal,
+  Show,
+  Suspense,
+} from 'solid-js'
 
+import type { WasteTypeCatalogEntry } from '~/modules/collection-points/utils/wasteSearch'
+import {
+  resolveWasteType,
+  searchWasteTypes,
+} from '~/modules/collection-points/utils/wasteSearch'
 import { useDebouncedValue } from '~/modules/common/hooks/useDebouncedValue'
 import { useGeolocation } from '~/modules/map/hooks/useGeolocation'
 import { useGooglePlacesAutocomplete } from '~/modules/map/hooks/useGooglePlacesAutocomplete'
@@ -7,16 +19,19 @@ import { useGooglePlacesService } from '~/modules/map/hooks/useGooglePlacesServi
 
 import { AutocompleteDropdown } from './AutocompleteDropdown'
 import { SearchInput } from './SearchInput'
+import { WasteTypeSuggestions } from './WasteTypeSuggestions'
 
 export type SearchPillProps = {
   onUseLocationClick?: (lat: number, lng: number) => void
   onSearch?: (query: string) => void
   onPlaceSelected?: (place: google.maps.places.PlaceResult['place_id']) => void
+  /** Callback when a waste type is selected from suggestions */
+  onWasteTypeSelected?: (wasteType: string) => void
   /** Render compact variant (smaller input/icons) */
   compact?: boolean
 }
 /**
- * Search pill component with Google Places autocomplete.
+ * Search pill component with Google Places autocomplete and waste type suggestions.
  *
  * @param props - Component props
  * @returns Search pill UI with autocomplete functionality
@@ -50,6 +65,13 @@ export function SearchPill(props: SearchPillProps) {
   const { predictions, loading } = useGooglePlacesAutocomplete({
     isReady,
     query: debouncedQuery,
+  })
+
+  // Waste type suggestions based on query
+  const wasteTypeSuggestions = createMemo(() => {
+    const q = query()
+    if (q.length < 2) return []
+    return searchWasteTypes(q)
   })
 
   createEffect(() => {
@@ -109,6 +131,26 @@ export function SearchPill(props: SearchPillProps) {
     }, 0)
   }
 
+  const handleWasteTypeSelect = (entry: WasteTypeCatalogEntry) => {
+    setQuery(entry.label)
+    setIsOpen(false)
+    props.onWasteTypeSelected?.(entry.value)
+    setTimeout(() => {
+      inputRef()?.blur()
+    }, 0)
+  }
+
+  /** Handle Enter key or search button: resolve waste type first, fall back to search */
+  const handleSearchSubmit = (searchQuery: string) => {
+    const wasteType = resolveWasteType(searchQuery)
+    if (wasteType && props.onWasteTypeSelected) {
+      props.onWasteTypeSelected(wasteType)
+      setIsOpen(false)
+      return
+    }
+    props.onSearch?.(searchQuery)
+  }
+
   const handleBlur = () => {
     setTimeout(() => {
       setIsOpen(false)
@@ -135,19 +177,33 @@ export function SearchPill(props: SearchPillProps) {
           props.onUseLocationClick ? handleUseLocationClick : undefined
         }
         loading={geoLoading}
-        onSearch={props.onSearch}
+        onSearch={handleSearchSubmit}
         ref={setInputRef}
         compact={props.compact}
+        placeholder={
+          props.onWasteTypeSelected
+            ? 'Pesquisar resíduo (ex.: pilhas, vidro, papel…)'
+            : undefined
+        }
       />
 
       <Suspense fallback={null}>
-        <AutocompleteDropdown
-          isOpen={isOpen}
-          query={query}
-          predictions={predictions}
-          loading={loading}
-          onSelectPrediction={handleSelectPrediction}
-        />
+        <Show when={isOpen() && query().length > 0}>
+          <div class="absolute top-full left-0 right-0 mt-2 bg-base-50 border border-base-300 rounded-lg shadow-lg max-h-80 overflow-y-auto z-50">
+            <WasteTypeSuggestions
+              suggestions={wasteTypeSuggestions}
+              onSelect={handleWasteTypeSelect}
+            />
+            <AutocompleteDropdown
+              isOpen={() => true}
+              query={query}
+              predictions={predictions}
+              loading={loading}
+              onSelectPrediction={handleSelectPrediction}
+              inline
+            />
+          </div>
+        </Show>
       </Suspense>
     </div>
   )

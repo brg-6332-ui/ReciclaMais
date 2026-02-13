@@ -1,7 +1,7 @@
 import { Key } from '@solid-primitives/keyed'
 import { MapPinIcon, RadioIcon, Recycle } from 'lucide-solid'
 import { AdvancedMarker, Map } from 'solid-google-maps'
-import { createEffect, Show } from 'solid-js'
+import { createEffect, createMemo, Show } from 'solid-js'
 import Supercluster from 'supercluster'
 
 import { useFeatures } from '~/modules/map/hooks/useFeatures'
@@ -26,6 +26,8 @@ export function CollectionPointsMap(props: {
   onPointSelect?: (key: string) => void
   /** Callback when a GPS marker is clicked */
   onGpsSelect?: (lat: number, lng: number) => void
+  /** Active waste type filter */
+  wasteFilter?: string | null
 }) {
   const [features] = useFeatures()
   const { mapRef, setMapRef, bounds, zoom } = useMapRefSignals()
@@ -36,8 +38,26 @@ export function CollectionPointsMap(props: {
 
   const { service: placesService } = useGooglePlacesService({ mapRef })
 
+  // Filter features by waste type (keep GPS markers always visible)
+  const filteredFeatures = createMemo(() => {
+    const wasteType = props.wasteFilter
+    if (!wasteType) return features
+
+    return {
+      ...features,
+      features: features.features.filter((f) => {
+        // Always show GPS markers
+        if (f.properties.type === 'gps') return true
+        // Filter collection points by waste type
+        const wasteTypes = f.properties.wasteTypes
+        if (!wasteTypes || !Array.isArray(wasteTypes)) return false
+        return wasteTypes.includes(wasteType)
+      }),
+    }
+  })
+
   const { clusters, getClusterExpansionZoom } = useSupercluster(
-    () => features,
+    () => filteredFeatures(),
     bounds,
     zoom,
     () => ({
@@ -60,7 +80,7 @@ export function CollectionPointsMap(props: {
     const map = mapRef()
     if (!map) return
 
-    const match = features.features.find((f) => {
+    const match = filteredFeatures().features.find((f) => {
       const p = f.properties
       const k = p.slug ?? (p.id ? String(p.id) : '') ?? ''
       return k === key

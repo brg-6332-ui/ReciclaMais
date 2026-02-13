@@ -4,7 +4,7 @@ import { useStringSearchParam } from '~/modules/common/hooks/useStringSearchPara
 
 /**
  * Hook for managing map-related URL parameters.
- * Reads lat/lng/search/placeId/fullscreen from URL query params and provides signals for reactive updates.
+ * Reads lat/lng/search/placeId/fullscreen/waste from URL query params and provides signals for reactive updates.
  * @returns Object with all map-related signals and setters
  */
 export function useMapUrlParams() {
@@ -13,6 +13,7 @@ export function useMapUrlParams() {
   const [getSearchParam] = useStringSearchParam('search')
   const [getPlaceIdParam] = useStringSearchParam('placeId')
   const [getFullscreenParam] = useStringSearchParam('fullscreen')
+  const [getWasteParam] = useStringSearchParam('waste')
 
   // Initialize from URL params
   const latFromUrl = getLatParam()
@@ -20,6 +21,7 @@ export function useMapUrlParams() {
   const searchFromUrl = getSearchParam()
   const placeIdFromUrl = getPlaceIdParam()
   const fullscreenFromUrl = getFullscreenParam()
+  const wasteFromUrl = getWasteParam()
 
   const [userLat, setUserLat] = createSignal<number | null>(
     latFromUrl ? parseFloat(latFromUrl) : null,
@@ -31,6 +33,9 @@ export function useMapUrlParams() {
   const [placeId, setPlaceId] = createSignal<string | null>(placeIdFromUrl)
   const [isFullscreen, setIsFullscreen] = createSignal<boolean>(
     fullscreenFromUrl === 'true',
+  )
+  const [wasteFilter, setWasteFilter] = createSignal<string | null>(
+    wasteFromUrl,
   )
 
   return {
@@ -44,6 +49,8 @@ export function useMapUrlParams() {
     setPlaceId,
     isFullscreen,
     setIsFullscreen,
+    wasteFilter,
+    setWasteFilter,
   }
 }
 
@@ -58,4 +65,6 @@ export type MapUrlParams = {
   setPlaceId: Setter<string | null>
   isFullscreen: Accessor<boolean>
   setIsFullscreen: Setter<boolean>
+  wasteFilter: Accessor<string | null>
+  setWasteFilter: Setter<string | null>
 }

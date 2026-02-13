@@ -101,6 +101,12 @@ export function SearchInput(props: SearchInputProps) {
         onInput={(e) => props.onInput(e.currentTarget.value)}
         onFocus={() => props.onFocus()}
         onBlur={() => props.onBlur()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && props.onSearch) {
+            e.preventDefault()
+            props.onSearch(props.value())
+          }
+        }}
         placeholder={placeholder()}
         class={`outline-none bg-transparent ${isCompact() ? 'text-xs' : 'text-sm'} flex-1 h-full leading-none`}
       />

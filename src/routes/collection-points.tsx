@@ -4,6 +4,7 @@ import {
   createResource,
   createSignal,
   For,
+  Show,
 } from 'solid-js'
 
 import { Select, SelectItem } from '~/components/ui/select'
@@ -12,7 +13,14 @@ import { useMapUrlParams } from '~/modules/collection-points/hooks/useMapUrlPara
 import { FeatureCollectionSchema } from '~/modules/collection-points/schemas'
 import { CollectionPointsList } from '~/modules/collection-points/sections/CollectionPointsList'
 import { MapContainer } from '~/modules/collection-points/sections/MapContainer'
+import { WasteFilterChips } from '~/modules/collection-points/sections/WasteFilterChips'
 import type { CollectionPoint } from '~/modules/collection-points/types'
+import {
+  BRAGA_CENTER,
+  getWasteTypeLabel,
+  sortByProximity,
+} from '~/modules/collection-points/utils/wasteSearch'
+import { useGeolocation } from '~/modules/map/hooks/useGeolocation'
 import wasteTypes from '~/wasteTypes.json'
 
 async function fetchCollectionPoints(): Promise<CollectionPoint[]> {
@@ -76,7 +84,38 @@ export default function CollectionPoints() {
     setPlaceId,
     isFullscreen,
     setIsFullscreen,
+    wasteFilter,
+    setWasteFilter,
   } = useMapUrlParams()
+
+  // Get user geolocation for proximity sorting
+  const { position: geoPosition } = useGeolocation({
+    enableHighAccuracy: false,
+    timeout: 10000,
+  })
+
+  // Sync waste URL param → selectedType dropdown
+  createEffect(() => {
+    const waste = wasteFilter()
+    if (waste) {
+      setSelectedType(waste)
+    }
+  })
+
+  // Sync selectedType dropdown → wasteFilter (bidirectional)
+  const handleTypeChange = (value: string) => {
+    setSelectedType(value)
+    if (value === 'all') {
+      setWasteFilter(null)
+    } else {
+      setWasteFilter(value)
+    }
+  }
+
+  const handleClearWasteFilter = () => {
+    setWasteFilter(null)
+    setSelectedType('all')
+  }
 
   const [points] = createResource<CollectionPoint[]>(fetchCollectionPoints)
 
@@ -86,6 +125,30 @@ export default function CollectionPoints() {
   const pointsAccessor = () => points() ?? []
 
   const filteredPoints = useCollectionPointsFilter(pointsAccessor, selectedType)
+
+  // Reference location for proximity sorting: user GPS > URL coords > Braga center
+  const referenceLocation = createMemo(() => {
+    const geo = geoPosition()
+    if (geo) return { lat: geo.lat, lng: geo.lng }
+    const uLat = userLat()
+    const uLng = userLng()
+    if (uLat !== null && uLng !== null) return { lat: uLat, lng: uLng }
+    return BRAGA_CENTER
+  })
+
+  const usingFallbackLocation = createMemo(() => {
+    const geo = geoPosition()
+    const uLat = userLat()
+    return !geo && uLat === null
+  })
+
+  // Sort by proximity when waste filter is active
+  const sortedPoints = createMemo(() => {
+    const pts = filteredPoints()
+    if (!wasteFilter()) return pts
+    const ref = referenceLocation()
+    return sortByProximity(pts, ref.lat, ref.lng)
+  })
 
   const selectedPoint = createMemo(
     () => pointsAccessor().find((p) => p.key === selectedKey()) ?? null,
@@ -126,6 +189,22 @@ export default function CollectionPoints() {
           </p>
         </div>
 
+        {/* Active waste filter chips */}
+        <Show when={wasteFilter()}>
+          <div class="mb-4">
+            <WasteFilterChips
+              wasteFilter={wasteFilter}
+              onClear={handleClearWasteFilter}
+            />
+            <Show when={usingFallbackLocation()}>
+              <p class="mt-2 text-sm text-muted-foreground">
+                📍 A ordenar por proximidade de Braga. Ative a localização para
+                resultados mais precisos.
+              </p>
+            </Show>
+          </div>
+        </Show>
+
         <MapContainer
           placeId={placeId}
           search={search}
@@ -140,6 +219,9 @@ export default function CollectionPoints() {
           selectedKey={selectedKey}
           onCloseDetails={handleCloseDetails}
           onSelectPoint={handleSelectPoint}
+          wasteFilter={wasteFilter}
+          onClearWasteFilter={handleClearWasteFilter}
+          onWasteFilterChange={setWasteFilter}
         />
 
         {/* Filter */}
@@ -147,7 +229,7 @@ export default function CollectionPoints() {
           <Select
             value={selectedType()}
             onInput={(e) =>
-              setSelectedType((e.target as HTMLSelectElement).value)
+              handleTypeChange((e.target as HTMLSelectElement).value)
             }
             class="w-full md:w-64"
           >
@@ -159,8 +241,54 @@ export default function CollectionPoints() {
           </Select>
         </div>
 
+        {/* Empty state */}
+        <Show
+          when={!points.loading && sortedPoints().length === 0 && wasteFilter()}
+        >
+          <div class="text-center py-12">
+            <p class="text-lg text-muted-foreground">
+              Não encontrámos pontos para{' '}
+              <strong>{getWasteTypeLabel(wasteFilter()!)}</strong> nas
+              proximidades.
+            </p>
+            <p class="text-sm text-muted-foreground mt-2">
+              Tente outro resíduo ou limpe os filtros.
+            </p>
+            <button
+              type="button"
+              class="mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+              onClick={handleClearWasteFilter}
+            >
+              Limpar filtros
+            </button>
+          </div>
+        </Show>
+
+        {/* Loading state */}
+        <Show when={points.loading}>
+          <div class="text-center py-12">
+            <p class="text-muted-foreground">A carregar pontos de recolha…</p>
+          </div>
+        </Show>
+
+        {/* Error state */}
+        <Show when={points.error as unknown as boolean}>
+          <div class="text-center py-12">
+            <p class="text-lg text-red-600">
+              Erro ao carregar pontos de recolha.
+            </p>
+            <button
+              type="button"
+              class="mt-4 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+              onClick={() => location.reload()}
+            >
+              Tentar novamente
+            </button>
+          </div>
+        </Show>
+
         <CollectionPointsList
-          points={filteredPoints}
+          points={sortedPoints}
           selectedKey={selectedKey}
           onSelect={handleSelectPoint}
         />

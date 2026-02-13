@@ -29,4 +29,14 @@ export const mapActions = {
     // TODO: use router navigation instead of full page reload
     window.location.href = url.toString()
   },
+
+  /**
+   * Opens the map page filtered by a waste type.
+   * @param wasteType - Canonical waste type value (e.g. 'plastic', 'batteries')
+   */
+  openMapPageWithWasteType: (wasteType: string) => {
+    const url = new URL(window.location.origin + '/map')
+    url.searchParams.set('waste', wasteType)
+    window.location.href = url.toString()
+  },
 }

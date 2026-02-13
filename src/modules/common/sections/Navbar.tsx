@@ -144,6 +144,7 @@ export function Navbar() {
                 compact={compactSearch()}
                 onUseLocationClick={mapActions.openMapPageWithCoordinates}
                 onPlaceSelected={mapActions.openMapPageWithPlaceId}
+                onWasteTypeSelected={mapActions.openMapPageWithWasteType}
               />
             </div>
           </div>
