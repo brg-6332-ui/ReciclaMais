@@ -108,11 +108,11 @@ export function Navbar() {
               </A>
 
               <A
-                href="/recycling-guide"
+                href="/guide"
                 title="Guia de Reciclagem"
-                aria-current={isActive('/recycling-guide') ? 'page' : undefined}
+                aria-current={isActive('/guide') ? 'page' : undefined}
                 class={`flex-1 text-center justify-items-center rounded-lg p-2 px-3 transition duration-150 ease-in-out transform ${
-                  isActive('/recycling-guide')
+                  isActive('/guide')
                     ? 'bg-primary-300'
                     : 'bg-transparent hover:bg-primary-200/30 hover:scale-105 active:scale-95'
                 }`}
@@ -305,7 +305,7 @@ export function Navbar() {
               <span>Pontos de Recolha</span>
             </A>
             <A
-              href="/recycling-guide"
+              href="/guide"
               onClick={() => setMobileOpen(false)}
               class="flex items-center gap-3 px-3 py-2 rounded-md text-base-content hover:bg-base-200 active:scale-95 active:opacity-90 transition-transform duration-150"
             >

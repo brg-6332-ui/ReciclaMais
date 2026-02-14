@@ -46,7 +46,7 @@ export function Footer() {
               <li>
                 <A
                   class="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  href="/recycling-guide"
+                  href="/guide"
                 >
                   Guia de Reciclagem
                 </A>
