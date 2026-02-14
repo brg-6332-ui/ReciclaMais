@@ -10,7 +10,7 @@ import {
 } from 'lucide-solid'
 import { createEffect, createSignal, onCleanup, onMount, Show } from 'solid-js'
 
-import logo from '~/assets/logo.png'
+import logo from '~/assets/logo2.png'
 import SlideOver from '~/components/ui/SlideOver'
 import { authActions } from '~/modules/auth/application/authActions'
 import { useAuthState } from '~/modules/auth/application/authState'
@@ -398,7 +398,7 @@ export function Navbar() {
 
 function Logo() {
   return (
-    <div class="rounded-full bg-base-400 overflow-clip ">
+    <div class="rounded-full bg-base-400/20 overflow-clip p-1 ">
       <A href="/" class="flex items-center gap-3 select-none">
         <img src={logo} alt="Recicla+" class="h-10" />
       </A>
