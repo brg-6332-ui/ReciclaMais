@@ -145,6 +145,11 @@ export function CollectionPointsMap(props: {
         }
         console.log('PlacesService initialized')
 
+        if (typeof id !== 'string' || !id) {
+          console.warn('No valid placeId provided:', id)
+          return
+        }
+
         if (id) {
           // small delay to ensure map is fully initialized
           setTimeout(() => {
