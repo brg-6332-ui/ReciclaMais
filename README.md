@@ -1,66 +1,180 @@
-# ReciclaMais (simple-webapp)
+# Recicla+
 
-A small SolidJS + TypeScript web application for locating and exploring recycling collection points. This repository contains a frontend app (Vite + Solid) with mappings, collection-point data, and a small Supabase-backed configuration for development.
+Plataforma web interativa para localização de pontos de recolha de resíduos e promoção de práticas de reciclagem sustentáveis.
 
-## Features
+O **Recicla+** é um protótipo desenvolvido no âmbito de um projecto académico na área da Programação Informática. O sistema demonstra como tecnologias web modernas, serviços cloud e integração com dispositivos de geolocalização podem ser articulados para criar uma solução digital orientada para a sustentabilidade urbana.
 
-- SolidJS + TypeScript frontend
-- Map integration (Google Maps) and clustering for collection points
-- Local JSON fixtures for collection points, POIs and waste types
-- Supabase integration (database types and client setup in `shared/infrastructure/supabase`)
+O projecto tem como foco principal:
 
-## Quick start
+- Facilitar a localização de pontos de recolha;
+- Disponibilizar informação educativa sobre separação de resíduos;
+- Simular um sistema de acompanhamento e recompensa;
+- Demonstrar integração entre frontend, backend e hardware IoT.
 
-Requirements
+---
 
-- Node.js (16+ recommended)
-- pnpm (this project uses pnpm; npm or yarn may work but pnpm is preferred)
+## Visão Geral da Solução
 
-Install and run the dev server
+O Recicla+ consiste numa aplicação web desenvolvida com arquitetura modular, composta por:
+
+- Interface reativa em SolidJS (TypeScript);
+- Integração com Google Maps para visualização geográfica;
+- Backend baseado em Supabase (PostgreSQL);
+- Simulação de comunicação com um dispositivo GNSS (ESP32).
+
+A aplicação permite ao utilizador:
+
+- Criar conta e iniciar sessão;
+- Consultar um mapa interativo com pontos de recolha;
+- Aceder a um guia educativo;
+- Visualizar estatísticas simuladas num dashboard.
+
+O sistema foi concebido como protótipo funcional, demonstrando a viabilidade técnica da solução.
+
+---
+
+## Arquitetura Técnica
+
+### Frontend
+
+- **Framework:** SolidJS (TypeScript)
+- **Bundler:** Vite
+- **Estilização:** TailwindCSS
+- **Mapas:** Google Maps JavaScript API
+
+A aplicação segue boas práticas de reatividade (signals, memos e controlo declarativo de rendering), evitando mutações imperativas desnecessárias.
+
+A estrutura está organizada por módulos funcionais, favorecendo:
+
+- Separação de responsabilidades;
+- Escalabilidade futura;
+- Manutenção simplificada.
+
+---
+
+### Backend
+
+- **Supabase (PostgreSQL)**
+- Autenticação de utilizadores
+- Persistência de dados (coordenadas, estatísticas simuladas)
+
+O backend é utilizado como Backend-as-a-Service, reduzindo a necessidade de infraestrutura dedicada e permitindo foco na lógica da aplicação.
+
+---
+
+### Integração IoT (Simulação)
+
+O projecto inclui a utilização de um módulo baseado em **ESP32 com GNSS integrado**, usado para recolha de coordenadas geográficas.
+
+Fluxo simplificado:
+
+1. O dispositivo recolhe latitude e longitude;
+2. As coordenadas são enviadas para o backend;
+3. O frontend consulta os dados;
+4. A localização é apresentada no mapa interativo.
+
+Esta componente demonstra a comunicação entre hardware físico e sistema web.
+
+---
+
+## Estrutura do Projecto (nível elevado)
+
+```
+src/
+ ├── components/          # Componentes reutilizáveis
+ ├── modules/             # Funcionalidades organizadas por domínio
+ ├── routes/              # Páginas da aplicação
+ ├── shared/              # Infraestrutura partilhada (ex.: Supabase)
+ └── map/                 # Lógica relacionada com mapas
+public/
+supabase/
+```
+
+A organização privilegia separação por domínio funcional em vez de separação puramente técnica.
+
+---
+
+## Requisitos
+
+- Node.js >= 22
+- pnpm
+- Chave válida da Google Maps API
+- (Opcional) Projeto Supabase configurado
+
+---
+
+## Instalação
+
+Clonar o repositório:
+
+```bash
+git clone https://github.com/brg-6332-ui/ReciclaMais.git
+cd ReciclaMais
+```
+
+Instalar dependências:
 
 ```bash
 pnpm install
+```
+
+Criar ficheiro `.env` na raiz do projecto:
+
+```env
+VITE_GOOGLE_MAPS_API_KEY=your_google_maps_key
+VITE_GOOGLE_MAPS_MAP_ID=your_map_id
+
+VITE_PUBLIC_SUPABASE_URL=your_supabase_url
+VITE_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
+```
+
+Executar em modo desenvolvimento:
+
+```bash
 pnpm dev
 ```
 
-Build for production
+Build para produção:
 
 ```bash
 pnpm build
 pnpm preview
 ```
 
-## Environment
+---
 
-If the app requires runtime environment variables (for example Supabase keys), add a `.env` file in the project root with the needed entries. Example variables used by this project are:
+## Validação e Qualidade
 
-```env
-VITE_SUPABASE_URL=your-supabase-url
-VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+Comandos disponíveis:
+
+```bash
+pnpm run type-check
+pnpm run lint
+pnpm run check
 ```
 
-Note: The project includes a `supabase/` folder for local Supabase configuration and `src/shared/infrastructure/supabase` for client types/setup.
+A aplicação foi validada quanto a:
 
-## Project structure (high level)
+- Navegação e fluxo de autenticação;
+- Responsividade;
+- Integração com Google Maps;
+- Persistência de dados simulados.
 
-- `src/` — application sources
-	- `components/` — reusable UI components (ui/)
-	- `modules/collection-points/` — collection point features, map, hooks
-	- `modules/auth/` — authentication state and actions
-	- `routes/` — route components
-	- `map/` — map-related hooks and sections
-	- `shared/infrastructure/supabase/` — supabase client and types
-- `public/` — static assets
-- `supabase/` — local Supabase config
+---
 
-See the repository for more details — components and modules are organized by feature.
+## Estado do Projecto
 
-## Development notes
+Este repositório corresponde a um **protótipo funcional académico**, concebido para demonstrar integração tecnológica e viabilidade de solução.
 
-- This project follows SolidJS best practices: use `createSignal`, `createMemo`, `<For>`, `<Show>` and avoid destructuring reactive signals.
-- ESLint and Prettier settings are configured for the repo — please run `pnpm run check` (if available) before opening PRs.
+Possíveis evoluções futuras:
 
+- Integração real com máquinas de recolha automatizadas;
+- Sistema de recompensas operacional;
+- Aplicação mobile dedicada;
+- Expansão geográfica.
 
-## License
+---
 
-This project is provided under the MIT License. See the `LICENSE` file for details if present.
+## Licença
+
+MIT License.
