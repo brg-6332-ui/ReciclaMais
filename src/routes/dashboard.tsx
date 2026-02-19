@@ -1,4 +1,4 @@
-import { A } from '@solidjs/router'
+import { A, useNavigate } from '@solidjs/router'
 import {
   Calendar,
   Gift,
@@ -8,7 +8,14 @@ import {
   User,
   Weight,
 } from 'lucide-solid'
-import { createMemo, createSignal, For, onMount, Show } from 'solid-js'
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  For,
+  onMount,
+  Show,
+} from 'solid-js'
 import { toast } from 'solid-toast'
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
@@ -66,6 +73,7 @@ function getUserInitials(email: string): string {
 }
 
 const Dashboard = () => {
+  const navigate = useNavigate()
   const { authState } = useAuthState()
   const dashboard = useDashboard()
 
@@ -84,6 +92,13 @@ const Dashboard = () => {
         // if any error, fallback to using authState
         setIsAuthConfirmed(authState().isAuthenticated)
       })
+  })
+
+  createEffect(() => {
+    if (isAuthConfirmed() === false) {
+      toast.error('É necessário iniciar sessão para aceder ao painel')
+      navigate('/auth')
+    }
   })
 
   const isConfirmed = createMemo(() =>
@@ -173,7 +188,7 @@ const Dashboard = () => {
 
   return (
     <Show
-      when={isConfirmed}
+      when={() => isConfirmed()}
       fallback={
         <div class="min-h-screen bg-linear-to-b from-base-100 to-base-200/50">
           <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
