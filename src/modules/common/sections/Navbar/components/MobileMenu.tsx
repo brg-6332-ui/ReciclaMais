@@ -50,7 +50,7 @@ export function MobileMenu(props: MobileMenuProps) {
               />
             )}
           </For>
-          <Show when={() => authState().isAuthenticated}>
+          <Show when={authState().isAuthenticated}>
             <A
               href="/dashboard"
               onClick={props.onClose}
