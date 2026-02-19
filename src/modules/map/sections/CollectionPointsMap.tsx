@@ -1,7 +1,7 @@
 import { Key } from '@solid-primitives/keyed'
 import { MapPinIcon, RadioIcon, Recycle } from 'lucide-solid'
 import { AdvancedMarker, Map } from 'solid-google-maps'
-import { createEffect, createMemo, Show } from 'solid-js'
+import { createEffect, createMemo, on, Show } from 'solid-js'
 import Supercluster from 'supercluster'
 
 import { useFeatures } from '~/modules/map/hooks/useFeatures'
@@ -74,26 +74,30 @@ export function CollectionPointsMap(props: {
   }
 
   // Pan + zoom to the selected point when selectedKey changes
-  createEffect(() => {
-    const key = props.selectedKey
-    if (!key) return
-    const map = mapRef()
-    if (!map) return
+  createEffect(
+    on(
+      () => props.selectedKey,
+      (key) => {
+        if (!key) return
+        const map = mapRef()
+        if (!map) return
 
-    const match = filteredFeatures().features.find((f) => {
-      const p = f.properties
-      const k = p.slug ?? (p.id ? String(p.id) : '') ?? ''
-      return k === key
-    })
-    if (!match) return
-    const [lng, lat] = match.geometry.coordinates
-    map.panTo({ lat, lng })
-    // Only zoom in if the current zoom is too far out
-    const currentZoom = map.getZoom() ?? 14
-    if (currentZoom < 15) {
-      map.setZoom(16)
-    }
-  })
+        const match = filteredFeatures().features.find((f) => {
+          const p = f.properties
+          const k = p.slug ?? (p.id ? String(p.id) : '') ?? ''
+          return k === key
+        })
+        if (!match) return
+        const [lng, lat] = match.geometry.coordinates
+        map.panTo({ lat, lng })
+        // Only zoom in if the current zoom is too far out
+        const currentZoom = map.getZoom() ?? 14
+        if (currentZoom < 15) {
+          map.setZoom(16)
+        }
+      },
+    ),
+  )
 
   const zoomToPlaceId = (placeId: string) => {
     const service = placesService()
@@ -130,38 +134,47 @@ export function CollectionPointsMap(props: {
     mapRef()?.panTo({ lat, lng })
   }
 
-  createEffect(() => {
-    if (!placesService()) {
-      console.warn('PlacesService not initialized yet')
-      return
-    }
-    console.log('PlacesService initialized')
+  // Zoom to a placeId only when the placeId prop becomes available
+  createEffect(
+    on(
+      () => [placesService(), props.placeId],
+      ([service, id]) => {
+        if (!service) {
+          console.warn('PlacesService not initialized yet')
+          return
+        }
+        console.log('PlacesService initialized')
 
-    const id = props.placeId
-    if (id) {
-      setTimeout(() => {
-        zoomToPlaceId(id)
-      }, 500)
-    }
-  })
+        if (id) {
+          // small delay to ensure map is fully initialized
+          setTimeout(() => {
+            zoomToPlaceId(id)
+          }, 500)
+        }
+      },
+    ),
+  )
 
-  createEffect(() => {
-    const lat = props.lat
-    const lng = props.lng
-    const map = mapRef()
-
-    if (
-      lat !== null &&
-      lng !== null &&
-      lat !== undefined &&
-      lng !== undefined &&
-      map
-    ) {
-      console.log('[TestMap] Zooming to user location:', { lat, lng })
-      map.panTo({ lat, lng })
-      map.setZoom(16)
-    }
-  })
+  // Zoom to provided lat/lng only when those props change
+  createEffect(
+    on(
+      () => [props.lat, props.lng],
+      ([lat, lng]) => {
+        const map = mapRef()
+        if (
+          lat !== null &&
+          lng !== null &&
+          lat !== undefined &&
+          lng !== undefined &&
+          map
+        ) {
+          console.log('[TestMap] Zooming to user location:', { lat, lng })
+          map.panTo({ lat, lng })
+          map.setZoom(16)
+        }
+      },
+    ),
+  )
 
   return (
     <Map
