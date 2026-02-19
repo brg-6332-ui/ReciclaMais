@@ -124,6 +124,7 @@ const Auth = () => {
                         id="login-email"
                         type="email"
                         placeholder="seu@email.com"
+                        autocomplete="email"
                         required
                         value={loginEmail()}
                         onInput={(e) =>
@@ -137,6 +138,7 @@ const Auth = () => {
                         id="login-password"
                         type="password"
                         placeholder="••••••••"
+                        autocomplete="current-password"
                         required
                         value={loginPassword()}
                         onInput={(e) =>
@@ -186,6 +188,7 @@ const Auth = () => {
                         id="register-name"
                         type="text"
                         placeholder="João Silva"
+                        autocomplete="name"
                         required
                         value={registerName()}
                         onInput={(e) =>
@@ -199,6 +202,7 @@ const Auth = () => {
                         id="register-email"
                         type="email"
                         placeholder="seu@email.com"
+                        autocomplete="email"
                         required
                         value={registerEmail()}
                         onInput={(e) =>
@@ -212,6 +216,7 @@ const Auth = () => {
                         id="register-password"
                         type="password"
                         placeholder="••••••••"
+                        autocomplete="new-password"
                         required
                         value={registerPassword()}
                         onInput={(e) =>
@@ -229,6 +234,7 @@ const Auth = () => {
                         id="register-confirm"
                         type="password"
                         placeholder="••••••••"
+                        autocomplete="new-password"
                         required
                         value={registerConfirm()}
                         onInput={(e) =>
