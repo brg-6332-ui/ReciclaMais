@@ -78,3 +78,6 @@ The following practices were pulled from a related instruction set and adapted t
 - Refactoring automation: for large, batch changes, prefer scripted edits and always run `pnpm run check` afterwards. If using shell scripts, ensure they exist in the repo and are executable.
 
 These are intentionally conservative guidelines — if you'd like any of the more prescriptive or agent-level rules (memory manipulation, multi-agent reporting fields, or forced import styles) included, tell me which ones and I'll highlight conflicts and prepare an explicit migration plan.
+
+Everytime you need to run playwright MCP, DO NOT WRITE SCRIPTS. USE THE TOOL PROVIDED.
+Dev server is usually open in localhost:3000. Only open another one (3001), if 3000 is not working.
