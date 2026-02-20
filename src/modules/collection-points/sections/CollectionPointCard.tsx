@@ -37,8 +37,8 @@ export function CollectionPointCard(props: CollectionPointCardProps) {
   return (
     <Card
       class={cn(
-        'shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer',
-        props.selected && 'ring-2 ring-primary-500 shadow-xl -translate-y-1',
+        'shadow-sm border border-base-300/50 hover:shadow-md hover:border-base-400/60 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer',
+        props.selected && 'ring-2 ring-primary-400 shadow-md -translate-y-0.5',
       )}
       onClick={handleSelect}
     >
@@ -50,9 +50,11 @@ export function CollectionPointCard(props: CollectionPointCardProps) {
               {props.point.company}
             </CardDescription>
           </div>
-          <div class="flex items-center gap-1 bg-accent-500/40 px-2 py-1 rounded-lg">
-            <Star class="h-4 w-4 text-accent-500 fill-accent-500" />
-            <span class="font-semibold">{props.point.rating}</span>
+          <div class="flex items-center gap-1 bg-primary-100/60 border border-primary-300/40 px-2.5 py-1 rounded-md">
+            <Star class="h-3.5 w-3.5 text-primary-600 fill-primary-600" />
+            <span class="text-sm font-medium text-primary-800">
+              {props.point.rating}
+            </span>
           </div>
         </div>
       </CardHeader>

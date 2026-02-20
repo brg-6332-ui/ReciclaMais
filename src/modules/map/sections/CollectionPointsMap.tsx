@@ -283,14 +283,14 @@ function ClusterMarker(props: {
     >
       <div class="flex items-center justify-center">
         <div
-          class="relative flex items-center justify-center rounded-full shadow-lg"
-          style="width:64px;height:64px"
+          class="relative flex items-center justify-center rounded-full shadow-sm"
+          style="width:52px;height:52px"
         >
-          <div class="absolute inset-0 rounded-full bg-marker-background-cluster" />
+          <div class="absolute inset-0 rounded-full bg-marker-background-cluster opacity-90" />
           <div class="relative z-10 text-marker-icon-cluster flex items-center justify-center">
-            <Recycle class="w-7 h-7" />
+            <Recycle class="w-6 h-6" />
           </div>
-          <div class="absolute -bottom-2 right-0 bg-marker-badge-background text-sm font-semibold text-marker-text px-2 py-0.5 rounded-full shadow-md">
+          <div class="absolute -bottom-1.5 right-0 bg-marker-badge-background text-xs font-semibold text-marker-text px-1.5 py-0.5 rounded-full shadow-sm">
             {props.cluster.properties.point_count_abbreviated}
           </div>
         </div>
@@ -316,10 +316,10 @@ function FeatureMarker(props: {
     >
       <div class="flex items-center justify-center transition-transform duration-200">
         <div
-          class="relative rounded-full shadow-md flex items-center justify-center transition-all duration-200"
+          class="relative rounded-full shadow-sm flex items-center justify-center transition-all duration-200"
           style={{
-            width: props.selected ? '52px' : '40px',
-            height: props.selected ? '52px' : '40px',
+            width: props.selected ? '48px' : '36px',
+            height: props.selected ? '48px' : '36px',
           }}
         >
           {/* Selection glow ring */}
@@ -329,8 +329,8 @@ function FeatureMarker(props: {
           <div
             class={`absolute inset-0 rounded-full ${
               props.selected
-                ? 'bg-primary-600 ring-2 ring-primary-300'
-                : 'bg-marker-background-single'
+                ? 'bg-primary-600 ring-2 ring-primary-300/60'
+                : 'bg-marker-background-single opacity-90'
             }`}
           />
           <div

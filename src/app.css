@@ -126,12 +126,12 @@
   --color-metal-border: oklch(55% 0.02 220 / 0.3);
 
   /* Map marker colors */
-  --color-marker-background-single: oklch(50% 0.1 165);
-  --color-marker-background-cluster: oklch(30% 0.1 165);
-  --color-marker-icon-single: oklch(65% 0.2 165);
-  --color-marker-icon-cluster: oklch(65% 0.2 165);
-  --color-marker-badge-background: oklch(45% 0.1 165);
-  --color-marker-text: oklch(75% 0.2 165);
+  --color-marker-background-single: oklch(50% 0.08 152);
+  --color-marker-background-cluster: oklch(30% 0.07 152);
+  --color-marker-icon-single: oklch(65% 0.10 152);
+  --color-marker-icon-cluster: oklch(65% 0.10 152);
+  --color-marker-badge-background: oklch(44% 0.07 152);
+  --color-marker-text: oklch(92% 0.03 152);
 }
 
 @plugin "daisyui/theme" {
@@ -159,17 +159,17 @@
   --color-base-content: oklch(22% 0.03 145);
   /* dark forest */
 
-  --color-primary-50: oklch(96% 0.04 145);
-  --color-primary-100: oklch(90% 0.06 145);
-  --color-primary-200: oklch(82% 0.08 145);
-  --color-primary-300: oklch(72% 0.11 145);
-  --color-primary-400: oklch(62% 0.14 145);
-  --color-primary-500: oklch(52% 0.16 145);
-  --color-primary-600: oklch(44% 0.15 145);
-  --color-primary-700: oklch(36% 0.13 145);
-  --color-primary-800: oklch(28% 0.10 145);
-  --color-primary-900: oklch(22% 0.08 145);
-  --color-primary-content: oklch(98% 0.02 95);
+  --color-primary-50: oklch(96% 0.03 148);
+  --color-primary-100: oklch(91% 0.05 148);
+  --color-primary-200: oklch(83% 0.07 148);
+  --color-primary-300: oklch(73% 0.09 148);
+  --color-primary-400: oklch(62% 0.11 148);
+  --color-primary-500: oklch(52% 0.12 148);
+  --color-primary-600: oklch(44% 0.11 148);
+  --color-primary-700: oklch(36% 0.10 148);
+  --color-primary-800: oklch(28% 0.08 148);
+  --color-primary-900: oklch(22% 0.06 148);
+  --color-primary-content: oklch(98% 0.015 95);
 
   --color-secondary-100: oklch(94% 0.04 145);
   --color-secondary-300: oklch(88% 0.06 145);
@@ -217,18 +217,18 @@
   --depth: 1;
   --noise: 0;
 
-  --shadow-sm: 0 2px 6px oklch(30% 0.05 145 / 0.06);
-  --shadow:    0 6px 16px oklch(30% 0.05 145 / 0.08);
-  --shadow-md: 0 10px 28px oklch(30% 0.05 145 / 0.10);
-  --shadow-lg: 0 18px 40px oklch(30% 0.05 145 / 0.12);
+  --shadow-sm: 0 1px 3px oklch(25% 0.02 150 / 0.06), 0 1px 2px oklch(25% 0.02 150 / 0.04);
+  --shadow:    0 4px 12px oklch(25% 0.02 150 / 0.07);
+  --shadow-md: 0 8px 24px oklch(25% 0.02 150 / 0.09);
+  --shadow-lg: 0 16px 36px oklch(25% 0.02 150 / 0.10);
 
   --shadow-inner: inset 0 2px 4px oklch(0% 0 0 / 0.06);
 
   /* Modern shadows */
-  --shadow-elevate: 0 8px 24px oklch(0% 0 0 / 0.12);
-  --shadow-float: 0 12px 32px oklch(0% 0 0 / 0.16);
+  --shadow-elevate: 0 6px 20px oklch(0% 0 0 / 0.08), 0 0 0 1px oklch(0% 0 0 / 0.03);
+  --shadow-float: 0 10px 28px oklch(0% 0 0 / 0.12), 0 0 0 1px oklch(0% 0 0 / 0.04);
 
-  --shadow-border: 0 0 0 1px oklch(70% 0.03 140 / 0.6);
+  --shadow-border: 0 0 0 1px oklch(70% 0.02 148 / 0.5);
 
   /* Plastic - Blue */
   --color-plastic: oklch(58% 0.2 235);
@@ -255,12 +255,12 @@
   --color-metal-border: oklch(55% 0.02 220 / 0.3);
 
   /* Map marker colors */
-  --color-marker-background-single: oklch(50% 0.2 165);
-  --color-marker-background-cluster: oklch(30% 0.1 165);
-  --color-marker-icon-single: oklch(20% 0.2 165);
-  --color-marker-icon-cluster: oklch(60% 0.2 165);
-  --color-marker-badge-background: oklch(45% 0.1 165);
-  --color-marker-text: oklch(75% 0.2 165);
+  --color-marker-background-single: oklch(52% 0.10 152);
+  --color-marker-background-cluster: oklch(32% 0.08 152);
+  --color-marker-icon-single: oklch(22% 0.06 152);
+  --color-marker-icon-cluster: oklch(62% 0.10 152);
+  --color-marker-badge-background: oklch(44% 0.08 152);
+  --color-marker-text: oklch(92% 0.03 152);
 }
 
 @plugin "daisyui/theme" {
@@ -299,16 +299,16 @@
      600-700 = text accents (readable on dark bg)
      800-900 = light tints for subtle highlights
   */
-  --color-primary-50: oklch(20% 0.025 150);
-  --color-primary-100: oklch(24% 0.035 148);
-  --color-primary-200: oklch(30% 0.045 147);
-  --color-primary-300: oklch(38% 0.065 146);
-  --color-primary-400: oklch(46% 0.09 145);
-  --color-primary-500: oklch(54% 0.12 145);
-  --color-primary-600: oklch(62% 0.11 145);
-  --color-primary-700: oklch(70% 0.09 145);
-  --color-primary-800: oklch(78% 0.07 145);
-  --color-primary-900: oklch(86% 0.05 145);
+  --color-primary-50: oklch(20% 0.02 150);
+  --color-primary-100: oklch(24% 0.03 148);
+  --color-primary-200: oklch(30% 0.04 148);
+  --color-primary-300: oklch(38% 0.055 147);
+  --color-primary-400: oklch(46% 0.075 147);
+  --color-primary-500: oklch(54% 0.10 147);
+  --color-primary-600: oklch(62% 0.09 147);
+  --color-primary-700: oklch(70% 0.07 147);
+  --color-primary-800: oklch(78% 0.05 147);
+  --color-primary-900: oklch(86% 0.04 147);
   --color-primary-content: oklch(98% 0.01 100);
 
   /* ── Secondary ── */
@@ -399,12 +399,12 @@
   --color-metal-border: oklch(55% 0.015 230 / 0.22);
 
   /* ── Map markers ── */
-  --color-marker-background-single: oklch(55% 0.10 165);
-  --color-marker-background-cluster: oklch(38% 0.10 165);
-  --color-marker-icon-single: oklch(78% 0.15 165);
-  --color-marker-icon-cluster: oklch(68% 0.15 165);
-  --color-marker-badge-background: oklch(50% 0.08 165);
-  --color-marker-text: oklch(95% 0.05 165);
+  --color-marker-background-single: oklch(52% 0.08 152);
+  --color-marker-background-cluster: oklch(36% 0.07 152);
+  --color-marker-icon-single: oklch(80% 0.10 152);
+  --color-marker-icon-cluster: oklch(70% 0.10 152);
+  --color-marker-badge-background: oklch(48% 0.06 152);
+  --color-marker-text: oklch(94% 0.03 152);
 }
 
 /* Keep global helper styles minimal; project components should use semantic classes only */

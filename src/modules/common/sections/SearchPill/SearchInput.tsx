@@ -72,7 +72,7 @@ export function SearchInput(props: SearchInputProps) {
   )
 
   return (
-    <div class="flex items-center h-10 bg-base-50 border border-base-300 rounded-full px-3 shadow-sm">
+    <div class="flex items-center h-10 bg-base-50 border border-base-300/70 rounded-full px-3 shadow-sm focus-within:border-primary-400/60 focus-within:shadow-[0_0_0_2px_oklch(62%_0.08_148_/_0.12)] transition-all duration-200">
       {/* keep a constant height (h-10) so input never shrinks vertically; compact only adjusts icon/text sizes */}
       <button
         class={`p-1 rounded-full hover:bg-base-400 text-muted-foreground ${isCompact() ? 'mr-1' : 'mr-2'}`}
@@ -112,7 +112,7 @@ export function SearchInput(props: SearchInputProps) {
       />
       <Show when={props.onSearch}>
         <button
-          class={`ml-3 bg-primary-500 text-black rounded-full ${isCompact() ? 'p-1' : 'p-2'} hover:opacity-95`}
+          class={`ml-3 bg-primary-500 text-primary-content rounded-full ${isCompact() ? 'p-1' : 'p-2'} hover:bg-primary-600 transition-colors duration-150`}
           onClick={() => props.onSearch?.(props.value())}
           aria-label="Pesquisar"
         >

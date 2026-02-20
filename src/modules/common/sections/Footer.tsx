@@ -4,7 +4,7 @@ import logo from '~/assets/logo.png'
 
 export function Footer() {
   return (
-    <footer class="bg-muted/50 border-t mt-20">
+    <footer class="bg-base-100 border-t border-base-300/50 mt-20">
       <div class="container mx-auto px-4 py-12">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div class="space-y-4">
@@ -14,7 +14,7 @@ export function Footer() {
                   <img src={logo} alt="reciclamais" class="h-10" />
                 </A>
               </div>
-              <span class="font-bold text-xl bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
+              <span class="font-bold text-xl text-base-content">
                 reciclamais
               </span>
             </div>
@@ -145,7 +145,7 @@ export function Footer() {
               </a>
               <a
                 href="#"
-                class="h-10 w-10 rounded-full bg-base-50 flex items-center justify-center hover:bg-primary-400 hover:text-primary-content transition-all duration-300 shadow-sm"
+                class="h-10 w-10 rounded-full bg-base-200/60 flex items-center justify-center hover:bg-primary-100 hover:text-primary-700 transition-all duration-200"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +164,7 @@ export function Footer() {
               </a>
               <a
                 href="#"
-                class="h-10 w-10 rounded-full bg-base-50 flex items-center justify-center hover:bg-primary-400 hover:text-primary-content transition-all duration-300 shadow-sm"
+                class="h-10 w-10 rounded-full bg-base-200/60 flex items-center justify-center hover:bg-primary-100 hover:text-primary-700 transition-all duration-200"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -185,7 +185,7 @@ export function Footer() {
               </a>
               <a
                 href="#"
-                class="h-10 w-10 rounded-full bg-base-50 flex items-center justify-center hover:bg-primary-400 hover:text-primary-content transition-all duration-300 shadow-sm"
+                class="h-10 w-10 rounded-full bg-base-200/60 flex items-center justify-center hover:bg-primary-100 hover:text-primary-700 transition-all duration-200"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -208,7 +208,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div class="border-t mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="border-t border-base-300/40 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p class="text-sm text-muted-foreground text-center md:text-left">
             © 2025-2026 EcoRecicla. Todos os direitos reservados.
           </p>
