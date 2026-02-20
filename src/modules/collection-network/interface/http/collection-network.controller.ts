@@ -1,10 +1,7 @@
 import { ApplicationError, InfrastructureError } from '~/shared/kernel/errors'
 
 import { createCollectionNetworkBootstrap } from '../../infrastructure/bootstrap/collection-network.bootstrap'
-import {
-  listCollectionPointsResultToResponseDTO,
-  responseDTOToLegacyFeatureCollection,
-} from './collection-network.http.mappers'
+import { listCollectionPointsResultToResponseDTO } from './collection-network.http.mappers'
 import { CollectionPointsResponseDTOSchema } from './collection-network.schemas'
 
 const bootstrap = createCollectionNetworkBootstrap()
@@ -52,19 +49,6 @@ export async function getCollectionPointsController(): Promise<Response> {
     }
 
     return toJsonResponse(parsed.data)
-  } catch (error) {
-    return mapCollectionNetworkErrorToHttp(error)
-  }
-}
-
-export async function getLegacyLocationController(): Promise<Response> {
-  try {
-    const result = await bootstrap.listCollectionPointsUseCase.execute({
-      includeGps: true,
-    })
-    const dto = listCollectionPointsResultToResponseDTO(result)
-
-    return toJsonResponse(responseDTOToLegacyFeatureCollection(dto))
   } catch (error) {
     return mapCollectionNetworkErrorToHttp(error)
   }
