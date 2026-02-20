@@ -6,34 +6,20 @@ import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { useAuthState } from '~/modules/auth/application/authState'
+import { identityAccessFacade } from '~/modules/identity-access/identity-access.facade'
 import { modalManager } from '~/modules/modal/core/modalManager'
 import { openContentModal } from '~/modules/modal/helpers/modalHelpers'
 import type { ModalId } from '~/modules/modal/types/modalTypes'
-import { supabase } from '~/shared/infrastructure/supabase/supabase'
 
 interface EditProfileModalProps {
   modalId: ModalId
-}
-
-function isValidUrl(value: string) {
-  if (!value) return true
-  try {
-    // simple validation
-
-    new URL(value)
-    return true
-  } catch {
-    return false
-  }
 }
 
 function EditProfileModal(props: EditProfileModalProps) {
   const { authState } = useAuthState()
   const state = authState()
   const metadata = state.isAuthenticated
-    ? (state.session?.user?.user_metadata as
-        | Record<string, unknown>
-        | undefined)
+    ? state.session?.user?.user_metadata
     : undefined
 
   const [name, setName] = createSignal<string>(
@@ -56,29 +42,19 @@ function EditProfileModal(props: EditProfileModalProps) {
     e.preventDefault()
     setError(null)
 
-    if (name().length > 100) {
-      setError('Nome demasiado longo (máx. 100 caracteres)')
-      return
-    }
-    if (!isValidUrl(avatarUrl())) {
-      setError('URL de avatar inválida')
-      return
-    }
-
     try {
       setSubmitting(true)
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: {
-          name: name() || null,
-          avatar_url: avatarUrl() || null,
-        },
+      await identityAccessFacade.updateProfile({
+        name: name() || null,
+        avatarUrl: avatarUrl() || null,
       })
-      if (updateError) throw updateError
+
       toast.success('Perfil atualizado com sucesso')
       void modalManager.closeModal(props.modalId)
     } catch (err) {
-      console.error('Erro ao atualizar perfil:', err)
-      setError(err instanceof Error ? err.message : 'Falha ao atualizar perfil')
+      const message =
+        err instanceof Error ? err.message : 'Falha ao atualizar perfil'
+      setError(message)
       toast.error('Falha ao atualizar perfil. Tente novamente mais tarde.')
     } finally {
       setSubmitting(false)
@@ -86,19 +62,20 @@ function EditProfileModal(props: EditProfileModalProps) {
   }
 
   function getInitials(): string {
-    const nameVal = (metadata?.name as string | undefined) ?? ''
-    if (nameVal) {
-      const parts = nameVal.trim().split(/\s+/)
+    const nameValue = (metadata?.name as string | undefined) ?? ''
+    if (nameValue) {
+      const parts = nameValue.trim().split(/\s+/)
       if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase()
       return parts[0].substring(0, 2).toUpperCase()
     }
-    // fallback to email
-    const email = state.session?.user?.email ?? ''
+
+    const email = state.isAuthenticated ? (state.session.user.email ?? '') : ''
     if (email) {
       const parts = email.split('@')[0].split(/[._-]/)
       if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase()
       return email.substring(0, 2).toUpperCase()
     }
+
     return '??'
   }
 
@@ -128,7 +105,7 @@ function EditProfileModal(props: EditProfileModalProps) {
         <Input
           id="name"
           value={name()}
-          onInput={(e) => setName((e.target as HTMLInputElement).value)}
+          onInput={(e) => setName(e.currentTarget.value)}
           placeholder="Como quer ser identificado"
         />
       </div>
@@ -138,7 +115,7 @@ function EditProfileModal(props: EditProfileModalProps) {
         <Input
           id="avatar"
           value={avatarUrl()}
-          onInput={(e) => setAvatarUrl((e.target as HTMLInputElement).value)}
+          onInput={(e) => setAvatarUrl(e.currentTarget.value)}
           placeholder="https://..."
         />
       </div>

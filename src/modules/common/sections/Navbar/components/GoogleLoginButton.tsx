@@ -26,9 +26,7 @@ export function GoogleLoginButton(props: GoogleLoginButtonProps) {
   const avatarUrl = () => {
     const state = authState()
     if (!state.isAuthenticated) return undefined
-    const metadata = state.session?.user.user_metadata as
-      | Record<string, unknown>
-      | undefined
+    const metadata = state.session?.user.user_metadata
     return (
       (metadata?.avatar_url as string | undefined) ||
       (metadata?.picture as string | undefined) ||

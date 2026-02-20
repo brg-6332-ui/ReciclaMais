@@ -1,6 +1,6 @@
-import { activitySchema, NewActivity } from '~/modules/activity/domain/activity'
+import type { NewActivity } from '~/modules/activity/domain/activity'
 import { SUPABASE_TABLE_ACTIVITIES } from '~/modules/activity/infrastructure/supabase/constants'
-import { User } from '~/modules/user/domain/user'
+import type { User } from '~/modules/user/domain/user'
 import { supabase } from '~/shared/infrastructure/supabase/supabase'
 
 export function createSupabaseActivityRepository() {
@@ -17,14 +17,7 @@ export function createSupabaseActivityRepository() {
         throw error
       }
 
-      return data.map((activity) => {
-        const { success, data } = activitySchema.safeParse(activity)
-        if (!success) {
-          console.error('Error parsing activity:', data)
-          throw new Error('Error parsing activity')
-        }
-        return data
-      })
+      return data
     },
 
     async addActivity(activity: Omit<NewActivity, 'id'>) {

@@ -8,9 +8,10 @@ import {
 } from 'solid-js'
 
 import { Select, SelectItem } from '~/components/ui/select'
+import { CollectionPointsResponseDTOSchema } from '~/modules/collection-network/interface/http/collection-network.schemas'
+import { responseDTOToCollectionPointVMs } from '~/modules/collection-network/ui/collection-network.ui-mapper'
 import { useCollectionPointsFilter } from '~/modules/collection-points/hooks/useCollectionPointsFilter'
 import { useMapUrlParams } from '~/modules/collection-points/hooks/useMapUrlParams'
-import { FeatureCollectionSchema } from '~/modules/collection-points/schemas'
 import { CollectionPointsList } from '~/modules/collection-points/sections/CollectionPointsList'
 import { MapContainer } from '~/modules/collection-points/sections/MapContainer'
 import { WasteFilterChips } from '~/modules/collection-points/sections/WasteFilterChips'
@@ -24,49 +25,20 @@ import { useGeolocation } from '~/modules/map/hooks/useGeolocation'
 import wasteTypes from '~/wasteTypes.json'
 
 async function fetchCollectionPoints(): Promise<CollectionPoint[]> {
-  const res = await fetch('/api/location')
+  const res = await fetch('/api/collection-points')
   if (!res.ok) throw new Error(`Failed to fetch locations: ${res.status}`)
   const data = (await res.json()) as unknown
 
-  // Validate runtime shape of the response
-  const parsed = FeatureCollectionSchema.safeParse(data)
+  const parsed = CollectionPointsResponseDTOSchema.safeParse(data)
   if (!parsed.success) {
-    // Log validation issues for debugging and surface an error to the caller
-    // so the resource enters the error state in the UI.
-    console.error('Invalid FeatureCollection from /api/location', parsed.error)
-    throw new Error('Invalid data from /api/location')
+    console.error(
+      'Invalid collection points payload from /api/collection-points',
+      parsed.error,
+    )
+    throw new Error('Invalid data from /api/collection-points')
   }
 
-  const features = parsed.data.features
-
-  return features.map((f, idx) => {
-    const props = f.properties ?? {}
-    const coords = f.geometry?.coordinates ?? [0, 0]
-    const wTypesRaw: unknown = props.wasteTypes ?? []
-    const types = Array.isArray(wTypesRaw) ? (wTypesRaw as string[]) : []
-    const name = props.name ?? props.slug ?? `Ponto ${idx + 1}`
-    const company = props.company ?? ''
-    const address = props.address ?? ''
-    const phone = props.phone ?? ''
-    const schedule = props.schedule ?? ''
-    const rating = Number(props.rating) || 4.0
-    const key =
-      props.slug ?? (props.id ? String(props.id) : null) ?? name ?? String(idx)
-
-    return {
-      id: idx + 1,
-      key,
-      name,
-      company,
-      address,
-      phone,
-      schedule,
-      rating,
-      types,
-      lat: coords[1],
-      lng: coords[0],
-    } as CollectionPoint
-  })
+  return responseDTOToCollectionPointVMs(parsed.data)
 }
 
 export default function CollectionPoints() {

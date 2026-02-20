@@ -78,6 +78,86 @@ export default [
     },
   },
   {
+    files: [
+      'src/modules/collection-network/domain/**/*.ts',
+      'src/modules/identity-access/domain/**/*.ts',
+      'src/modules/recycling-activity/domain/**/*.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            'zod',
+            'zod/*',
+            '@solidjs/*',
+            'solid-js',
+            '~/shared/infrastructure/*',
+            '~/modules/*/application/*',
+            '~/modules/*/infrastructure/*',
+            '~/modules/*/interface/*',
+            '~/routes/*',
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      'src/modules/collection-network/application/**/*.ts',
+      'src/modules/identity-access/application/**/*.ts',
+      'src/modules/recycling-activity/application/**/*.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            '~/modules/*/infrastructure/*',
+            '~/modules/*/ui/*',
+            'zod',
+            'zod/*',
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      'src/modules/collection-network/infrastructure/**/*.ts',
+      'src/modules/identity-access/infrastructure/**/*.ts',
+      'src/modules/recycling-activity/infrastructure/**/*.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: ['zod', 'zod/*'],
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      'src/modules/collection-network/ui/**/*.ts',
+      'src/modules/identity-access/ui/**/*.ts',
+      'src/modules/recycling-activity/ui/**/*.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            '~/modules/*/domain/*',
+            '~/modules/*/infrastructure/*',
+            'zod',
+            'zod/*',
+          ],
+        },
+      ],
+    },
+  },
+  {
     ignores: [
       'node_modules',
       'dist',

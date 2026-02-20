@@ -2,15 +2,23 @@ import { FeatureCollection, Point } from 'geojson'
 import { onMount, untrack } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
+import { CollectionPointsResponseDTOSchema } from '~/modules/collection-network/interface/http/collection-network.schemas'
+import { responseDTOToMapFeatureCollection } from '~/modules/collection-network/ui/collection-network.map-feature.mapper'
 import { POIBasic } from '~/modules/map/hooks/usePOI'
 
 async function loadFeaturesDataset(): Promise<
   FeatureCollection<Point, POIBasic>
 > {
-  const res = await fetch('/api/location')
+  const res = await fetch('/api/collection-points')
   if (!res.ok) throw new Error(`Failed to fetch locations: ${res.status}`)
-  const data = (await res.json()) as FeatureCollection<Point, POIBasic>
-  return data
+  const data = (await res.json()) as unknown
+  const parsed = CollectionPointsResponseDTOSchema.safeParse(data)
+
+  if (!parsed.success) {
+    throw new Error('Invalid /api/collection-points payload')
+  }
+
+  return responseDTOToMapFeatureCollection(parsed.data)
 }
 
 export function useFeatures() {

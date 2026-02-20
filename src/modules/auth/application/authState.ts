@@ -1,40 +1,46 @@
-import { Session } from '@supabase/supabase-js'
-import { createRoot, createSignal, onMount } from 'solid-js'
+import { useIdentityAuthState } from '~/modules/identity-access/application/auth-state.store'
 
-import { supabase } from '~/shared/infrastructure/supabase/supabase'
+export type LegacySession = {
+  user: {
+    id: string
+    email?: string
+    user_metadata?: Record<string, unknown>
+  }
+  access_token?: string
+}
 
 export type AuthState =
   | {
       isAuthenticated: true
-      session: Session
+      session: LegacySession
     }
   | {
       isAuthenticated: false
       session?: undefined
     }
 
-const authStateObj = createRoot(() => {
-  const [authState, setAuthState] = createSignal<AuthState>({
-    isAuthenticated: false,
-  })
+export const useAuthState = () => {
+  const identity = useIdentityAuthState()
 
-  onMount(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_, session) => {
-        setAuthState(
-          session
-            ? { isAuthenticated: true, session }
-            : { isAuthenticated: false },
-        )
-      },
-    )
+  const authState = (): AuthState => {
+    const state = identity.authState()
 
-    return () => {
-      authListener.subscription.unsubscribe()
+    if (!state.isAuthenticated) {
+      return { isAuthenticated: false }
     }
-  })
+
+    return {
+      isAuthenticated: true,
+      session: {
+        user: {
+          id: state.session.userId,
+          email: state.session.email ?? undefined,
+          user_metadata: state.session.metadata,
+        },
+        access_token: state.session.accessToken ?? undefined,
+      },
+    }
+  }
 
   return { authState }
-})
-
-export const useAuthState = () => authStateObj
+}

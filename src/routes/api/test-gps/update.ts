@@ -1,5 +1,6 @@
+import { updateGpsEntry } from '~/shared/infrastructure/gps-simulator/store'
+
 import { parseJsonRequest } from './parseBody'
-import { updateEntry } from './store'
 
 export async function POST(event: { request: Request }) {
   const { request } = event
@@ -32,7 +33,7 @@ export async function POST(event: { request: Request }) {
     })
   }
 
-  const entry = updateEntry(b.id, b.lat, b.lng)
+  const entry = updateGpsEntry(b.id, b.lat, b.lng)
   if (!entry) {
     return new Response(JSON.stringify({ error: 'not found' }), {
       status: 404,
