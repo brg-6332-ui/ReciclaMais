@@ -9,27 +9,27 @@ export function Footer() {
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div class="space-y-4">
             <div class="flex items-center gap-2">
-              <div class="h-10 w-10 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center shadow-lg overflow-clip">
+              <div class="h-10 w-10 rounded-full bg-base-200 flex items-center justify-center shadow-lg overflow-clip">
                 <A href="/" class="flex items-center select-none">
-                  <img src={logo} alt="reciclamais" class="h-10" />
+                  <img src={logo} alt="ReciclaMais" class="h-10" />
                 </A>
               </div>
-              <span class="font-bold text-xl text-base-content">
-                reciclamais
+              <span class="font-bold text-xl text-base-content tracking-tight">
+                ReciclaMais
               </span>
             </div>
-            <p class="text-sm text-muted-foreground">
+            <p class="text-sm text-base-content/60">
               A transformar reciclagem em recompensas. Juntos por um planeta
               mais sustentável.
             </p>
           </div>
 
           <div>
-            <h3 class="font-semibold mb-4">Links Úteis</h3>
+            <h3 class="font-semibold mb-4 text-base-content/90">Links Úteis</h3>
             <ul class="space-y-2">
               <li>
                 <A
-                  class="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  class="text-sm text-base-content/60 hover:text-primary transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                   href="/"
                 >
                   Início
@@ -37,7 +37,7 @@ export function Footer() {
               </li>
               <li>
                 <A
-                  class="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  class="text-sm text-base-content/60 hover:text-primary transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                   href="/collection-points"
                 >
                   Pontos de Recolha
@@ -45,7 +45,7 @@ export function Footer() {
               </li>
               <li>
                 <A
-                  class="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  class="text-sm text-base-content/60 hover:text-primary transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                   href="/guide"
                 >
                   Guia de Reciclagem
@@ -53,7 +53,7 @@ export function Footer() {
               </li>
               <li>
                 <A
-                  class="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  class="text-sm text-base-content/60 hover:text-primary transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                   href="/about"
                 >
                   Sobre Nós
@@ -63,9 +63,9 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 class="font-semibold mb-4">Contacto</h3>
+            <h3 class="font-semibold mb-4 text-base-content/90">Contacto</h3>
             <ul class="space-y-2">
-              <li class="flex items-center gap-2 text-sm text-muted-foreground">
+              <li class="flex items-center gap-2 text-sm text-base-content/60">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -83,7 +83,7 @@ export function Footer() {
                 </svg>
                 info@reciclamais.pt
               </li>
-              <li class="flex items-center gap-2 text-sm text-muted-foreground">
+              <li class="flex items-center gap-2 text-sm text-base-content/60">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -100,7 +100,7 @@ export function Footer() {
                 </svg>
                 +351 123 456 789
               </li>
-              <li class="flex items-center gap-2 text-sm text-muted-foreground">
+              <li class="flex items-center gap-2 text-sm text-base-content/60">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -122,11 +122,14 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 class="font-semibold mb-4">Redes Sociais</h3>
-            <div class="flex gap-3 ">
+            <h3 class="font-semibold mb-4 text-base-content/90">
+              Redes Sociais
+            </h3>
+            <div class="flex gap-3">
               <a
                 href="#"
-                class="h-10 w-10 rounded-full bg-base-50 flex items-center justify-center hover:bg-primary-400 hover:text-primary-content transition-all duration-300 shadow-sm"
+                aria-label="Facebook"
+                class="h-10 w-10 rounded-full bg-base-200/60 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -145,7 +148,8 @@ export function Footer() {
               </a>
               <a
                 href="#"
-                class="h-10 w-10 rounded-full bg-base-200/60 flex items-center justify-center hover:bg-primary-100 hover:text-primary-700 transition-all duration-200"
+                aria-label="Twitter"
+                class="h-10 w-10 rounded-full bg-base-200/60 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +168,8 @@ export function Footer() {
               </a>
               <a
                 href="#"
-                class="h-10 w-10 rounded-full bg-base-200/60 flex items-center justify-center hover:bg-primary-100 hover:text-primary-700 transition-all duration-200"
+                aria-label="Instagram"
+                class="h-10 w-10 rounded-full bg-base-200/60 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -185,7 +190,8 @@ export function Footer() {
               </a>
               <a
                 href="#"
-                class="h-10 w-10 rounded-full bg-base-200/60 flex items-center justify-center hover:bg-primary-100 hover:text-primary-700 transition-all duration-200"
+                aria-label="LinkedIn"
+                class="h-10 w-10 rounded-full bg-base-200/60 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -209,14 +215,20 @@ export function Footer() {
         </div>
 
         <div class="border-t border-base-300/40 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p class="text-sm text-muted-foreground text-center md:text-left">
-            © 2025-2026 EcoRecicla. Todos os direitos reservados.
+          <p class="text-sm text-base-content/50 text-center md:text-left">
+            © 2025–2026 ReciclaMais. Todos os direitos reservados.
           </p>
-          <div class="flex gap-6 text-sm text-muted-foreground">
-            <A class="hover:text-primary transition-colors" href="/termos">
+          <div class="flex gap-6 text-sm text-base-content/50">
+            <A
+              class="hover:text-primary transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+              href="/terms"
+            >
               Termos de Uso
             </A>
-            <A class="hover:text-primary transition-colors" href="/privacidade">
+            <A
+              class="hover:text-primary transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+              href="/privacy"
+            >
               Política de Privacidade
             </A>
           </div>
