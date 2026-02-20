@@ -1,12 +1,12 @@
 import { createSignal } from 'solid-js'
 
-import { GUIDE_CATEGORIES } from '~/modules/guide/data/guideData'
-import { CategoryDetail } from '~/modules/guide/sections/CategoryDetail'
-import { CategoryGrid } from '~/modules/guide/sections/CategoryGrid'
-import { GuideCTA } from '~/modules/guide/sections/GuideCTA'
-import { GuideHero } from '~/modules/guide/sections/GuideHero'
-import { ImpactSection } from '~/modules/guide/sections/ImpactSection'
-import { MiniQuiz } from '~/modules/guide/sections/MiniQuiz'
+import { GUIDE_CATEGORIES } from '~/features/guide/data/guideData'
+import { CategoryDetail } from '~/features/guide/sections/CategoryDetail'
+import { CategoryGrid } from '~/features/guide/sections/CategoryGrid'
+import { GuideCTA } from '~/features/guide/sections/GuideCTA'
+import { GuideHero } from '~/features/guide/sections/GuideHero'
+import { ImpactSection } from '~/features/guide/sections/ImpactSection'
+import { MiniQuiz } from '~/features/guide/sections/MiniQuiz'
 
 export function GuidePage() {
   const [selectedCategory, setSelectedCategory] = createSignal(

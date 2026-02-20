@@ -8,20 +8,20 @@ import {
 } from 'solid-js'
 
 import { Select, SelectItem } from '~/components/ui/select'
-import { CollectionPointsResponseDTOSchema } from '~/modules/collection-network/interface/http/collection-network.schemas'
-import { responseDTOToCollectionPointVMs } from '~/modules/collection-network/ui/collection-network.ui-mapper'
-import { useCollectionPointsFilter } from '~/modules/collection-points/hooks/useCollectionPointsFilter'
-import { useMapUrlParams } from '~/modules/collection-points/hooks/useMapUrlParams'
-import { CollectionPointsList } from '~/modules/collection-points/sections/CollectionPointsList'
-import { MapContainer } from '~/modules/collection-points/sections/MapContainer'
-import { WasteFilterChips } from '~/modules/collection-points/sections/WasteFilterChips'
-import type { CollectionPoint } from '~/modules/collection-points/types'
+import { useCollectionPointsFilter } from '~/features/collection-points/hooks/useCollectionPointsFilter'
+import { useMapUrlParams } from '~/features/collection-points/hooks/useMapUrlParams'
+import { CollectionPointsList } from '~/features/collection-points/sections/CollectionPointsList'
+import { MapContainer } from '~/features/collection-points/sections/MapContainer'
+import { WasteFilterChips } from '~/features/collection-points/sections/WasteFilterChips'
+import type { CollectionPoint } from '~/features/collection-points/types'
 import {
   BRAGA_CENTER,
   getWasteTypeLabel,
   sortByProximity,
-} from '~/modules/collection-points/utils/wasteSearch'
-import { useGeolocation } from '~/modules/map/hooks/useGeolocation'
+} from '~/features/collection-points/utils/wasteSearch'
+import { useGeolocation } from '~/features/map/hooks/useGeolocation'
+import { CollectionPointsResponseDTOSchema } from '~/modules/collection-network/interface/http/collection-network.schemas'
+import { responseDTOToCollectionPointVMs } from '~/modules/collection-network/ui/collection-network.ui-mapper'
 import wasteTypes from '~/wasteTypes.json'
 
 async function fetchCollectionPoints(): Promise<CollectionPoint[]> {

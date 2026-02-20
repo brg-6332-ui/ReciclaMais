@@ -1,4 +1,4 @@
-import * as POI from '~/poi.json'
+import * as POI from '~/shared/infrastructure/data/poi.json'
 import { getActiveGpsEntries } from '~/shared/infrastructure/gps-simulator/store'
 
 import type { CollectionNetworkRepository } from '../../application/collection-network.repository'

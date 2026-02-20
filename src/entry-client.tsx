@@ -1,5 +1,5 @@
 // @refresh reload
-import '~/modules/auth/application/init'
+import '~/features/identity-access/application/init'
 
 import { mount, StartClient } from '@solidjs/start/client'
 

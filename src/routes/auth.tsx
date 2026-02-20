@@ -14,7 +14,7 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import { authActions } from '~/modules/auth/application/authActions'
+import { authActions } from '~/features/identity-access/application/authActions'
 
 const Auth = () => {
   const [isLoading, setIsLoading] = createSignal(false)

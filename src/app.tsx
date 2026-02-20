@@ -6,9 +6,9 @@ import { APIProvider } from 'solid-google-maps'
 import { onMount, Suspense } from 'solid-js'
 import { Toaster } from 'solid-toast'
 
-import Footer from '~/shared/ui/shell/Footer'
-import { Navbar } from '~/shared/ui/shell/Navbar'
-import UnifiedModalContainer from '~/shared/ui/shell/UnifiedModalContainer'
+import UnifiedModalContainer from '~/features/modal/components/UnifiedModalContainer'
+import Footer from '~/features/shell/sections/Footer'
+import { Navbar } from '~/features/shell/sections/Navbar'
 import { env, validateEnvVars } from '~/utils/env'
 
 export default function App() {

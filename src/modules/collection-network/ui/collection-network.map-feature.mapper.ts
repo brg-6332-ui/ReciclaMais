@@ -1,6 +1,6 @@
 import type { FeatureCollection, Point } from 'geojson'
 
-import type { POIBasic } from '~/modules/map/hooks/usePOI'
+import type { POIBasic } from '~/features/map/hooks/usePOI'
 
 import type { CollectionPointsResponseDTO } from '../interface/http/collection-network.responses'
 
