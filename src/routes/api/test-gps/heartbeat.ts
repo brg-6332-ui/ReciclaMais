@@ -1,5 +1,6 @@
+import { heartbeatGpsEntry } from '~/shared/infrastructure/gps-simulator/store'
+
 import { parseJsonRequest } from './parseBody'
-import { heartbeat } from './store'
 
 export async function POST(event: { request: Request }) {
   // Expect JSON body: { id: string }
@@ -27,7 +28,7 @@ export async function POST(event: { request: Request }) {
       headers: { 'Content-Type': 'application/json' },
     })
   }
-  const ok = heartbeat(b.id)
+  const ok = heartbeatGpsEntry(b.id)
   if (!ok) {
     return new Response(JSON.stringify({ error: 'not found' }), {
       status: 404,

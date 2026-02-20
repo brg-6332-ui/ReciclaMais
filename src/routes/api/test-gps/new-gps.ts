@@ -1,5 +1,6 @@
+import { createGpsEntry } from '~/shared/infrastructure/gps-simulator/store'
+
 import { parseJsonRequest } from './parseBody'
-import { createEntry } from './store'
 
 export async function POST(event: { request: Request }) {
   // Expect optional JSON body: { lat?: number, lng?: number }
@@ -21,7 +22,7 @@ export async function POST(event: { request: Request }) {
     lng = typeof b.lng === 'number' ? b.lng : null
   }
 
-  const id = createEntry(lat, lng)
+  const id = createGpsEntry(lat, lng)
   return new Response(JSON.stringify({ id }), {
     status: 201,
     headers: { 'Content-Type': 'application/json' },

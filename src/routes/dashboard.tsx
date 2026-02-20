@@ -22,13 +22,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import type { MaterialType } from '~/modules/activity/domain/activity'
-import { openActivityAddModal } from '~/modules/activity/ui/ActivityAddModal'
-import { useAuthState } from '~/modules/auth/application/authState'
-import { useDashboard } from '~/modules/dashboard/hooks/useDashboard'
-import { openConfirmModal } from '~/modules/modal/helpers/modalHelpers'
-import { openEditProfileModal } from '~/modules/user/ui/EditProfileModal'
-import { supabase } from '~/shared/infrastructure/supabase/supabase'
+import { useDashboard } from '~/features/dashboard/hooks/useDashboard'
+import { authActions } from '~/features/identity-access/application/authActions'
+import { useAuthState } from '~/features/identity-access/application/authState'
+import { openEditProfileModal } from '~/features/identity-access/ui/EditProfileModal'
+import { openConfirmModal } from '~/features/modal/helpers/modalHelpers'
+import type { MaterialType } from '~/features/recycling-activity/domain/activity'
+import { openActivityAddModal } from '~/features/recycling-activity/ui/ActivityAddModal'
 
 /**
  * Material type labels in Portuguese.
@@ -83,10 +83,10 @@ const Dashboard = () => {
   )
 
   onMount(() => {
-    supabase.auth
-      .getSession()
-      .then(({ data }) => {
-        setIsAuthConfirmed(Boolean(data.session))
+    authActions
+      .getCurrentSession()
+      .then((session) => {
+        setIsAuthConfirmed(Boolean(session))
       })
       .catch(() => {
         // if any error, fallback to using authState
@@ -118,9 +118,7 @@ const Dashboard = () => {
 
   const userMetadata = () => {
     const auth = authState()
-    return auth.isAuthenticated
-      ? (auth.session.user.user_metadata as Record<string, unknown> | undefined)
-      : undefined
+    return auth.isAuthenticated ? auth.session.user.user_metadata : undefined
   }
 
   const userDisplayName = () => {
@@ -167,13 +165,8 @@ const Dashboard = () => {
       async onConfirm() {
         try {
           setDeletingId(id)
-          const { error } = await supabase
-            .from('activities')
-            .delete()
-            .eq('id', id)
-          if (error) throw error
+          await dashboard.removeActivity(id)
           toast.success('Atividade removida com sucesso')
-          dashboard.reFetch()
         } catch (err) {
           console.error('Erro ao remover atividade:', err)
           toast.error(

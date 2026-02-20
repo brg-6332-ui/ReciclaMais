@@ -1,7 +1,10 @@
-import { getActiveEntries, TTL_MS } from '~/routes/api/test-gps/store'
+import {
+  getActiveGpsEntries,
+  TTL_MS,
+} from '~/shared/infrastructure/gps-simulator/store'
 
 export function GET() {
-  const entries = getActiveEntries()
+  const entries = getActiveGpsEntries()
   return new Response(JSON.stringify({ gps: { entries, ttlMs: TTL_MS } }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },

@@ -79,19 +79,3 @@ export const CardContent: Component<DivProps> = (props) => {
     <div {...rest} class={cn('p-6 pt-0', local.class ?? classNameFromProps)} />
   )
 }
-
-export const CardFooter: Component<DivProps> = (props) => {
-  const [local, rest] = splitProps(props, ['class'])
-  const classNameFromProps = (props as unknown as { className?: string })
-    .className
-
-  return (
-    <div
-      {...rest}
-      class={cn(
-        'flex items-center p-6 pt-0',
-        local.class ?? classNameFromProps,
-      )}
-    />
-  )
-}

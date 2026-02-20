@@ -14,8 +14,8 @@ import { Motion } from 'solid-motionone'
 import heroImage from '~/assets/hero-recycling.jpg'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent } from '~/components/ui/card'
-import { useInView } from '~/modules/guide/hooks/useInView'
-import { usePrefersReducedMotion } from '~/modules/guide/hooks/usePrefersReducedMotion'
+import { useInView } from '~/features/guide/hooks/useInView'
+import { usePrefersReducedMotion } from '~/features/guide/hooks/usePrefersReducedMotion'
 
 /**
  * Floating organic background shapes for the hero section.
