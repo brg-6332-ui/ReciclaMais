@@ -128,20 +128,22 @@ function DetailsContent(props: {
       {/* Header */}
       <div class="flex items-start justify-between gap-2">
         <div class="flex-1 min-w-0">
-          <h3 class="text-lg font-bold leading-tight truncate">
+          <h3 class="text-lg font-bold text-text-900 leading-tight truncate">
             {props.point.name}
           </h3>
           <Show when={props.point.company}>
-            <p class="text-sm text-muted-foreground mt-0.5 flex items-center gap-1.5">
+            <p class="text-sm text-text-500 mt-0.5 flex items-center gap-1.5">
               <Building2 class="h-3.5 w-3.5 shrink-0" />
               {props.point.company}
             </p>
           </Show>
         </div>
         <div class="flex items-center gap-2 shrink-0">
-          <div class="flex items-center gap-1 bg-accent-500/40 px-2 py-0.5 rounded-lg text-sm">
-            <Star class="h-3.5 w-3.5 text-accent-500 fill-accent-500" />
-            <span class="font-semibold">{props.point.rating}</span>
+          <div class="flex items-center gap-1.5 bg-primary-500/10 border border-primary-500/25 px-2.5 py-1 rounded-lg text-sm shadow-sm">
+            <Star class="h-3.5 w-3.5 text-primary-600 fill-primary-600" />
+            <span class="font-semibold text-primary-700">
+              {props.point.rating}
+            </span>
           </div>
           <button
             class="rounded-full p-1 hover:bg-base-200 dark:hover:bg-base-700 transition-colors"
@@ -159,23 +161,23 @@ function DetailsContent(props: {
       {/* Info rows */}
       <div class="space-y-2.5 text-sm">
         <Show when={props.point.address}>
-          <div class="flex items-start gap-2">
-            <MapPin class="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-            <span class="text-muted-foreground">{props.point.address}</span>
+          <div class="flex items-start gap-2.5">
+            <MapPin class="h-4 w-4 text-primary-600 mt-0.5 shrink-0" />
+            <span class="text-text-500">{props.point.address}</span>
           </div>
         </Show>
 
         <Show when={props.point.schedule}>
-          <div class="flex items-center gap-2">
-            <Clock class="h-4 w-4 text-muted-foreground shrink-0" />
-            <span class="text-muted-foreground">{props.point.schedule}</span>
+          <div class="flex items-center gap-2.5">
+            <Clock class="h-4 w-4 text-primary-600 shrink-0" />
+            <span class="text-text-500">{props.point.schedule}</span>
           </div>
         </Show>
 
         <Show when={props.point.phone}>
-          <div class="flex items-center gap-2">
-            <Phone class="h-4 w-4 text-muted-foreground shrink-0" />
-            <span class="text-muted-foreground">{props.point.phone}</span>
+          <div class="flex items-center gap-2.5">
+            <Phone class="h-4 w-4 text-primary-600 shrink-0" />
+            <span class="text-text-500">{props.point.phone}</span>
           </div>
         </Show>
       </div>

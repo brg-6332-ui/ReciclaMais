@@ -37,41 +37,44 @@ export function CollectionPointCard(props: CollectionPointCardProps) {
   return (
     <Card
       class={cn(
-        'shadow-sm border border-base-300/50 hover:shadow-md hover:border-base-400/60 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer',
-        props.selected && 'ring-2 ring-primary-400 shadow-md -translate-y-0.5',
+        'border border-base-400/40 shadow-sm hover:shadow-md hover:border-primary-500/30 transition-all duration-200 cursor-pointer group',
+        props.selected &&
+          'ring-2 ring-primary-500/50 shadow-md border-primary-500/40',
       )}
       onClick={handleSelect}
     >
       <CardHeader>
-        <div class="flex items-start justify-between">
+        <div class="flex items-start justify-between gap-3">
           <div class="flex-1">
-            <CardTitle class="text-xl mb-2">{props.point.name}</CardTitle>
-            <CardDescription class="text-sm">
+            <CardTitle class="text-xl font-bold text-text-900 mb-1.5">
+              {props.point.name}
+            </CardTitle>
+            <CardDescription class="text-sm text-text-500">
               {props.point.company}
             </CardDescription>
           </div>
-          <div class="flex items-center gap-1 bg-primary-100/60 border border-primary-300/40 px-2.5 py-1 rounded-md">
+          <div class="flex items-center gap-1.5 bg-primary-500/10 border border-primary-500/25 px-3 py-1.5 rounded-lg shadow-sm">
             <Star class="h-3.5 w-3.5 text-primary-600 fill-primary-600" />
-            <span class="text-sm font-medium text-primary-800">
+            <span class="text-sm font-semibold text-primary-700">
               {props.point.rating}
             </span>
           </div>
         </div>
       </CardHeader>
       <CardContent class="space-y-4">
-        <div class="flex items-start gap-2 text-sm">
-          <MapPin class="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-          <span class="text-muted-foreground">{props.point.address}</span>
+        <div class="flex items-start gap-2.5 text-sm">
+          <MapPin class="h-4 w-4 text-primary-600 group-hover:text-primary-500 mt-0.5 shrink-0 transition-colors" />
+          <span class="text-text-500">{props.point.address}</span>
         </div>
 
-        <div class="flex items-center gap-2 text-sm">
-          <Clock class="h-4 w-4 text-muted-foreground shrink-0" />
-          <span class="text-muted-foreground">{props.point.schedule}</span>
+        <div class="flex items-center gap-2.5 text-sm">
+          <Clock class="h-4 w-4 text-primary-600 group-hover:text-primary-500 shrink-0 transition-colors" />
+          <span class="text-text-500">{props.point.schedule}</span>
         </div>
 
-        <div class="flex items-center gap-2 text-sm">
-          <Phone class="h-4 w-4 text-muted-foreground shrink-0" />
-          <span class="text-muted-foreground">{props.point.phone}</span>
+        <div class="flex items-center gap-2.5 text-sm">
+          <Phone class="h-4 w-4 text-primary-600 group-hover:text-primary-500 shrink-0 transition-colors" />
+          <span class="text-text-500">{props.point.phone}</span>
         </div>
 
         <div class="space-y-2">
@@ -86,7 +89,11 @@ export function CollectionPointCard(props: CollectionPointCardProps) {
           </div>
         </div>
 
-        <Button class="w-full" variant="outline" onClick={handleSelect}>
+        <Button
+          class="w-full border-primary-500/30 hover:bg-primary-500/5 hover:border-primary-500/50"
+          variant="outline"
+          onClick={handleSelect}
+        >
           Ver Detalhes
         </Button>
       </CardContent>

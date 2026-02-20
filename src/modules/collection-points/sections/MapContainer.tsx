@@ -167,7 +167,7 @@ export function MapContainer(props: MapContainerProps) {
     <Card
       ref={setCardRef}
       class={cn(
-        'mb-8 shadow-md border border-base-300/60 rounded-xl overflow-hidden h-[220px] md:h-[440px] transition-all duration-300 ease-in-out relative',
+        'mb-8 shadow-lg border border-base-400/50 rounded-xl overflow-hidden h-[220px] md:h-[440px] transition-all duration-300 ease-in-out relative',
         {
           'h-screen md:h-screen w-screen fixed inset-0 rounded-none z-50':
             isFullscreen(),
