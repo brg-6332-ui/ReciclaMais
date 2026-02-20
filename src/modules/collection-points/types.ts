@@ -30,11 +30,3 @@ export interface CollectionPoint {
  * Type for waste type filter values
  */
 export type WasteTypeValue = string
-
-/**
- * Configuration for waste type display
- */
-export interface WasteTypeConfig {
-  value: WasteTypeValue
-  label: string
-}

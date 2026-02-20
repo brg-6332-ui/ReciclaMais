@@ -1,6 +1,6 @@
 import type { CollectionPointId } from './value-objects/collection-point-id.vo'
 
-export type CollectionPointKind = 'collection-point' | 'gps'
+type CollectionPointKind = 'collection-point' | 'gps'
 
 export type CollectionPointEntity = {
   id: CollectionPointId

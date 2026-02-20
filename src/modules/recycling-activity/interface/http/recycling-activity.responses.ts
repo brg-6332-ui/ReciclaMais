@@ -1,5 +1,3 @@
-import type { DashboardSummaryResult } from '../../application/results/dashboard-summary.result'
-
 export type RecyclingActivityResponseDTO = {
   id: number
   material: string
@@ -16,5 +14,3 @@ export type CreateRecyclingActivityResponseDTO = {
 export type ListRecyclingActivitiesResponseDTO = {
   activities: RecyclingActivityResponseDTO[]
 }
-
-export type DashboardSummaryResponseDTO = DashboardSummaryResult

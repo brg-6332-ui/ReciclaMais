@@ -9,7 +9,6 @@ const [authState, setAuthState] = createSignal<AuthStateEntity>({
 })
 
 let initialized = false
-let unsubscribe: (() => void) | null = null
 
 function toAuthState(
   session: Awaited<ReturnType<typeof identityAccessFacade.getCurrentSession>>,
@@ -40,19 +39,9 @@ export function initializeIdentityAuthState() {
       setAuthState({ isAuthenticated: false })
     })
 
-  const subscription = identityAccessFacade.onAuthStateChange((session) => {
+  identityAccessFacade.onAuthStateChange((session) => {
     setAuthState(toAuthState(session))
   })
-
-  unsubscribe = () => {
-    subscription.unsubscribe()
-  }
-}
-
-export function disposeIdentityAuthState() {
-  unsubscribe?.()
-  unsubscribe = null
-  initialized = false
 }
 
 export function useIdentityAuthState() {

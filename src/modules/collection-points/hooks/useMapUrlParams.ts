@@ -1,4 +1,4 @@
-import { Accessor, createSignal, Setter } from 'solid-js'
+import { createSignal } from 'solid-js'
 
 import { useStringSearchParam } from '~/modules/common/hooks/useStringSearchParam'
 
@@ -52,19 +52,4 @@ export function useMapUrlParams() {
     wasteFilter,
     setWasteFilter,
   }
-}
-
-export type MapUrlParams = {
-  userLat: Accessor<number | null>
-  setUserLat: Setter<number | null>
-  userLng: Accessor<number | null>
-  setUserLng: Setter<number | null>
-  search: Accessor<string | null>
-  setSearch: Setter<string | null>
-  placeId: Accessor<string | null>
-  setPlaceId: Setter<string | null>
-  isFullscreen: Accessor<boolean>
-  setIsFullscreen: Setter<boolean>
-  wasteFilter: Accessor<string | null>
-  setWasteFilter: Setter<string | null>
 }

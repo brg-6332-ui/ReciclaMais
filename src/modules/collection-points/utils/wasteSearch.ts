@@ -263,16 +263,3 @@ export function sortByProximity(
     return distA - distB
   })
 }
-
-/**
- * Formats distance for display.
- *
- * @param km - Distance in kilometers
- * @returns Formatted distance string (e.g., "1.2 km" or "800 m")
- */
-export function formatDistance(km: number): string {
-  if (km < 1) {
-    return `${Math.round(km * 1000)} m`
-  }
-  return `${km.toFixed(1)} km`
-}

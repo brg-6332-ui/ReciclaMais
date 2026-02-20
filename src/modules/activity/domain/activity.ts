@@ -1,9 +1,7 @@
 import {
   MATERIAL_TYPES,
   type MaterialType,
-  toMaterialType,
 } from '~/modules/recycling-activity/domain/material-type.vo'
-import { calculateRecyclingReward } from '~/modules/recycling-activity/domain/reward-calculator.service'
 
 export { MATERIAL_TYPES, type MaterialType }
 
@@ -12,13 +10,6 @@ export const REWARD_RATES: Record<MaterialType, number> = {
   glass: 0.000375,
   paper: 0.0004,
   metal: 0.0005,
-}
-
-export const CO2_RATES: Record<MaterialType, number> = {
-  plastic: 0.002,
-  glass: 0.0003,
-  paper: 0.0009,
-  metal: 0.0015,
 }
 
 export interface Activity {
@@ -49,19 +40,5 @@ export interface ActivityResponse {
     reward: number
     occurred_at: string
     collection_point_name?: string
-  }
-}
-
-export function calculateReward(material: MaterialType, grams: number): number {
-  return calculateRecyclingReward(material, grams)
-}
-
-export function createNewActivity(
-  data: Omit<NewActivity, '__type'>,
-): NewActivity {
-  return {
-    ...data,
-    material: toMaterialType(data.material),
-    __type: 'Activity',
   }
 }
