@@ -29,9 +29,9 @@ function CategoryCard(props: {
       aria-pressed={props.isSelected}
       class="group relative w-full text-left rounded-2xl p-5 border-2 transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
       classList={{
-        'border-primary-400 bg-primary-50 shadow-md scale-[1.02]':
+        'border-primary-400 bg-primary-100 shadow-md scale-[1.02]':
           props.isSelected,
-        'border-base-300/60 bg-base-100 hover:border-base-400 hover:shadow-sm hover:scale-[1.01]':
+        'border-base-300/60 bg-base-100 hover:border-base-400/80 hover:shadow-sm hover:scale-[1.01]':
           !props.isSelected,
         'opacity-0 translate-y-4': !inView(),
         'opacity-100 translate-y-0': inView(),

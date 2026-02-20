@@ -44,10 +44,10 @@ const MATERIAL_LABELS: Record<MaterialType, string> = {
  * Material type icons background colors.
  */
 const MATERIAL_COLORS: Record<MaterialType, string> = {
-  plastic: 'bg-blue-50 text-blue-600',
-  glass: 'bg-teal-50 text-teal-600',
-  paper: 'bg-amber-50 text-amber-600',
-  metal: 'bg-slate-100 text-slate-600',
+  plastic: 'bg-plastic-bg text-plastic',
+  glass: 'bg-glass-bg text-glass',
+  paper: 'bg-paper-bg text-paper',
+  metal: 'bg-metal-bg text-metal',
 }
 
 /**
@@ -192,16 +192,16 @@ const Dashboard = () => {
       fallback={
         <div class="min-h-screen bg-linear-to-b from-base-100 to-base-200/50">
           <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-            <Card class="rounded-xl border border-slate-200/60 bg-base-50 shadow-sm">
+            <Card class="rounded-xl border border-base-300/60 bg-base-200 shadow-sm">
               <CardContent class="p-8 text-center">
-                <h2 class="mb-2 text-lg font-semibold text-slate-900">
+                <h2 class="mb-2 text-lg font-semibold text-base-content">
                   É necessário iniciar sessão
                 </h2>
-                <p class="mb-6 text-sm text-slate-500">
+                <p class="mb-6 text-sm text-text-500">
                   Inicie sessão para ver o seu painel e as suas atividades.
                 </p>
                 <Show when={() => isAuthConfirmed() === null}>
-                  <p class="text-xs text-slate-400 mt-2">
+                  <p class="text-xs text-text-300 mt-2">
                     A verificar sessão...
                   </p>
                 </Show>
@@ -224,11 +224,11 @@ const Dashboard = () => {
           {/* User Header - Single cohesive row */}
           <header class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-3">
-              <Avatar class="h-11 w-11 shrink-0 rounded-full ring-2 ring-emerald-500/20">
+              <Avatar class="h-11 w-11 shrink-0 rounded-full ring-2 ring-primary-500/20">
                 <Show
                   when={userAvatarUrl()}
                   fallback={
-                    <AvatarFallback class="bg-emerald-600 text-sm font-semibold text-white">
+                    <AvatarFallback class="bg-primary-500 text-sm font-semibold text-primary-content">
                       {userInitials()}
                     </AvatarFallback>
                   }
@@ -237,10 +237,10 @@ const Dashboard = () => {
                 </Show>
               </Avatar>
               <div class="min-w-0">
-                <h1 class="truncate text-lg font-semibold text-slate-900">
+                <h1 class="truncate text-lg font-semibold text-base-content">
                   {userDisplayName()}
                 </h1>
-                <p class="text-xs text-slate-500">
+                <p class="text-xs text-text-500">
                   <Show
                     when={dashboard.state() === 'success'}
                     fallback="A carregar..."
@@ -263,7 +263,7 @@ const Dashboard = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                class="text-slate-500"
+                class="text-text-500"
                 aria-label="Editar perfil"
                 onClick={() => openEditProfileModal()}
               >
@@ -275,22 +275,22 @@ const Dashboard = () => {
           {/* KPI Grid - 4 columns, primary card spans 2 */}
           <section class="mb-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {/* Primary KPI - Total Reciclado */}
-            <Card class="col-span-2 overflow-hidden rounded-2xl border-0 bg-linear-to-br from-emerald-600 to-emerald-700 text-white shadow-lg shadow-emerald-600/20">
+            <Card class="col-span-2 overflow-hidden rounded-2xl border-0 bg-linear-to-br from-primary-500 to-primary-400 text-primary-content shadow-lg shadow-primary-500/15">
               <CardContent class="p-5 sm:p-6">
                 <div class="flex items-start justify-between">
                   <div>
-                    <p class="mb-1 text-xs font-medium uppercase tracking-wide text-emerald-100">
+                    <p class="mb-1 text-xs font-medium uppercase tracking-wide text-primary-content/80">
                       Total Reciclado
                     </p>
                     <div class="flex items-baseline gap-1.5">
                       <span class="text-4xl font-extrabold tracking-tight sm:text-5xl">
                         {dashboard.stats().totalRecycled.toFixed(1)}
                       </span>
-                      <span class="text-lg font-medium text-emerald-200">
+                      <span class="text-lg font-medium text-primary-content/70">
                         kg
                       </span>
                     </div>
-                    <p class="mt-2 text-xs text-emerald-100/80">
+                    <p class="mt-2 text-xs text-primary-content/60">
                       Impacto positivo na comunidade
                     </p>
                   </div>
@@ -302,15 +302,15 @@ const Dashboard = () => {
             </Card>
 
             {/* Secondary KPI - Recompensas */}
-            <Card class="rounded-xl border border-slate-200/60 bg-base-50 shadow-sm">
+            <Card class="rounded-xl border border-base-300/60 bg-base-200 shadow-sm">
               <CardContent class="p-4 sm:p-5">
-                <div class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50">
-                  <Gift class="h-4 w-4 text-amber-500" />
+                <div class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-warning/10">
+                  <Gift class="h-4 w-4 text-warning" />
                 </div>
-                <p class="mb-0.5 text-xs font-medium text-slate-500">
+                <p class="mb-0.5 text-xs font-medium text-text-500">
                   Recompensas
                 </p>
-                <p class="text-2xl font-bold text-amber-600 sm:text-3xl">
+                <p class="text-2xl font-bold text-warning sm:text-3xl">
                   {dashboard.stats().totalRewards.toFixed(2)}
                   <span class="text-lg">€</span>
                 </p>
@@ -318,18 +318,18 @@ const Dashboard = () => {
             </Card>
 
             {/* Secondary KPI - Reciclado este mês */}
-            <Card class="rounded-xl border border-slate-200/60 bg-base-50 shadow-sm">
+            <Card class="rounded-xl border border-base-300/60 bg-base-200 shadow-sm">
               <CardContent class="p-4 sm:p-5">
-                <div class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50">
-                  <Calendar class="h-4 w-4 text-emerald-600" />
+                <div class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary-100">
+                  <Calendar class="h-4 w-4 text-primary-600" />
                 </div>
-                <p class="mb-0.5 text-xs font-medium text-slate-500">
+                <p class="mb-0.5 text-xs font-medium text-text-500">
                   Reciclado este mês
                 </p>
                 <div class="flex items-baseline gap-2">
-                  <p class="text-2xl font-bold text-emerald-600 sm:text-3xl">
+                  <p class="text-2xl font-bold text-primary-600 sm:text-3xl">
                     {dashboard.stats().recycledThisMonth.toFixed(1)}
-                    <span class="text-lg font-medium text-slate-400">kg</span>
+                    <span class="text-lg font-medium text-text-300">kg</span>
                   </p>
                   <Show
                     when={
@@ -339,12 +339,12 @@ const Dashboard = () => {
                     <span
                       class="ml-2 rounded-md px-2 py-0.5 text-xs font-medium"
                       classList={{
-                        'bg-emerald-100 text-emerald-800':
+                        'bg-success/15 text-success':
                           dashboard.stats().recycledThisMonthDeltaPercent! > 0,
-                        'bg-slate-100 text-slate-700':
+                        'bg-base-300 text-text-500':
                           dashboard.stats().recycledThisMonthDeltaPercent! ===
                           0,
-                        'bg-red-100 text-red-700':
+                        'bg-error/15 text-error':
                           dashboard.stats().recycledThisMonthDeltaPercent! < 0,
                       }}
                     >
@@ -364,16 +364,16 @@ const Dashboard = () => {
             </Card>
 
             {/* Secondary KPI - Frequência de reciclagem (entregas este mês) */}
-            <Card class="col-span-2 rounded-xl border border-slate-200/60 bg-base-50 shadow-sm lg:col-span-1 lg:hidden xl:block">
+            <Card class="col-span-2 rounded-xl border border-base-300/60 bg-base-200 shadow-sm lg:col-span-1 lg:hidden xl:block">
               <CardContent class="flex items-center gap-4 p-4 sm:p-5 lg:block">
-                <div class="mb-0 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 lg:mb-3">
-                  <Calendar class="h-4 w-4 text-slate-600" />
+                <div class="mb-0 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-base-300 lg:mb-3">
+                  <Calendar class="h-4 w-4 text-text-500" />
                 </div>
                 <div>
-                  <p class="mb-0.5 text-xs font-medium text-slate-500">
+                  <p class="mb-0.5 text-xs font-medium text-text-500">
                     Entregas este mês
                   </p>
-                  <p class="text-2xl font-bold text-slate-700 sm:text-3xl">
+                  <p class="text-2xl font-bold text-base-content sm:text-3xl">
                     {dashboard.stats().deliveriesThisMonth}
                   </p>
                 </div>
@@ -383,19 +383,19 @@ const Dashboard = () => {
 
           {/* Loading State */}
           <Show when={dashboard.state() === 'loading'}>
-            <Card class="rounded-xl border border-slate-200/60 bg-base-50 shadow-sm">
+            <Card class="rounded-xl border border-base-300/60 bg-base-200 shadow-sm">
               <CardContent class="flex items-center justify-center p-12">
-                <Loader2 class="mr-3 h-5 w-5 animate-spin text-emerald-600" />
-                <p class="text-slate-500">A carregar atividades...</p>
+                <Loader2 class="mr-3 h-5 w-5 animate-spin text-primary-500" />
+                <p class="text-text-500">A carregar atividades...</p>
               </CardContent>
             </Card>
           </Show>
 
           {/* Error State */}
           <Show when={dashboard.state() === 'error'}>
-            <Card class="rounded-xl border border-red-200 bg-red-50 shadow-sm">
+            <Card class="rounded-xl border border-error/30 bg-error/10 shadow-sm">
               <CardContent class="p-6 text-center">
-                <p class="mb-4 text-red-600">
+                <p class="mb-4 text-error">
                   Erro ao carregar dados: {dashboard.error()?.message}
                 </p>
                 <Button variant="outline" onClick={() => dashboard.reFetch()}>
@@ -407,27 +407,27 @@ const Dashboard = () => {
 
           {/* Recent Activity */}
           <Show when={dashboard.state() === 'success'}>
-            <section class="rounded-2xl border border-slate-200/60 bg-base-50 shadow-sm">
-              <CardHeader class="border-b border-slate-100 px-5 py-4 sm:px-6">
+            <section class="rounded-2xl border border-base-300/60 bg-base-200 shadow-sm">
+              <CardHeader class="border-b border-base-300/40 px-5 py-4 sm:px-6">
                 <div class="flex items-center justify-between">
-                  <CardTitle class="flex items-center gap-2 text-base font-semibold text-slate-900">
-                    <Recycle class="h-4 w-4 text-emerald-600" />
+                  <CardTitle class="flex items-center gap-2 text-base font-semibold text-base-content">
+                    <Recycle class="h-4 w-4 text-primary-600" />
                     Atividade Recente
                   </CardTitle>
-                  <span class="text-xs text-slate-400">
+                  <span class="text-xs text-text-300">
                     Últimas {dashboard.recentActivities().length} entregas
                   </span>
                 </div>
               </CardHeader>
-              <div class="divide-y divide-slate-100">
+              <div class="divide-y divide-base-300/40">
                 <Show
                   when={dashboard.recentActivities().length > 0}
                   fallback={
                     <div class="px-5 py-12 text-center sm:px-6">
-                      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
-                        <Recycle class="h-6 w-6 text-slate-400" />
+                      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-base-300">
+                        <Recycle class="h-6 w-6 text-text-300" />
                       </div>
-                      <p class="mb-4 text-sm text-slate-500">
+                      <p class="mb-4 text-sm text-text-500">
                         Nenhuma atividade registada ainda.
                       </p>
                       <Button variant="hero" onClick={handleAddRecycling}>
@@ -438,10 +438,10 @@ const Dashboard = () => {
                 >
                   <For each={dashboard.recentActivities()}>
                     {(activity) => (
-                      <div class="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-slate-50 sm:gap-4 sm:px-6">
+                      <div class="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-base-300/30 sm:gap-4 sm:px-6">
                         {/* Icon */}
                         <div
-                          class={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${MATERIAL_COLORS[activity.type] ?? 'bg-slate-100 text-slate-600'}`}
+                          class={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${MATERIAL_COLORS[activity.type] ?? 'bg-base-300 text-text-500'}`}
                         >
                           <Recycle class="h-5 w-5" />
                         </div>
@@ -449,7 +449,7 @@ const Dashboard = () => {
                         {/* Material & Date */}
                         <div class="min-w-0 flex-1">
                           <div class="flex items-center gap-2">
-                            <span class="font-medium text-slate-900">
+                            <span class="font-medium text-base-content">
                               {MATERIAL_LABELS[activity.type] ?? activity.type}
                             </span>
                             <Badge
@@ -459,11 +459,11 @@ const Dashboard = () => {
                               {activity.amount.toFixed(2)} kg
                             </Badge>
                           </div>
-                          <p class="flex items-center gap-1.5 text-xs text-slate-500">
+                          <p class="flex items-center gap-1.5 text-xs text-text-500">
                             <Calendar class="h-3 w-3" />
                             {formatDate(activity.date)}
                             <Show when={activity.location}>
-                              <span class="text-slate-300">•</span>
+                              <span class="text-text-300">•</span>
                               <span class="truncate">{activity.location}</span>
                             </Show>
                           </p>
@@ -471,15 +471,15 @@ const Dashboard = () => {
 
                         {/* Amount - Mobile */}
                         <div class="text-right sm:hidden">
-                          <span class="text-sm font-semibold text-emerald-600">
+                          <span class="text-sm font-semibold text-primary-600">
                             {activity.amount.toFixed(1)} kg
                           </span>
                         </div>
 
                         {/* Reward */}
                         <div class="hidden shrink-0 items-center gap-1.5 sm:flex">
-                          <Gift class="h-4 w-4 text-amber-500" />
-                          <span class="font-semibold text-amber-600">
+                          <Gift class="h-4 w-4 text-warning" />
+                          <span class="font-semibold text-warning">
                             {activity.reward.toFixed(2)}€
                           </span>
                         </div>
@@ -489,7 +489,7 @@ const Dashboard = () => {
                           variant="ghost"
                           size="icon"
                           aria-label="Remover atividade"
-                          class="h-8 w-8 shrink-0 text-slate-400 hover:text-red-500"
+                          class="h-8 w-8 shrink-0 text-text-300 hover:text-error"
                           disabled={deletingId() === activity.id}
                           onClick={() => void handleDeleteActivity(activity.id)}
                         >

@@ -83,7 +83,7 @@ function ScrollIndicator() {
  */
 export function GuideHero() {
   return (
-    <section class="relative min-h-[85vh] flex items-center overflow-hidden bg-linear-to-br from-base-100 via-primary-50 to-accent-100">
+    <section class="relative min-h-[85vh] flex items-center overflow-hidden bg-linear-to-br from-base-100 via-primary-50/80 to-accent-100/60">
       <HeroShapes />
       <div class="container mx-auto px-6 py-20 relative z-10">
         <div class="max-w-3xl mx-auto text-center space-y-8">
@@ -134,7 +134,7 @@ export function GuideHero() {
             </button>
             <A
               href="/collection-points"
-              class="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-xl border-2 border-primary-300 text-primary-700 font-semibold hover:bg-primary-50 hover:scale-[1.02] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
+              class="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-xl border-2 border-primary-300/60 text-primary-700 font-semibold hover:bg-primary-50 hover:scale-[1.02] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2"
             >
               <MapPin class="w-5 h-5" />
               Ver Pontos no Mapa

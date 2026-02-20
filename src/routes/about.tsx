@@ -47,7 +47,7 @@ function HeroShapes() {
         cy="200"
         rx="150"
         ry="120"
-        class="fill-primary-200/60"
+        class="fill-primary-200/40"
         animate={{ rotate: [0, 5, 0] }}
         transition={{ duration: 8, repeat: Infinity, easing: 'ease-in-out' }}
       />
@@ -57,7 +57,7 @@ function HeroShapes() {
         cy="150"
         rx="80"
         ry="60"
-        class="fill-accent-300/50"
+        class="fill-accent-300/30"
         animate={{ rotate: [0, -3, 0] }}
         transition={{ duration: 6, repeat: Infinity, easing: 'ease-in-out' }}
       />
@@ -66,7 +66,7 @@ function HeroShapes() {
         cx="120"
         cy="280"
         r="40"
-        class="fill-secondary-300/40"
+        class="fill-secondary-300/25"
         animate={{ scale: [1, 1.1, 1] }}
         transition={{ duration: 4, repeat: Infinity, easing: 'ease-in-out' }}
       />
@@ -83,14 +83,14 @@ function HeroShapes() {
         ]}
       >
         {(dot) => (
-          <circle cx={dot.cx} cy={dot.cy} r="6" class="fill-primary-500/70" />
+          <circle cx={dot.cx} cy={dot.cy} r="6" class="fill-primary-500/50" />
         )}
       </For>
       {/* Connecting lines */}
       <path
         d="M150 120 L200 180 L250 100 M200 180 L280 280 M200 180 L180 300 M100 200 L150 120 M320 180 L280 280"
         stroke-width="1.5"
-        class="stroke-primary-400/40"
+        class="stroke-primary-400/30"
         fill="none"
       />
     </svg>
@@ -226,7 +226,7 @@ function InViewMotion(props: {
  */
 function HeroSection() {
   return (
-    <section class="relative min-h-[80vh] flex items-center overflow-hidden bg-linear-to-br from-base-100 via-primary-50 to-accent-100">
+    <section class="relative min-h-[80vh] flex items-center overflow-hidden bg-linear-to-br from-base-100 via-primary-50/80 to-accent-100/60">
       <div class="container mx-auto px-6 py-20">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
@@ -240,7 +240,7 @@ function HeroSection() {
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-base-content">
               A reciclagem pode ser simples.
               <br />
-              <span class="text-primary-600">
+              <span class="text-primary-600 dark:text-primary-600">
                 E a participação pode fazer a diferença.
               </span>
             </h1>
@@ -334,7 +334,7 @@ function PlatformDiagram() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        class="flex items-center gap-3 px-6 py-4 bg-accent-100 rounded-xl border border-accent-300"
+        class="flex items-center gap-3 px-6 py-4 bg-accent-100 rounded-xl border border-accent-300/60"
       >
         <Users class="w-6 h-6 text-accent-700" />
         <span class="font-medium text-accent-700">Utilizador</span>
@@ -349,7 +349,7 @@ function PlatformDiagram() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        class="flex items-center gap-3 px-8 py-5 bg-primary-100 rounded-xl border-2 border-primary-400 shadow-lg"
+        class="flex items-center gap-3 px-8 py-5 bg-primary-100 rounded-xl border-2 border-primary-400/60 shadow-lg"
       >
         <Sparkles class="w-7 h-7 text-primary-600" />
         <span class="font-semibold text-primary-700 text-lg">
@@ -366,7 +366,7 @@ function PlatformDiagram() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.6 }}
-        class="flex items-center gap-3 px-6 py-4 bg-secondary-100 rounded-xl border border-secondary-300"
+        class="flex items-center gap-3 px-6 py-4 bg-secondary-100 rounded-xl border border-secondary-300/60"
       >
         <MapPin class="w-6 h-6 text-secondary-700" />
         <span class="font-medium text-secondary-700">Pontos de Recolha</span>
@@ -561,7 +561,7 @@ function UserRoleSection() {
   ]
 
   return (
-    <section class="py-24 bg-linear-to-br from-accent-100 via-base-100 to-primary-50">
+    <section class="py-24 bg-linear-to-br from-accent-100/60 via-base-100 to-primary-50/60">
       <div class="container mx-auto px-6">
         <InViewMotion
           tag="div"
@@ -587,7 +587,7 @@ function UserRoleSection() {
                 animate={{ opacity: 1, y: 0, rotate: role.rotation }}
                 transition={{ duration: 0.6, delay: index() * 0.15 }}
               >
-                <Card class="h-full bg-base-100/80 backdrop-blur-sm border-primary-200 hover:shadow-xl transition-shadow duration-300">
+                <Card class="h-full bg-base-100/80 backdrop-blur-sm border-base-300/60 hover:shadow-xl transition-shadow duration-300">
                   <CardContent class="p-8 text-center">
                     <div class="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mx-auto mb-6">
                       <role.icon class="w-8 h-8 text-primary-600" />
@@ -670,7 +670,7 @@ function PrinciplesSection() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: index() * 0.08 }}
-                class="flex flex-col items-center text-center p-6 bg-base-100 rounded-xl border border-primary-100 hover:border-primary-300 transition-colors"
+                class="flex flex-col items-center text-center p-6 bg-base-100 rounded-xl border border-base-300/40 hover:border-primary-300/60 transition-colors"
               >
                 <div class="w-12 h-12 rounded-full bg-primary-50 flex items-center justify-center mb-4">
                   <principle.icon class="w-6 h-6 text-primary-600" />
@@ -725,7 +725,7 @@ function ContactSection() {
             </p>
           </div>
 
-          <Card class="bg-base-50 border-primary-100">
+          <Card class="bg-base-200 border-base-300/60">
             <CardContent class="p-8">
               <Presence exitBeforeEnter>
                 <Show
