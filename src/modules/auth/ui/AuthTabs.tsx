@@ -127,8 +127,13 @@ function AuthTabsTrigger(props: AuthTabsTriggerProps) {
 /* ------------------------------------------------------------------ */
 
 type AuthTabsProps = {
-  /** Initial active tab (defaults to `'login'`). */
+  /** Initial active tab (defaults to `'login'`). Ignored when `value` is provided. */
   defaultValue?: AuthTabValue
+  /**
+   * Controlled value — when provided the component delegates state management
+   * to the parent. Pair with `onChange` to update the parent signal.
+   */
+  value?: Accessor<AuthTabValue>
   /** Callback when the active tab changes. */
   onChange?: (value: AuthTabValue) => void
   /** Render prop that receives current value accessor. */
@@ -138,31 +143,38 @@ type AuthTabsProps = {
 /**
  * Fully composed AuthTabs segmented control.
  *
- * @example
+ * Supports both **uncontrolled** (`defaultValue`) and **controlled** (`value` +
+ * `onChange`) modes.
+ *
+ * @example — uncontrolled
  * ```tsx
  * <AuthTabs defaultValue="login" onChange={clearErrors}>
- *   {(activeTab) => (
- *     <>
- *       <Show when={activeTab() === 'login'}>
- *         <LoginForm />
- *       </Show>
- *       <Show when={activeTab() === 'register'}>
- *         <RegisterForm />
- *       </Show>
- *     </>
- *   )}
+ *   {(activeTab) => (...)}
+ * </AuthTabs>
+ * ```
+ *
+ * @example — controlled
+ * ```tsx
+ * const [tab, setTab] = createSignal<AuthTabValue>('login')
+ * <AuthTabs value={tab} onChange={setTab}>
+ *   {(activeTab) => (...)}
  * </AuthTabs>
  * ```
  */
 function AuthTabs(props: AuthTabsProps) {
-  const [value, setValue] = createSignal<AuthTabValue>(
+  const [internalValue, setInternalValue] = createSignal<AuthTabValue>(
     props.defaultValue ?? 'login',
   )
+
+  // If a controlled `value` accessor is provided, use it; otherwise fall back
+  // to the internal signal.
+  const value: Accessor<AuthTabValue> = () =>
+    props.value ? props.value() : internalValue()
 
   const api: AuthTabsApi = {
     value,
     setValue: (v) => {
-      setValue(v)
+      setInternalValue(v)
       props.onChange?.(v)
     },
   }
@@ -196,7 +208,7 @@ function AuthTabs(props: AuthTabsProps) {
         </AuthTabsTrigger>
       </div>
 
-      {/* Content rendered via render-prop */}
+      {/* Content rendered via render-prop — pass the resolved accessor */}
       {props.children(value)}
     </div>
   )

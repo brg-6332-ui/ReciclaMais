@@ -14,18 +14,63 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { authActions } from '~/modules/auth/application/authActions'
-import { AuthTabs } from '~/modules/auth/ui/AuthTabs'
+import { AuthTabs, type AuthTabValue } from '~/modules/auth/ui/AuthTabs'
 import { FormError } from '~/modules/auth/ui/FormError'
 import {
   mapAuthError,
   validateLoginFields,
   validateRegistrationFields,
 } from '~/modules/auth/utils/authErrors'
+import { modalManager } from '~/modules/modal/core/modalManager'
+
+/**
+ * Opens a non-dismissable informational dialog telling the user to confirm
+ * their e-mail address before signing in.
+ */
+function openEmailConfirmationModal(onClose?: () => void): void {
+  modalManager.openModal({
+    type: 'content',
+    title: 'Confirmação de conta',
+    closeOnOutsideClick: false,
+    closeOnEscape: false,
+    showCloseButton: false,
+    onClose,
+    content: (
+      <div class="space-y-4 py-2">
+        <p class="text-base-content/80 leading-relaxed">
+          A sua conta foi criada com sucesso. Para poder iniciar sessão,
+          precisará de{' '}
+          <strong class="text-base-content font-semibold">
+            confirmar o seu endereço de correio eletrónico
+          </strong>
+          . Por favor, verifique a sua caixa de entrada (e a pasta de spam) e
+          clique na ligação de confirmação enviada pelo Recicla+.
+        </p>
+        <p class="text-sm text-muted-foreground">
+          Após a confirmação, poderá iniciar sessão na aba <em>Entrar</em>.
+        </p>
+      </div>
+    ),
+    footer: (modalId) => (
+      <div class="flex justify-end pt-2">
+        <Button
+          type="button"
+          class="text-primary-content px-6"
+          onClick={() => void modalManager.closeModal(modalId)}
+        >
+          OK, percebi
+        </Button>
+      </div>
+    ),
+  })
+}
 
 const Auth = () => {
   // ── Shared state ──
   const [isLoading, setIsLoading] = createSignal(false)
   const [errorMessage, setErrorMessage] = createSignal<string | undefined>()
+  // ── Tab state (controlled so we can switch programmatically) ──
+  const [activeTab, setActiveTab] = createSignal<AuthTabValue>('login')
 
   // ── Login fields ──
   const [loginEmail, setLoginEmail] = createSignal('')
@@ -39,6 +84,11 @@ const Auth = () => {
 
   /** Clear errors when user switches tab or starts typing. */
   const clearError = () => setErrorMessage(undefined)
+
+  const handleTabChange = (tab: AuthTabValue) => {
+    clearError()
+    setActiveTab(tab)
+  }
 
   // ── Login handler ──
   const handleLogin = async (e: Event) => {
@@ -98,11 +148,10 @@ const Auth = () => {
         return
       }
 
-      toast.success(
-        'Conta criada com sucesso! Verifique o seu email para confirmar.',
-      )
-      // Only redirect on real success
-      window.location.href = '/'
+      // Switch to the login tab and show the email confirmation dialog.
+      setActiveTab('login')
+      clearError()
+      openEmailConfirmationModal()
     } catch (err) {
       setErrorMessage(mapAuthError(err))
     } finally {
@@ -144,8 +193,8 @@ const Auth = () => {
           </p>
         </div>
 
-        {/* ── AuthTabs segmented control + forms ── */}
-        <AuthTabs defaultValue="login" onChange={clearError}>
+        {/* ── AuthTabs segmented control + forms (controlled) ── */}
+        <AuthTabs value={activeTab} onChange={handleTabChange}>
           {(activeTab) => (
             <>
               {/* ── Login form ── */}
