@@ -425,6 +425,18 @@
   animation: slide-up 0.25s ease-out both;
 }
 
+/* Auth form error entrance — subtle slide-down + fade */
+@keyframes formErrorIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Guide page — gentle floating animation for background shapes */
 @keyframes float {
   0%, 100% { transform: translateY(0) rotate(0deg); }
