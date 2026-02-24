@@ -1,6 +1,6 @@
 import { A } from '@solidjs/router'
-import { Recycle } from 'lucide-solid'
-import { createSignal } from 'solid-js'
+import { Loader2, Recycle } from 'lucide-solid'
+import { createSignal, Show } from 'solid-js'
 import { toast } from 'solid-toast'
 
 import { Button } from '~/components/ui/button'
@@ -13,67 +13,113 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { authActions } from '~/modules/auth/application/authActions'
+import { AuthTabs } from '~/modules/auth/ui/AuthTabs'
+import { FormError } from '~/modules/auth/ui/FormError'
+import {
+  mapAuthError,
+  validateLoginFields,
+  validateRegistrationFields,
+} from '~/modules/auth/utils/authErrors'
 
 const Auth = () => {
+  // ── Shared state ──
   const [isLoading, setIsLoading] = createSignal(false)
+  const [errorMessage, setErrorMessage] = createSignal<string | undefined>()
+
+  // ── Login fields ──
   const [loginEmail, setLoginEmail] = createSignal('')
   const [loginPassword, setLoginPassword] = createSignal('')
 
+  // ── Register fields ──
   const [registerName, setRegisterName] = createSignal('')
   const [registerEmail, setRegisterEmail] = createSignal('')
   const [registerPassword, setRegisterPassword] = createSignal('')
   const [registerConfirm, setRegisterConfirm] = createSignal('')
 
+  /** Clear errors when user switches tab or starts typing. */
+  const clearError = () => setErrorMessage(undefined)
+
+  // ── Login handler ──
   const handleLogin = async (e: Event) => {
     e.preventDefault()
+    clearError()
+
+    const validationError = validateLoginFields({
+      email: loginEmail(),
+      password: loginPassword(),
+    })
+    if (validationError) {
+      setErrorMessage(validationError)
+      return
+    }
+
     setIsLoading(true)
     try {
       await authActions.signInWithEmail(loginEmail(), loginPassword())
       toast.success('Sessão iniciada com sucesso!')
-      window.location.href = '/' // redirect to home on success
+      window.location.href = '/'
     } catch (err) {
-      toast.error(
-        `Erro ao autenticar: ${err instanceof Error ? err.message : String(err)}`,
-      )
+      setErrorMessage(mapAuthError(err))
     } finally {
       setIsLoading(false)
     }
   }
 
+  // ── Register handler ──
   const handleRegister = async (e: Event) => {
     e.preventDefault()
-    if (registerPassword() !== registerConfirm()) {
-      toast.error('As palavras-passe não coincidem')
+    clearError()
+
+    const validationError = validateRegistrationFields({
+      name: registerName(),
+      email: registerEmail(),
+      password: registerPassword(),
+      confirm: registerConfirm(),
+    })
+    if (validationError) {
+      setErrorMessage(validationError)
       return
     }
+
     setIsLoading(true)
     try {
-      await authActions.signUpWithEmail(registerEmail(), registerPassword())
+      const result = await authActions.signUpWithEmail(
+        registerEmail(),
+        registerPassword(),
+      )
+
+      // Supabase returns a user with empty identities when the email
+      // is already registered (to prevent enumeration). Detect this
+      // and show a friendly message instead of silently redirecting.
+      const identities = result?.user?.identities
+      if (identities !== undefined && identities.length === 0) {
+        setErrorMessage('Este email já está registado. Tente iniciar sessão.')
+        return
+      }
+
       toast.success(
         'Conta criada com sucesso! Verifique o seu email para confirmar.',
       )
-      window.location.href = '/' // optionally redirect
+      // Only redirect on real success
+      window.location.href = '/'
     } catch (err) {
-      toast.error(
-        `Erro ao registar: ${err instanceof Error ? err.message : String(err)}`,
-      )
+      setErrorMessage(mapAuthError(err))
     } finally {
       setIsLoading(false)
     }
   }
 
+  // ── Google handler ──
   const handleGoogle = async () => {
+    clearError()
     setIsLoading(true)
     try {
       await authActions.loginWithGoogle()
       toast.success('Autenticação com Google concluída')
       window.location.href = '/'
     } catch (err) {
-      toast.error(
-        `Erro ao autenticar com Google: ${err instanceof Error ? err.message : String(err)}`,
-      )
+      setErrorMessage(mapAuthError(err))
     } finally {
       setIsLoading(false)
     }
@@ -82,6 +128,7 @@ const Auth = () => {
   return (
     <div class="min-h-screen flex items-center justify-center py-12 px-4">
       <div class="w-full max-w-md">
+        {/* ── Header ── */}
         <div class="text-center mb-8">
           <A href="/" class="inline-flex items-center gap-2 mb-4">
             <div class="h-12 w-12 rounded-full bg-linear-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg">
@@ -97,166 +144,235 @@ const Auth = () => {
           </p>
         </div>
 
-        <div class="w-full">
-          <Tabs defaultValue="login">
-            <TabsList class="w-full flex gap-4 justify-between bg-base-100 ">
-              <div class="flex-1 text-center m-0 bg-base-200 rounded-full ">
-                <TabsTrigger value="login">Entrar</TabsTrigger>
-              </div>
-              <div class="flex-1 text-center bg-base-200 rounded-full">
-                <TabsTrigger value="register">Registar</TabsTrigger>
-              </div>
-            </TabsList>
-
-            <TabsContent value="login">
-              <Card class="shadow-lg">
-                <CardHeader>
-                  <CardTitle>Iniciar sessão</CardTitle>
-                  <CardDescription>
-                    Inicie sessão com o seu email e palavra-passe
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={(e) => void handleLogin(e)} class="space-y-4">
-                    <div class="space-y-2">
-                      <Label for="login-email">Email</Label>
-                      <Input
-                        id="login-email"
-                        type="email"
-                        placeholder="seu@email.com"
-                        autocomplete="email"
-                        required
-                        value={loginEmail()}
-                        onInput={(e) =>
-                          setLoginEmail((e.target as HTMLInputElement).value)
-                        }
-                      />
-                    </div>
-                    <div class="space-y-2">
-                      <Label for="login-password">Palavra-passe</Label>
-                      <Input
-                        id="login-password"
-                        type="password"
-                        placeholder="••••••••"
-                        autocomplete="current-password"
-                        required
-                        value={loginPassword()}
-                        onInput={(e) =>
-                          setLoginPassword((e.target as HTMLInputElement).value)
-                        }
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      class="w-full text-primary-content"
-                      disabled={isLoading()}
+        {/* ── AuthTabs segmented control + forms ── */}
+        <AuthTabs defaultValue="login" onChange={clearError}>
+          {(activeTab) => (
+            <>
+              {/* ── Login form ── */}
+              <Show when={activeTab() === 'login'}>
+                <Card class="shadow-lg transition-shadow duration-200 hover:shadow-xl">
+                  <CardHeader>
+                    <CardTitle>Iniciar sessão</CardTitle>
+                    <CardDescription>
+                      Inicie sessão com o seu email e palavra-passe
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form
+                      onSubmit={(e) => void handleLogin(e)}
+                      class="space-y-5"
                     >
-                      {isLoading() ? 'A entrar...' : 'Entrar'}
-                    </Button>
+                      <div class="space-y-1.5">
+                        <Label
+                          for="login-email"
+                          class="font-medium text-base-content/90"
+                        >
+                          Email
+                        </Label>
+                        <Input
+                          id="login-email"
+                          type="email"
+                          placeholder="seu@email.com"
+                          autocomplete="email"
+                          required
+                          value={loginEmail()}
+                          onInput={(e) => {
+                            clearError()
+                            setLoginEmail((e.target as HTMLInputElement).value)
+                          }}
+                          class="transition-colors duration-150"
+                        />
+                      </div>
+                      <div class="space-y-1.5">
+                        <Label
+                          for="login-password"
+                          class="font-medium text-base-content/90"
+                        >
+                          Palavra-passe
+                        </Label>
+                        <Input
+                          id="login-password"
+                          type="password"
+                          placeholder="••••••••"
+                          autocomplete="current-password"
+                          required
+                          value={loginPassword()}
+                          onInput={(e) => {
+                            clearError()
+                            setLoginPassword(
+                              (e.target as HTMLInputElement).value,
+                            )
+                          }}
+                          class="transition-colors duration-150"
+                        />
+                      </div>
 
-                    <div class="">
+                      {/* Contextual error */}
+                      <FormError message={errorMessage()} />
+
+                      <Button
+                        type="submit"
+                        class="w-full text-primary-content h-11 font-semibold shadow-sm transition-all duration-200 hover:shadow-md active:scale-[0.98]"
+                        disabled={isLoading()}
+                      >
+                        <Show when={isLoading()} fallback="Entrar">
+                          <Loader2 class="h-4 w-4 animate-spin" />
+                          <span>A entrar…</span>
+                        </Show>
+                      </Button>
+
+                      <div class="relative flex items-center py-1">
+                        <div class="flex-1 border-t border-base-300" />
+                        <span class="mx-3 text-xs text-muted-foreground">
+                          ou
+                        </span>
+                        <div class="flex-1 border-t border-base-300" />
+                      </div>
+
                       <Button
                         type="button"
-                        class="w-full  text-primary-content"
+                        variant="outline"
+                        class="w-full h-11 font-medium transition-all duration-200 hover:shadow-sm active:scale-[0.98]"
                         onClick={() => void handleGoogle()}
                         disabled={isLoading()}
                       >
-                        {isLoading() ? 'A autenticar...' : 'Entrar com Google'}
+                        <Show when={isLoading()} fallback="Entrar com Google">
+                          <Loader2 class="h-4 w-4 animate-spin" />
+                          <span>A autenticar…</span>
+                        </Show>
                       </Button>
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                    </form>
+                  </CardContent>
+                </Card>
+              </Show>
 
-            <TabsContent value="register">
-              <Card class="shadow-lg">
-                <CardHeader>
-                  <CardTitle>Criar Conta</CardTitle>
-                  <CardDescription>
-                    Preencha os dados para criar a sua conta
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form
-                    onSubmit={(e) => void handleRegister(e)}
-                    class="space-y-4"
-                  >
-                    <div class="space-y-2">
-                      <Label for="register-name">Nome Completo</Label>
-                      <Input
-                        id="register-name"
-                        type="text"
-                        placeholder="João Silva"
-                        autocomplete="name"
-                        required
-                        value={registerName()}
-                        onInput={(e) =>
-                          setRegisterName((e.target as HTMLInputElement).value)
-                        }
-                      />
-                    </div>
-                    <div class="space-y-2">
-                      <Label for="register-email">Email</Label>
-                      <Input
-                        id="register-email"
-                        type="email"
-                        placeholder="seu@email.com"
-                        autocomplete="email"
-                        required
-                        value={registerEmail()}
-                        onInput={(e) =>
-                          setRegisterEmail((e.target as HTMLInputElement).value)
-                        }
-                      />
-                    </div>
-                    <div class="space-y-2">
-                      <Label for="register-password">Palavra-passe</Label>
-                      <Input
-                        id="register-password"
-                        type="password"
-                        placeholder="••••••••"
-                        autocomplete="new-password"
-                        required
-                        value={registerPassword()}
-                        onInput={(e) =>
-                          setRegisterPassword(
-                            (e.target as HTMLInputElement).value,
-                          )
-                        }
-                      />
-                    </div>
-                    <div class="space-y-2">
-                      <Label for="register-confirm">
-                        Confirmar palavra-passe
-                      </Label>
-                      <Input
-                        id="register-confirm"
-                        type="password"
-                        placeholder="••••••••"
-                        autocomplete="new-password"
-                        required
-                        value={registerConfirm()}
-                        onInput={(e) =>
-                          setRegisterConfirm(
-                            (e.target as HTMLInputElement).value,
-                          )
-                        }
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      class="w-full text-primary-content"
-                      disabled={isLoading()}
+              {/* ── Register form ── */}
+              <Show when={activeTab() === 'register'}>
+                <Card class="shadow-lg transition-shadow duration-200 hover:shadow-xl">
+                  <CardHeader>
+                    <CardTitle>Criar Conta</CardTitle>
+                    <CardDescription>
+                      Preencha os dados para criar a sua conta
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form
+                      onSubmit={(e) => void handleRegister(e)}
+                      class="space-y-5"
                     >
-                      {isLoading() ? 'A criar conta...' : 'Criar Conta'}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+                      <div class="space-y-1.5">
+                        <Label
+                          for="register-name"
+                          class="font-medium text-base-content/90"
+                        >
+                          Nome Completo
+                        </Label>
+                        <Input
+                          id="register-name"
+                          type="text"
+                          placeholder="João Silva"
+                          autocomplete="name"
+                          required
+                          value={registerName()}
+                          onInput={(e) => {
+                            clearError()
+                            setRegisterName(
+                              (e.target as HTMLInputElement).value,
+                            )
+                          }}
+                          class="transition-colors duration-150"
+                        />
+                      </div>
+                      <div class="space-y-1.5">
+                        <Label
+                          for="register-email"
+                          class="font-medium text-base-content/90"
+                        >
+                          Email
+                        </Label>
+                        <Input
+                          id="register-email"
+                          type="email"
+                          placeholder="seu@email.com"
+                          autocomplete="email"
+                          required
+                          value={registerEmail()}
+                          onInput={(e) => {
+                            clearError()
+                            setRegisterEmail(
+                              (e.target as HTMLInputElement).value,
+                            )
+                          }}
+                          class="transition-colors duration-150"
+                        />
+                      </div>
+                      <div class="space-y-1.5">
+                        <Label
+                          for="register-password"
+                          class="font-medium text-base-content/90"
+                        >
+                          Palavra-passe
+                        </Label>
+                        <Input
+                          id="register-password"
+                          type="password"
+                          placeholder="••••••••"
+                          autocomplete="new-password"
+                          required
+                          value={registerPassword()}
+                          onInput={(e) => {
+                            clearError()
+                            setRegisterPassword(
+                              (e.target as HTMLInputElement).value,
+                            )
+                          }}
+                          class="transition-colors duration-150"
+                        />
+                      </div>
+                      <div class="space-y-1.5">
+                        <Label
+                          for="register-confirm"
+                          class="font-medium text-base-content/90"
+                        >
+                          Confirmar palavra-passe
+                        </Label>
+                        <Input
+                          id="register-confirm"
+                          type="password"
+                          placeholder="••••••••"
+                          autocomplete="new-password"
+                          required
+                          value={registerConfirm()}
+                          onInput={(e) => {
+                            clearError()
+                            setRegisterConfirm(
+                              (e.target as HTMLInputElement).value,
+                            )
+                          }}
+                          class="transition-colors duration-150"
+                        />
+                      </div>
+
+                      {/* Contextual error */}
+                      <FormError message={errorMessage()} />
+
+                      <Button
+                        type="submit"
+                        class="w-full text-primary-content h-11 font-semibold shadow-sm transition-all duration-200 hover:shadow-md active:scale-[0.98]"
+                        disabled={isLoading()}
+                      >
+                        <Show when={isLoading()} fallback="Criar Conta">
+                          <Loader2 class="h-4 w-4 animate-spin" />
+                          <span>A criar conta…</span>
+                        </Show>
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </Show>
+            </>
+          )}
+        </AuthTabs>
 
         <p class="text-center text-sm text-muted-foreground mt-6">
           Ao continuar, concorda com os nossos{' '}
