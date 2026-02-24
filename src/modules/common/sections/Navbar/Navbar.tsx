@@ -1,7 +1,7 @@
 import { createSignal } from 'solid-js'
 
 import { SearchPill } from '~/modules/common/sections/SearchPill/SearchPill'
-import { mapActions } from '~/modules/map/application/mapActions'
+import { useMapActions } from '~/modules/map/application/mapActions'
 
 import { DesktopNav, DesktopNavIcons } from './components/DesktopNav'
 import { Logo } from './components/Logo'
@@ -17,6 +17,7 @@ import { useCompactSearch } from './hooks/useCompactSearch'
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = createSignal(false)
   const compactSearch = useCompactSearch()
+  const mapActions = useMapActions()
 
   return (
     <header class="bg-base-50/60 backdrop-blur-sm sticky top-0 z-40">

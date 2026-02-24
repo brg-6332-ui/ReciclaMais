@@ -1,42 +1,45 @@
-export const mapActions = {
-  openMapsPageWithSearch: (search: string) => {
-    // Opens /map route with search query param
-    const url = new URL(window.location.origin + '/map')
-    if (search) {
-      url.searchParams.set('search', search)
-    }
-    // TODO: use router navigation instead of full page reload
-    window.location.href = url.toString()
-  },
+import { useNavigate } from '@solidjs/router'
 
-  openMapPageWithPlaceId: (placeId: string | undefined) => {
-    // Opens /map route with placeId query param
-    const url = new URL(window.location.origin + '/map')
-    if (placeId) {
-      url.searchParams.set('placeId', placeId)
-    }
+/**
+ * Hook that returns navigation actions for the map page.
+ * Must be called inside a SolidJS component or reactive context.
+ */
+export function useMapActions() {
+  const navigate = useNavigate()
 
-    // TODO: use router navigation instead of full page reload
-    window.location.href = url.toString()
-  },
+  return {
+    /** Navigates to /map with a search query param. */
+    openMapsPageWithSearch: (search: string) => {
+      const params = new URLSearchParams()
+      if (search) params.set('search', search)
+      const qs = params.toString()
+      navigate('/map' + (qs ? '?' + qs : ''))
+    },
 
-  openMapPageWithCoordinates: (lat: number, lng: number) => {
-    // Opens /map route with coordinates query params
-    const url = new URL(window.location.origin + '/map')
-    url.searchParams.set('lat', lat.toString())
-    url.searchParams.set('lng', lng.toString())
+    /** Navigates to /map with a placeId query param. */
+    openMapPageWithPlaceId: (placeId: string | undefined) => {
+      const params = new URLSearchParams()
+      if (placeId) params.set('placeId', placeId)
+      const qs = params.toString()
+      navigate('/map' + (qs ? '?' + qs : ''))
+    },
 
-    // TODO: use router navigation instead of full page reload
-    window.location.href = url.toString()
-  },
+    /** Navigates to /map with lat/lng coordinate query params. */
+    openMapPageWithCoordinates: (lat: number, lng: number) => {
+      const params = new URLSearchParams()
+      params.set('lat', lat.toString())
+      params.set('lng', lng.toString())
+      navigate('/map?' + params.toString())
+    },
 
-  /**
-   * Opens the map page filtered by a waste type.
-   * @param wasteType - Canonical waste type value (e.g. 'plastic', 'batteries')
-   */
-  openMapPageWithWasteType: (wasteType: string) => {
-    const url = new URL(window.location.origin + '/map')
-    url.searchParams.set('waste', wasteType)
-    window.location.href = url.toString()
-  },
+    /**
+     * Navigates to the map page filtered by a waste type.
+     * @param wasteType - Canonical waste type value (e.g. 'plastic', 'batteries')
+     */
+    openMapPageWithWasteType: (wasteType: string) => {
+      const params = new URLSearchParams()
+      params.set('waste', wasteType)
+      navigate('/map?' + params.toString())
+    },
+  }
 }
