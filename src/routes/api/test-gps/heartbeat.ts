@@ -31,7 +31,7 @@ export async function POST(event: { request: Request }) {
       headers: { 'Content-Type': 'application/json' },
     })
   }
-  const ok = heartbeat(b.id)
+  const ok = await heartbeat(b.id)
   if (!ok) {
     console.debug('Heartbeat request: entry not found')
     return new Response(JSON.stringify({ error: 'not found' }), {

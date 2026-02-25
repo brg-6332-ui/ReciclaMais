@@ -33,17 +33,29 @@ export async function POST(event: { request: Request }) {
     })
   }
 
-  const entry = updateEntry(b.id, b.lat, b.lng)
-  if (!entry) {
+  const result = await updateEntry(b.id, b.lat, b.lng)
+  if (!result) {
     console.debug('GPS update request: entry not found')
     return new Response(JSON.stringify({ error: 'not found' }), {
       status: 404,
       headers: { 'Content-Type': 'application/json' },
     })
   }
-  console.debug('GPS update request: entry updated', entry)
-  return new Response(JSON.stringify({ ok: true, entry }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  })
+
+  console.debug('GPS update request: entry updated', result.entry)
+  return new Response(
+    JSON.stringify({
+      ok: true,
+      entry: result.entry,
+      ignored: result.ignored,
+      invalid_reason: result.invalidReason,
+      ttff_ms: result.ttffMs,
+      last: result.last,
+      metrics: result.metrics,
+    }),
+    {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    },
+  )
 }

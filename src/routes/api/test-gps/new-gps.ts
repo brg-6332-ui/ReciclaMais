@@ -23,7 +23,7 @@ export async function POST(event: { request: Request }) {
     lng = typeof b.lng === 'number' ? b.lng : null
   }
 
-  const id = createEntry(lat, lng)
+  const id = await createEntry(lat, lng)
   console.debug('New GPS entry created', { id, lat, lng })
   return new Response(JSON.stringify({ id }), {
     status: 201,
