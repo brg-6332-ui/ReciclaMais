@@ -3,6 +3,7 @@ import { AlertTriangle, RefreshCw } from 'lucide-solid'
 import { createEffect, For, Show } from 'solid-js'
 
 import { Button } from '~/components/ui/button'
+import { openConfirmModal } from '~/modules/modal/helpers/modalHelpers'
 import { useGpsDashboard } from '~/modules/test-gps/hooks/useGpsDashboard'
 import type { GpsFilters } from '~/modules/test-gps/types'
 import ControlBar from '~/modules/test-gps/ui/ControlBar'
@@ -73,6 +74,18 @@ export default function TestGPS() {
     )
   }
 
+  const handleClearAllData = () => {
+    openConfirmModal(
+      'Tem a certeza de que pretende limpar dados de teste? Esta ação não pode ser anulada.',
+      {
+        title: 'Limpar dados de teste',
+        confirmText: 'Limpar',
+        cancelText: 'Cancelar',
+        onConfirm: () => dashboard.clearAllData(),
+      },
+    )
+  }
+
   return (
     <div class="min-h-screen">
       {/* Background gradient */}
@@ -101,9 +114,11 @@ export default function TestGPS() {
           filters={dashboard.filters()}
           paused={dashboard.paused()}
           loading={dashboard.status() === 'loading'}
+          clearing={dashboard.clearing()}
           onFiltersChange={(f) => dashboard.setFilters(f)}
           onApply={() => dashboard.fetchData()}
           onRefresh={() => dashboard.fetchData()}
+          onClearData={handleClearAllData}
           onTogglePause={() => dashboard.togglePause()}
         />
 

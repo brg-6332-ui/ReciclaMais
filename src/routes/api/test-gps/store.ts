@@ -119,6 +119,13 @@ export type SummaryOptions = {
   eventsLimit?: number
 }
 
+export type ClearAllTestDataResult = {
+  ok: true
+  mode: 'supabase' | 'memory'
+  sessionsDeleted: number
+  outagesDeleted: number
+}
+
 export const TTL_MS = 60_000
 export const DEFAULT_SUMMARY_TIMEZONE = 'Europe/Lisbon'
 
@@ -682,6 +689,64 @@ function heartbeatMemory(id: string): boolean {
 export async function heartbeat(id: string): Promise<boolean> {
   if (supabase) return heartbeatDb(id)
   return heartbeatMemory(id)
+}
+
+async function clearAllTestDataDb(): Promise<ClearAllTestDataResult> {
+  if (!supabase) {
+    return clearAllTestDataMemory()
+  }
+
+  const { count: outagesDeleted, error: outagesError } = await supabase
+    .from('gps_test_outages')
+    .delete({ count: 'exact' })
+    .not('id', 'is', null)
+
+  if (outagesError) {
+    throw outagesError
+  }
+
+  const { count: sessionsDeleted, error: sessionsError } = await supabase
+    .from('gps_test_sessions')
+    .delete({ count: 'exact' })
+    .not('id', 'is', null)
+
+  if (sessionsError) {
+    throw sessionsError
+  }
+
+  runtimeStore.clear()
+  memorySessions.clear()
+  memoryOutages.length = 0
+  memoryOutageSeq = 1
+
+  return {
+    ok: true,
+    mode: 'supabase',
+    sessionsDeleted: sessionsDeleted ?? 0,
+    outagesDeleted: outagesDeleted ?? 0,
+  }
+}
+
+function clearAllTestDataMemory(): ClearAllTestDataResult {
+  const sessionsDeleted = memorySessions.size
+  const outagesDeleted = memoryOutages.length
+
+  memorySessions.clear()
+  memoryOutages.length = 0
+  memoryOutageSeq = 1
+  runtimeStore.clear()
+
+  return {
+    ok: true,
+    mode: 'memory',
+    sessionsDeleted,
+    outagesDeleted,
+  }
+}
+
+export async function clearAllTestData(): Promise<ClearAllTestDataResult> {
+  if (supabase) return clearAllTestDataDb()
+  return clearAllTestDataMemory()
 }
 
 function classifyForSession(

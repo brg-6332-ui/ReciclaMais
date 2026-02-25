@@ -22,6 +22,7 @@ export function useGpsDashboard(initialFilters: GpsFilters) {
   const [data, setData] = createSignal<GpsApiResponse | null>(null)
   const [status, setStatus] = createSignal<FetchStatus>('idle')
   const [error, setError] = createSignal<string | null>(null)
+  const [clearing, setClearing] = createSignal(false)
   const [paused, setPaused] = createSignal(false)
   const [lastUpdatedMs, setLastUpdatedMs] = createSignal<number | null>(null)
 
@@ -159,12 +160,42 @@ export function useGpsDashboard(initialFilters: GpsFilters) {
     }
   })
 
+  /**
+   * Clears all persisted GPS test metrics (sessions + outages) from backend.
+   * On success, refreshes dashboard data.
+   */
+  async function clearAllData() {
+    if (clearing()) return
+
+    setClearing(true)
+    try {
+      const response = await fetch('/api/test-gps/clear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirm: true }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+
+      setError(null)
+      await fetchData()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erro desconhecido'
+      setError(`Falha ao limpar métricas: ${message}`)
+    } finally {
+      setClearing(false)
+    }
+  }
+
   return {
     // State (signals)
     filters,
     data,
     status,
     error,
+    clearing,
     paused,
     lastUpdatedMs,
 
@@ -172,6 +203,7 @@ export function useGpsDashboard(initialFilters: GpsFilters) {
     setFilters,
     setPaused,
     fetchData: () => void fetchData(),
+    clearAllData: () => void clearAllData(),
     togglePause: () => setPaused((prev) => !prev),
   }
 }
