@@ -65,6 +65,13 @@ export default function TestGPS() {
   const outageEvents = () => summary()?.outages.events ?? []
   const byHour = () => summary()?.outages.by_hour ?? {}
   const timezone = () => summary()?.window.timezone ?? dashboard.filters().tz
+  const isWindowEmpty = () => {
+    const s = summary()
+    if (!s) return false
+    return (
+      entries().length === 0 && s.sessions.count === 0 && s.outages.count === 0
+    )
+  }
 
   return (
     <div class="min-h-screen">
@@ -128,56 +135,50 @@ export default function TestGPS() {
           when={dashboard.status() !== 'loading' || dashboard.data()}
           fallback={<SkeletonDashboard />}
         >
-          {/* KPI Cards */}
-          <Show when={summary()}>{(s) => <KpiCards summary={s()} />}</Show>
+          <Show
+            when={dashboard.status() !== 'success' || !isWindowEmpty()}
+            fallback={<EmptyState onRefresh={() => dashboard.fetchData()} />}
+          >
+            {/* KPI Cards */}
+            <Show when={summary()}>{(s) => <KpiCards summary={s()} />}</Show>
 
-          {/* Two-column content */}
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Column A — Sessions */}
-            <div class="rounded-lg border border-base-300 bg-base-100 p-5 space-y-3">
-              <h2 class="text-sm font-semibold text-text-700">
-                Sessões Ativas
-              </h2>
-              <SessionsTable entries={entries()} />
+            {/* Two-column content */}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Column A — Sessions */}
+              <div class="rounded-lg border border-base-300 bg-base-100 p-5 space-y-3">
+                <h2 class="text-sm font-semibold text-text-700">
+                  Sessões Ativas
+                </h2>
+                <SessionsTable entries={entries()} />
+              </div>
+
+              {/* Column B — Outages by hour */}
+              <div class="rounded-lg border border-base-300 bg-base-100 p-5 space-y-3">
+                <h2 class="text-sm font-semibold text-text-700">
+                  Outages por Hora
+                </h2>
+                <OutageByHourBars byHour={byHour()} />
+              </div>
             </div>
 
-            {/* Column B — Outages by hour */}
-            <div class="rounded-lg border border-base-300 bg-base-100 p-5 space-y-3">
-              <h2 class="text-sm font-semibold text-text-700">
-                Outages por Hora
-              </h2>
-              <OutageByHourBars byHour={byHour()} />
-            </div>
-          </div>
+            {/* Outage Events (conditional) */}
+            <Show when={dashboard.filters().includeOutageEvents}>
+              <div class="rounded-lg border border-base-300 bg-base-100 p-5 space-y-3">
+                <h2 class="text-sm font-semibold text-text-700">
+                  Eventos de Outage
+                </h2>
+                <OutageEventsPanel
+                  events={outageEvents()}
+                  timezone={timezone()}
+                />
+              </div>
+            </Show>
 
-          {/* Outage Events (conditional) */}
-          <Show when={dashboard.filters().includeOutageEvents}>
-            <div class="rounded-lg border border-base-300 bg-base-100 p-5 space-y-3">
-              <h2 class="text-sm font-semibold text-text-700">
-                Eventos de Outage
-              </h2>
-              <OutageEventsPanel
-                events={outageEvents()}
-                timezone={timezone()}
-              />
-            </div>
+            {/* Raw Payload */}
+            <Show when={dashboard.data()}>
+              <RawPayloadPanel data={dashboard.data()} />
+            </Show>
           </Show>
-
-          {/* Raw Payload */}
-          <Show when={dashboard.data()}>
-            <RawPayloadPanel data={dashboard.data()} />
-          </Show>
-        </Show>
-
-        {/* Empty state when no data and not loading */}
-        <Show
-          when={
-            dashboard.status() === 'success' &&
-            entries().length === 0 &&
-            !summary()
-          }
-        >
-          <EmptyState onRefresh={() => dashboard.fetchData()} />
         </Show>
       </div>
     </div>

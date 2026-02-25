@@ -7,6 +7,8 @@ import type {
 } from '~/modules/test-gps/types'
 
 const DEFAULT_REFRESH_MS = 5_000
+const MIN_REFRESH_MS = 3_000
+const MAX_REFRESH_MS = 15_000
 
 /**
  * Hook that manages fetching, auto-refresh, abort, and visibility-pause
@@ -25,6 +27,20 @@ export function useGpsDashboard(initialFilters: GpsFilters) {
 
   let abortController: AbortController | null = null
   let refreshTimer: ReturnType<typeof setInterval> | null = null
+
+  /**
+   * Computes auto-refresh interval based on backend TTL when available.
+   * Rule: min(max(ttl/2, 3000), 15000), fallback to default 5000ms.
+   */
+  function getRefreshIntervalMs(payload: GpsApiResponse | null): number {
+    const ttlMs = payload?.gps.ttlMs
+    if (!Number.isFinite(ttlMs) || !ttlMs || ttlMs <= 0) {
+      return DEFAULT_REFRESH_MS
+    }
+
+    const halfTtl = Math.floor(ttlMs / 2)
+    return Math.min(MAX_REFRESH_MS, Math.max(MIN_REFRESH_MS, halfTtl))
+  }
 
   /**
    * Builds the API URL from current filters.
@@ -46,17 +62,18 @@ export function useGpsDashboard(initialFilters: GpsFilters) {
    * Cancels any in-flight request via AbortController.
    */
   async function fetchData() {
+    const controller = new AbortController()
     if (abortController) {
       abortController.abort()
     }
-    abortController = new AbortController()
+    abortController = controller
 
     setStatus('loading')
     setError(null)
 
     try {
       const response = await fetch(buildUrl(), {
-        signal: abortController.signal,
+        signal: controller.signal,
       })
 
       if (!response.ok) {
@@ -67,6 +84,9 @@ export function useGpsDashboard(initialFilters: GpsFilters) {
       setData(json)
       setStatus('success')
       setLastUpdatedMs(Date.now())
+      if (!paused() && !document.hidden) {
+        startRefresh(json)
+      }
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') {
         return
@@ -75,20 +95,23 @@ export function useGpsDashboard(initialFilters: GpsFilters) {
       setError(message)
       setStatus('error')
     } finally {
-      abortController = null
+      if (abortController === controller) {
+        abortController = null
+      }
     }
   }
 
   /**
    * Starts or restarts the auto-refresh interval.
    */
-  function startRefresh() {
+  function startRefresh(payload: GpsApiResponse | null = data()) {
     stopRefresh()
+    const intervalMs = getRefreshIntervalMs(payload)
     refreshTimer = setInterval(() => {
       if (!paused()) {
         void fetchData()
       }
-    }, DEFAULT_REFRESH_MS)
+    }, intervalMs)
   }
 
   /**

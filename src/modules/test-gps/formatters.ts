@@ -96,6 +96,31 @@ export function shortId(id: string): string {
 }
 
 /**
+ * Formats latitude/longitude pair for compact display.
+ * @param lat - Latitude.
+ * @param lng - Longitude.
+ * @param precision - Decimal precision for both coordinates.
+ */
+export function formatLatLng(
+  lat: number | null | undefined,
+  lng: number | null | undefined,
+  precision = 5,
+): string {
+  if (
+    lat === null ||
+    lat === undefined ||
+    lng === null ||
+    lng === undefined ||
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng)
+  ) {
+    return '—'
+  }
+
+  return `${lat.toFixed(precision)}, ${lng.toFixed(precision)}`
+}
+
+/**
  * Formats a "time ago" string from an epoch timestamp.
  * @param ms - Unix timestamp in milliseconds.
  * @returns e.g. "há 5 s", "há 2 min", "há 1 h"

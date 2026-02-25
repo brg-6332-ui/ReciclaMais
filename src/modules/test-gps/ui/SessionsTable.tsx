@@ -3,6 +3,7 @@ import { For, Show } from 'solid-js'
 import { Badge } from '~/components/ui/badge'
 import {
   formatDurationMs,
+  formatLatLng,
   shortId,
   timeAgo,
 } from '~/modules/test-gps/formatters'
@@ -41,12 +42,14 @@ export default function SessionsTable(props: { entries: GpsEntry[] }) {
                   </td>
                   <td class="py-3 pr-4 text-text-500">
                     <Show
-                      when={entry.quality.first_fix_at_ms}
+                      when={entry.lat !== null && entry.lng !== null}
                       fallback={
                         <span class="text-text-300 italic">Sem fix</span>
                       }
                     >
-                      {timeAgo(entry.lastSeen)}
+                      <span class="font-mono text-xs text-text-700">
+                        {formatLatLng(entry.lat, entry.lng)}
+                      </span>
                     </Show>
                   </td>
                   <td class="py-3 pr-4 font-mono text-xs">
@@ -102,6 +105,19 @@ export default function SessionsTable(props: { entries: GpsEntry[] }) {
                 <div>
                   <span class="text-text-300">Última atividade</span>
                   <p class="text-text-700">{timeAgo(entry.lastSeen)}</p>
+                </div>
+                <div>
+                  <span class="text-text-300">Última posição</span>
+                  <p class="font-mono text-text-700">
+                    <Show
+                      when={entry.lat !== null && entry.lng !== null}
+                      fallback={
+                        <span class="italic text-text-300">Sem fix</span>
+                      }
+                    >
+                      {formatLatLng(entry.lat, entry.lng)}
+                    </Show>
+                  </p>
                 </div>
                 <div>
                   <span class="text-text-300">TTFF</span>
