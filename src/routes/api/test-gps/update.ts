@@ -2,6 +2,7 @@ import { parseJsonRequest } from './parseBody'
 import { updateEntry } from './store'
 
 export async function POST(event: { request: Request }) {
+  console.debug('Received GPS update request')
   const { request } = event
   let body: unknown
   try {
@@ -34,11 +35,13 @@ export async function POST(event: { request: Request }) {
 
   const entry = updateEntry(b.id, b.lat, b.lng)
   if (!entry) {
+    console.debug('GPS update request: entry not found')
     return new Response(JSON.stringify({ error: 'not found' }), {
       status: 404,
       headers: { 'Content-Type': 'application/json' },
     })
   }
+  console.debug('GPS update request: entry updated', entry)
   return new Response(JSON.stringify({ ok: true, entry }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
