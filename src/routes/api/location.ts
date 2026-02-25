@@ -97,14 +97,16 @@ type POIFile = {
   }
 }
 
-export function GET() {
+export async function GET() {
   try {
     // Build a GeoJSON FeatureCollection from the bundled POI sample file
     const poiFile = POI as unknown as POIFile
     const rawPoints = [...(poiFile.data.publicGetMapInformation.points ?? [])]
 
+    const activeEntries = await getActiveEntries()
+
     rawPoints.push(
-      ...getActiveEntries().map((entry) => ({
+      ...activeEntries.map((entry) => ({
         id: `gps-${entry.id}`,
         latitude: entry.lat?.toString() ?? '0',
         longitude: entry.lng?.toString() ?? '0',
