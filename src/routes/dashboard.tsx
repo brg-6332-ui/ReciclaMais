@@ -22,8 +22,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { deleteActivity } from '~/modules/activity/application/activityApi'
 import type { MaterialType } from '~/modules/activity/domain/activity'
-import { openActivityAddModal } from '~/modules/activity/ui/ActivityAddModal'
+import {
+  openActivityAddModal,
+  openActivityEditModal,
+} from '~/modules/activity/ui/ActivityAddModal'
 import { useAuthState } from '~/modules/auth/application/authState'
 import { useDashboard } from '~/modules/dashboard/hooks/useDashboard'
 import { openConfirmModal } from '~/modules/modal/helpers/modalHelpers'
@@ -167,11 +171,7 @@ const Dashboard = () => {
       async onConfirm() {
         try {
           setDeletingId(id)
-          const { error } = await supabase
-            .from('activities')
-            .delete()
-            .eq('id', id)
-          if (error) throw error
+          await deleteActivity(id)
           toast.success('Atividade removida com sucesso')
           dashboard.reFetch()
         } catch (err) {
@@ -184,6 +184,36 @@ const Dashboard = () => {
         }
       },
     })
+  }
+
+  const handleOpenActivity = (
+    activity: ReturnType<typeof dashboard.recentActivities>[number],
+  ) => {
+    openActivityEditModal(
+      {
+        id: activity.id,
+        material: activity.type,
+        grams: activity.grams,
+        reward: activity.reward,
+        occurred_at: activity.date,
+        observation: activity.observation ?? null,
+      },
+      {
+        onSuccess: () => {
+          dashboard.reFetch()
+        },
+      },
+    )
+  }
+
+  const handleActivityKeyDown = (
+    event: KeyboardEvent,
+    activity: ReturnType<typeof dashboard.recentActivities>[number],
+  ) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      handleOpenActivity(activity)
+    }
   }
 
   return (
@@ -438,7 +468,15 @@ const Dashboard = () => {
                 >
                   <For each={dashboard.recentActivities()}>
                     {(activity) => (
-                      <div class="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-base-300/30 sm:gap-4 sm:px-6">
+                      <div
+                        role="button"
+                        tabindex="0"
+                        class="flex cursor-pointer items-center gap-3 px-5 py-3 transition-colors hover:bg-base-300/30 focus:outline-none focus:ring-2 focus:ring-primary-500/40 sm:gap-4 sm:px-6"
+                        onClick={() => handleOpenActivity(activity)}
+                        onKeyDown={(event) =>
+                          handleActivityKeyDown(event, activity)
+                        }
+                      >
                         {/* Icon */}
                         <div
                           class={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${MATERIAL_COLORS[activity.type] ?? 'bg-base-300 text-text-500'}`}
@@ -458,6 +496,11 @@ const Dashboard = () => {
                             >
                               {activity.amount.toFixed(2)} kg
                             </Badge>
+                            <Show when={activity.observation?.trim()}>
+                              <Badge variant="secondary" class="text-xs">
+                                Obs
+                              </Badge>
+                            </Show>
                           </div>
                           <p class="flex items-center gap-1.5 text-xs text-text-500">
                             <Calendar class="h-3 w-3" />
@@ -491,7 +534,10 @@ const Dashboard = () => {
                           aria-label="Remover atividade"
                           class="h-8 w-8 shrink-0 text-text-300 hover:text-error"
                           disabled={deletingId() === activity.id}
-                          onClick={() => void handleDeleteActivity(activity.id)}
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            void handleDeleteActivity(activity.id)
+                          }}
                         >
                           <Show
                             when={deletingId() === activity.id}

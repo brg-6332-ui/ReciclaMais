@@ -51,7 +51,7 @@ export function useDashboard() {
       // Fetch all activities for the user
       const { data: activities, error: fetchError } = await supabase
         .from('activities')
-        .select('id, material, grams, reward, date, location_id')
+        .select('id, material, grams, reward, date, location_id, observation')
         .eq('user_id', userId)
         .order('date', { ascending: false })
 
@@ -97,10 +97,12 @@ export function useDashboard() {
           recentActivities.push({
             id: activity.id,
             date: activity.date,
+            grams,
             type: material,
             amount: grams / 1000, // Convert to kg
             reward,
             location: activity.location_id || undefined,
+            observation: activity.observation ?? null,
           })
         }
 

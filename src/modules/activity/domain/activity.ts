@@ -22,11 +22,12 @@ export const CO2_RATES: Record<MaterialType, number> = {
 export const activitySchema = z.object({
   id: z.number(),
   user_id: z.uuid(),
-  material: z.string(),
+  material: z.enum(MATERIAL_TYPES),
   grams: z.number(),
-  location_id: z.string(),
+  location_id: z.string().nullable(),
   date: z.string(),
   reward: z.string().nullable(),
+  observation: z.string().nullable(),
   __type: z
     .string()
     .nullish()
@@ -45,18 +46,25 @@ export interface CreateActivityPayload {
   reward: number
   occurred_at: string
   collection_point_id?: string
+  observation?: string
+}
+
+export type UpdateActivityPayload = CreateActivityPayload
+
+export interface EditableActivity {
+  id: number
+  material: MaterialType
+  grams: number
+  reward: number
+  occurred_at: string
+  observation?: string | null
 }
 
 /**
  * Response from API after creating an activity.
  */
 export interface ActivityResponse {
-  activity: {
-    id: number
-    material: string
-    grams: number
-    reward: number
-    occurred_at: string
+  activity: EditableActivity & {
     collection_point_name?: string
   }
 }

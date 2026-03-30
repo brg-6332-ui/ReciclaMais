@@ -23,6 +23,7 @@ export type Database = {
           id: number
           location_id: string | null
           material: string
+          observation: string | null
           reward: string | null
           user_id: string
         }
@@ -33,6 +34,7 @@ export type Database = {
           id?: number
           location_id?: string | null
           material: string
+          observation?: string | null
           reward?: string | null
           user_id: string
         }
@@ -43,6 +45,7 @@ export type Database = {
           id?: number
           location_id?: string | null
           material?: string
+          observation?: string | null
           reward?: string | null
           user_id?: string
         }

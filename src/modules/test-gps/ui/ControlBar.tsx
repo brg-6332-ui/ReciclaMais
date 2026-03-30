@@ -1,4 +1,11 @@
-import { MoreVertical, Pause, Play, RefreshCw, Search, Trash2 } from 'lucide-solid'
+import {
+  MoreVertical,
+  Pause,
+  Play,
+  RefreshCw,
+  Search,
+  Trash2,
+} from 'lucide-solid'
 import { createEffect, createSignal, onCleanup, Show } from 'solid-js'
 
 import { Button } from '~/components/ui/button'

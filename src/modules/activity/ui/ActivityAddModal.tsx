@@ -1,22 +1,29 @@
-import { createMemo, createSignal, For, Show } from 'solid-js'
+import { Loader2, Trash2 } from 'lucide-solid'
+import { createMemo, createSignal, For, Show, untrack } from 'solid-js'
+import { toast } from 'solid-toast'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Select, SelectItem } from '~/components/ui/select'
-import { useAddActivity } from '~/modules/activity/application/useAddActivity'
+import {
+  createActivity,
+  deleteActivity,
+  updateActivity,
+} from '~/modules/activity/application/activityApi'
 import {
   type CreateActivityPayload,
+  type EditableActivity,
   MATERIAL_TYPES,
   type MaterialType,
 } from '~/modules/activity/domain/activity'
 import { modalManager } from '~/modules/modal/core/modalManager'
-import { openContentModal } from '~/modules/modal/helpers/modalHelpers'
+import {
+  openConfirmModal,
+  openContentModal,
+} from '~/modules/modal/helpers/modalHelpers'
 import type { ModalId } from '~/modules/modal/types/modalTypes'
 
-/**
- * Material type labels in Portuguese.
- */
 const MATERIAL_LABELS: Record<MaterialType, string> = {
   plastic: 'Plástico',
   glass: 'Vidro',
@@ -24,9 +31,6 @@ const MATERIAL_LABELS: Record<MaterialType, string> = {
   metal: 'Metal',
 }
 
-/**
- * Formats a Date to datetime-local input format.
- */
 function formatDateTimeLocal(date: Date): string {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -69,31 +73,65 @@ function getCurrencyCentsFromInput(value: string): number {
   return Number.parseInt(digitsOnly, 10)
 }
 
-interface ActivityAddModalProps {
-  modalId: ModalId
-  onSuccess?: () => void
+function formatQuantityFromGrams(grams: number): string {
+  return (grams / 1000).toString().replace('.', ',')
 }
 
-function ActivityAddModal(props: ActivityAddModalProps) {
-  const { execute, state, error, reset } = useAddActivity()
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message
+  }
 
-  // Form state
-  const [material, setMaterial] = createSignal<MaterialType | ''>('')
-  const [quantityKg, setQuantityKg] = createSignal<string>('')
-  const [rewardCents, setRewardCents] = createSignal(0)
-  const [occurredAt, setOccurredAt] = createSignal(
-    formatDateTimeLocal(new Date()),
+  return 'Falha ao processar a atividade. Tente novamente mais tarde.'
+}
+
+type ActivityModalProps =
+  | {
+      modalId: ModalId
+      mode: 'create'
+      onSuccess?: () => void
+    }
+  | {
+      modalId: ModalId
+      mode: 'edit'
+      activity: EditableActivity
+      onSuccess?: () => void
+    }
+
+function ActivityAddModal(props: ActivityModalProps) {
+  const initialActivity = untrack(() =>
+    props.mode === 'edit' ? props.activity : null,
   )
-  const [notes, setNotes] = createSignal('')
 
-  // Validation
+  const [material, setMaterial] = createSignal<MaterialType | ''>(
+    initialActivity?.material ?? '',
+  )
+  const [quantityKg, setQuantityKg] = createSignal(
+    initialActivity ? formatQuantityFromGrams(initialActivity.grams) : '',
+  )
+  const [rewardCents, setRewardCents] = createSignal(
+    initialActivity ? Math.round(initialActivity.reward * 100) : 0,
+  )
+  const [occurredAt, setOccurredAt] = createSignal(
+    initialActivity
+      ? formatDateTimeLocal(new Date(initialActivity.occurred_at))
+      : formatDateTimeLocal(new Date()),
+  )
+  const [notes, setNotes] = createSignal(initialActivity?.observation ?? '')
+  const [error, setError] = createSignal<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = createSignal(false)
+  const [isDeleting, setIsDeleting] = createSignal(false)
+
+  const isEditMode = createMemo(() => props.mode === 'edit')
+  const isBusy = createMemo(() => isSubmitting() || isDeleting())
+
   const quantityValue = createMemo(() => {
     return parseDecimalInput(quantityKg()) ?? 0
   })
 
   const isValidQuantity = createMemo(() => {
-    const val = quantityValue()
-    return val > 0 && val <= 50000
+    const value = quantityValue()
+    return value > 0 && value <= 50000
   })
 
   const isValidDate = createMemo(() => {
@@ -111,7 +149,6 @@ function ActivityAddModal(props: ActivityAddModalProps) {
     return material() !== '' && isValidQuantity() && isValidDate()
   })
 
-  // Handlers
   function handleMaterialChange(event: Event) {
     const target = event.target as HTMLSelectElement
     setMaterial(target.value as MaterialType | '')
@@ -149,36 +186,74 @@ function ActivityAddModal(props: ActivityAddModalProps) {
   }
 
   function handleCancel() {
-    reset()
     void modalManager.closeModal(props.modalId)
   }
 
   async function handleSubmit(event: Event) {
     event.preventDefault()
 
-    if (!isFormValid()) return
-
-    const grams = Math.round(quantityValue() * 1000)
-    const occurredAtDate = new Date(occurredAt())
+    if (!isFormValid() || isBusy()) return
 
     const payload: CreateActivityPayload = {
       material: material() as MaterialType,
-      grams,
+      grams: Math.round(quantityValue() * 1000),
       reward: Math.round(rewardValue() * 100) / 100,
-      occurred_at: occurredAtDate.toISOString(),
+      occurred_at: new Date(occurredAt()).toISOString(),
+      observation: notes(),
     }
 
-    const result = await execute(payload)
+    try {
+      setIsSubmitting(true)
+      setError(null)
 
-    if (result) {
+      if (isEditMode()) {
+        await updateActivity(initialActivity!.id, payload)
+        toast.success('Atividade atualizada com sucesso')
+      } else {
+        await createActivity(payload)
+        toast.success('Atividade criada com sucesso')
+      }
+
       props.onSuccess?.()
-      void modalManager.closeModal(props.modalId)
+      await modalManager.closeModal(props.modalId)
+    } catch (submissionError) {
+      console.error('Error saving activity:', submissionError)
+      setError(getErrorMessage(submissionError))
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
+  function handleDeleteRequest() {
+    if (!isEditMode() || isDeleting()) return
+
+    openConfirmModal('Tem a certeza de que pretende remover esta atividade?', {
+      title: 'Remover atividade',
+      confirmText: 'Remover',
+      cancelText: 'Cancelar',
+      async onConfirm() {
+        try {
+          setIsDeleting(true)
+          setError(null)
+          await deleteActivity(initialActivity!.id)
+          toast.success('Atividade removida com sucesso')
+          props.onSuccess?.()
+          await modalManager.closeModal(props.modalId)
+        } catch (deleteError) {
+          console.error('Error deleting activity:', deleteError)
+          setError(getErrorMessage(deleteError))
+          toast.error(
+            'Falha ao remover a atividade. Tente novamente mais tarde.',
+          )
+        } finally {
+          setIsDeleting(false)
+        }
+      },
+    })
+  }
+
   return (
-    <form class="space-y-6 p-4" onSubmit={(e) => void handleSubmit(e)}>
-      {/* Material Select */}
+    <form class="space-y-6 p-4" onSubmit={(event) => void handleSubmit(event)}>
       <div class="space-y-2">
         <Label for="material">Tipo de Material *</Label>
         <Select
@@ -198,7 +273,6 @@ function ActivityAddModal(props: ActivityAddModalProps) {
         </Select>
       </div>
 
-      {/* Quantity Input */}
       <div class="space-y-2">
         <Label for="quantity">Quantidade (kg) *</Label>
         <Input
@@ -217,7 +291,6 @@ function ActivityAddModal(props: ActivityAddModalProps) {
         </Show>
       </div>
 
-      {/* Date/Time Input */}
       <div class="space-y-2">
         <Label for="occurred-at">Data e Hora *</Label>
         <Input
@@ -233,7 +306,6 @@ function ActivityAddModal(props: ActivityAddModalProps) {
         </Show>
       </div>
 
-      {/* Reward Input */}
       <div class="space-y-2">
         <Label for="reward">Recompensa (€) *</Label>
         <Input
@@ -246,7 +318,6 @@ function ActivityAddModal(props: ActivityAddModalProps) {
         />
       </div>
 
-      {/* Notes */}
       <div class="space-y-2">
         <Label for="notes">Observações (opcional)</Label>
         <textarea
@@ -258,50 +329,101 @@ function ActivityAddModal(props: ActivityAddModalProps) {
         />
       </div>
 
-      {/* Error Message */}
-      <Show when={state() === 'error' && error()}>
-        <div class="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
-          {error()?.message}
+      <Show when={error()}>
+        <div class="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+          {error()}
         </div>
       </Show>
 
-      {/* Actions */}
-      <div class="flex justify-end gap-3 pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleCancel}
-          disabled={state() === 'submitting'}
-        >
-          Cancelar
-        </Button>
-        <Button
-          type="submit"
-          variant="hero"
-          disabled={!isFormValid() || state() === 'submitting'}
-        >
-          <Show when={state() === 'submitting'} fallback="Confirmar Reciclagem">
-            A enviar...
-          </Show>
-        </Button>
+      <div class="flex flex-col-reverse gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
+        <Show when={isEditMode()}>
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={handleDeleteRequest}
+            disabled={isBusy()}
+          >
+            <Show
+              when={isDeleting()}
+              fallback={
+                <>
+                  <Trash2 />
+                  Excluir
+                </>
+              }
+            >
+              <Loader2 class="animate-spin" />A remover...
+            </Show>
+          </Button>
+        </Show>
+
+        <div class="flex justify-end gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCancel}
+            disabled={isBusy()}
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            variant="hero"
+            disabled={!isFormValid() || isBusy()}
+          >
+            <Show
+              when={isSubmitting()}
+              fallback={
+                isEditMode() ? 'Guardar Alterações' : 'Confirmar Reciclagem'
+              }
+            >
+              <Loader2 class="animate-spin" />A enviar...
+            </Show>
+          </Button>
+        </div>
       </div>
     </form>
   )
 }
 
-/**
- * Opens the activity add modal.
- * @param options - Optional callbacks
- */
 export function openActivityAddModal(options?: {
   onSuccess?: () => void
 }): void {
   openContentModal(
     (modalId) => (
-      <ActivityAddModal modalId={modalId} onSuccess={options?.onSuccess} />
+      <ActivityAddModal
+        modalId={modalId}
+        mode="create"
+        onSuccess={options?.onSuccess}
+      />
     ),
     {
       title: 'Nova Reciclagem',
+      priority: 'high',
+      closeOnEscape: true,
+      closeOnOutsideClick: false,
+      showCloseButton: true,
+    },
+  )
+}
+
+export function openActivityEditModal(
+  activity: EditableActivity,
+  options?: {
+    onSuccess?: () => void
+  },
+): void {
+  openContentModal(
+    (modalId) => (
+      <ActivityAddModal
+        modalId={modalId}
+        mode="edit"
+        activity={activity}
+        onSuccess={options?.onSuccess}
+      />
+    ),
+    {
+      title: 'Editar Atividade',
       priority: 'high',
       closeOnEscape: true,
       closeOnOutsideClick: false,

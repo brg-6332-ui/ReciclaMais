@@ -28,10 +28,12 @@ export interface DashboardStats {
 export interface DashboardActivity {
   id: number
   date: string
+  grams: number
   type: MaterialType
   amount: number // in kg
   reward: number // in euros
   location?: string
+  observation?: string | null
 }
 
 /**
