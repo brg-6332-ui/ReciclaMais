@@ -9,7 +9,6 @@ import {
   type CreateActivityPayload,
   MATERIAL_TYPES,
   type MaterialType,
-  REWARD_RATES,
 } from '~/modules/activity/domain/activity'
 import { modalManager } from '~/modules/modal/core/modalManager'
 import { openContentModal } from '~/modules/modal/helpers/modalHelpers'
@@ -37,17 +36,37 @@ function formatDateTimeLocal(date: Date): string {
   return `${year}-${month}-${day}T${hours}:${minutes}`
 }
 
-/**
- * Calculates estimated reward based on material and quantity.
- */
-function calculateEstimatedReward(
-  material: MaterialType | '',
-  quantityKg: number,
-): number {
-  if (!material || quantityKg <= 0) return 0
-  const rate = REWARD_RATES[material]
-  const grams = Math.round(quantityKg * 1000)
-  return Math.round(grams * rate * 100) / 100
+const DECIMAL_INPUT_PATTERN = /^\d*(?:[,.]\d*)?$/
+
+function parseDecimalInput(value: string): number | null {
+  const normalized = value.trim().replace(',', '.')
+
+  if (normalized === '' || normalized === '.') {
+    return null
+  }
+
+  const parsedValue = Number.parseFloat(normalized)
+  return Number.isNaN(parsedValue) ? null : parsedValue
+}
+
+function getNextDecimalInputValue(value: string): string | null {
+  const sanitizedValue = value.replace(/\s+/g, '')
+  return DECIMAL_INPUT_PATTERN.test(sanitizedValue) ? sanitizedValue : null
+}
+
+function formatEuroCents(cents: number): string {
+  const normalizedCents = Math.max(0, Math.trunc(cents))
+  return `EUR ${(normalizedCents / 100).toFixed(2).replace('.', ',')}`
+}
+
+function getCurrencyCentsFromInput(value: string): number {
+  const digitsOnly = value.replace(/\D+/g, '')
+
+  if (digitsOnly === '') {
+    return 0
+  }
+
+  return Number.parseInt(digitsOnly, 10)
 }
 
 interface ActivityAddModalProps {
@@ -61,6 +80,7 @@ function ActivityAddModal(props: ActivityAddModalProps) {
   // Form state
   const [material, setMaterial] = createSignal<MaterialType | ''>('')
   const [quantityKg, setQuantityKg] = createSignal<string>('')
+  const [rewardCents, setRewardCents] = createSignal(0)
   const [occurredAt, setOccurredAt] = createSignal(
     formatDateTimeLocal(new Date()),
   )
@@ -68,8 +88,7 @@ function ActivityAddModal(props: ActivityAddModalProps) {
 
   // Validation
   const quantityValue = createMemo(() => {
-    const val = parseFloat(quantityKg())
-    return isNaN(val) ? 0 : val
+    return parseDecimalInput(quantityKg()) ?? 0
   })
 
   const isValidQuantity = createMemo(() => {
@@ -84,14 +103,13 @@ function ActivityAddModal(props: ActivityAddModalProps) {
     return date <= fiveMinutesFromNow
   })
 
+  const rewardValue = createMemo(() => {
+    return rewardCents() / 100
+  })
+
   const isFormValid = createMemo(() => {
     return material() !== '' && isValidQuantity() && isValidDate()
   })
-
-  // Estimated reward
-  const estimatedReward = createMemo(() =>
-    calculateEstimatedReward(material(), quantityValue()),
-  )
 
   // Handlers
   function handleMaterialChange(event: Event) {
@@ -101,12 +119,28 @@ function ActivityAddModal(props: ActivityAddModalProps) {
 
   function handleQuantityChange(event: Event) {
     const target = event.target as HTMLInputElement
-    setQuantityKg(target.value)
+    const nextValue = getNextDecimalInputValue(target.value)
+
+    if (nextValue !== null) {
+      setQuantityKg(nextValue)
+    }
   }
 
   function handleDateChange(event: Event) {
     const target = event.target as HTMLInputElement
     setOccurredAt(target.value)
+  }
+
+  function handleRewardChange(event: Event) {
+    const target = event.target as HTMLInputElement
+    const nextRewardCents = getCurrencyCentsFromInput(target.value)
+    const formattedValue = formatEuroCents(nextRewardCents)
+
+    if (target.value !== formattedValue) {
+      target.value = formattedValue
+    }
+
+    setRewardCents(nextRewardCents)
   }
 
   function handleNotesChange(event: Event) {
@@ -130,6 +164,7 @@ function ActivityAddModal(props: ActivityAddModalProps) {
     const payload: CreateActivityPayload = {
       material: material() as MaterialType,
       grams,
+      reward: Math.round(rewardValue() * 100) / 100,
       occurred_at: occurredAtDate.toISOString(),
     }
 
@@ -168,11 +203,9 @@ function ActivityAddModal(props: ActivityAddModalProps) {
         <Label for="quantity">Quantidade (kg) *</Label>
         <Input
           id="quantity"
-          type="number"
-          step="0.01"
-          min="0.01"
-          max="50000"
-          placeholder="Ex: 2.5"
+          type="text"
+          inputMode="decimal"
+          placeholder="Ex: 2,5"
           value={quantityKg()}
           onInput={handleQuantityChange}
           required
@@ -200,17 +233,17 @@ function ActivityAddModal(props: ActivityAddModalProps) {
         </Show>
       </div>
 
-      {/* Estimated Reward */}
+      {/* Reward Input */}
       <div class="space-y-2">
-        <Label>Recompensa Estimada</Label>
-        <div class="h-10 flex items-center px-3 rounded-md border border-input bg-muted/50">
-          <span class="text-lg font-semibold text-accent-500">
-            {estimatedReward().toFixed(2)}€
-          </span>
-        </div>
-        <p class="text-xs text-muted-foreground">
-          Valor estimado. A recompensa final é calculada pelo sistema.
-        </p>
+        <Label for="reward">Recompensa (€) *</Label>
+        <Input
+          id="reward"
+          type="text"
+          inputMode="numeric"
+          value={formatEuroCents(rewardCents())}
+          onInput={handleRewardChange}
+          required
+        />
       </div>
 
       {/* Notes */}

@@ -2,10 +2,7 @@ import type { APIEvent } from '@solidjs/start/server'
 import { createClient } from '@supabase/supabase-js'
 import z from 'zod/v4'
 
-import {
-  calculateReward,
-  MATERIAL_TYPES,
-} from '~/modules/activity/domain/activity'
+import { MATERIAL_TYPES } from '~/modules/activity/domain/activity'
 import type { Database } from '~/shared/infrastructure/supabase/database.types'
 
 type ActivityInsert = Database['public']['Tables']['activities']['Insert']
@@ -16,6 +13,7 @@ type ActivityInsert = Database['public']['Tables']['activities']['Insert']
 const createActivityPayloadSchema = z.object({
   material: z.enum(MATERIAL_TYPES),
   grams: z.number().int().positive().max(50_000_000), // max 50000kg in grams
+  reward: z.number().nonnegative(),
   occurred_at: z.iso.datetime(),
   collection_point_id: z.string().optional(),
 })
@@ -202,9 +200,6 @@ export async function POST(event: APIEvent): Promise<Response> {
       )
     }
 
-    // Calculate reward on server (never trust client)
-    const reward = calculateReward(payload.material, payload.grams)
-
     // Prepare insert data (location_id is guaranteed to be a string here)
     const insertData = {
       user_id: user.id,
@@ -212,7 +207,7 @@ export async function POST(event: APIEvent): Promise<Response> {
       grams: payload.grams,
       date: payload.occurred_at,
       location_id: payload.collection_point_id ?? null,
-      reward: reward.toFixed(2),
+      reward: payload.reward.toFixed(2),
     } satisfies ActivityInsert
 
     // Insert activity

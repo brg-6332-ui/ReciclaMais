@@ -7,16 +7,6 @@ export const MATERIAL_TYPES = ['plastic', 'glass', 'paper', 'metal'] as const
 export type MaterialType = (typeof MATERIAL_TYPES)[number]
 
 /**
- * Reward rates per gram for each material type.
- */
-export const REWARD_RATES: Record<MaterialType, number> = {
-  plastic: 0.0004, // 0.40€ per kg
-  glass: 0.000375, // 0.375€ per kg
-  paper: 0.0004, // 0.40€ per kg
-  metal: 0.0005, // 0.50€ per kg
-}
-
-/**
  * CO2 saved per gram for each material type (in grams of CO2).
  */
 export const CO2_RATES: Record<MaterialType, number> = {
@@ -52,6 +42,7 @@ export type NewActivity = Omit<Activity, 'id'>
 export interface CreateActivityPayload {
   material: MaterialType
   grams: number
+  reward: number
   occurred_at: string
   collection_point_id?: string
 }
@@ -68,17 +59,6 @@ export interface ActivityResponse {
     occurred_at: string
     collection_point_name?: string
   }
-}
-
-/**
- * Calculates the reward for a given material and weight.
- * @param material - The material type
- * @param grams - Weight in grams
- * @returns Reward in euros (2 decimal places)
- */
-export function calculateReward(material: MaterialType, grams: number): number {
-  const rate = REWARD_RATES[material]
-  return Math.round(grams * rate * 100) / 100
 }
 
 /**
