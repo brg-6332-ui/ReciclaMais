@@ -16,9 +16,12 @@ export function useCollectionPointsFilter(
     const pts = points() || []
     const type = selectedType()
     if (type === 'all') {
-      return pts
+      return pts.filter((point) => point.name !== 'dynamic-gps-entry')
     }
-    return pts.filter((point) => point.types.includes(type))
+    return pts.filter(
+      (point) =>
+        point.types.includes(type) && point.name !== 'dynamic-gps-entry',
+    )
   })
 
   return filteredPoints
