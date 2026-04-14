@@ -1,0 +1,1 @@
+Comandos úteis: `pnpm run dev` para desenvolvimento, `pnpm run build` para build, `pnpm run start` para rodar build, `pnpm run lint` para lint, `pnpm run type-check` para checagem de tipos, `pnpm run check` para lint + type-check, `pnpm run fix` para auto-fix do ESLint quando possível.

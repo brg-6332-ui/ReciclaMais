@@ -1,0 +1,1 @@
+Projeto ReciclaMais em TypeScript com SolidStart/Vinxi, Tailwind/DaisyUI e Supabase. Objetivo: registrar atividades de reciclagem, acompanhar dashboard e recompensas. Estrutura principal em src/modules (domínio, aplicação e UI por feature), src/routes (páginas e APIs) e src/shared (integrações como Supabase). Ambiente Linux.

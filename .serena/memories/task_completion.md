@@ -1,0 +1,1 @@
+Ao concluir uma tarefa, rodar pelo menos `pnpm run type-check` e preferencialmente `pnpm run check` quando a mudança tocar múltiplos arquivos/fluxos. Verificar também se a API e a UI continuam alinhadas nos contratos compartilhados.

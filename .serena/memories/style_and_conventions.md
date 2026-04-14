@@ -1,0 +1,1 @@
+Código em TypeScript com componentes SolidJS e organização por módulos. Preferir tipagem explícita em contratos compartilhados, comentários curtos apenas quando agregam contexto, validação com Zod onde há fronteira de dados e nomes em inglês no código com interface em português quando aplicável.
