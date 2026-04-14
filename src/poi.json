@@ -238,7 +238,8 @@
                     "company": "Escola Basica",
                     "wasteTypes": [
                         "glass",
-                        "metal"
+                        "metal",
+                        "paper"
                     ]
                 },
                 {
@@ -301,7 +302,8 @@
                     "rating": 4.6,
                     "company": "Collection Partner",
                     "wasteTypes": [
-                        "metal"
+                        "metal",
+                        "batteries"
                     ]
                 },
                 {
@@ -412,7 +414,8 @@
                     "rating": 3.7,
                     "company": "Ponto Vermelho",
                     "wasteTypes": [
-                        "plastic"
+                        "plastic",
+                        "clothing"
                     ]
                 },
                 {
@@ -440,7 +443,8 @@
                     "rating": 5.0,
                     "company": "Collection Partner",
                     "wasteTypes": [
-                        "metal"
+                        "metal",
+                        "electronics"
                     ]
                 },
                 {
@@ -856,7 +860,8 @@
                     "company": "Eb 23",
                     "wasteTypes": [
                         "glass",
-                        "metal"
+                        "metal",
+                        "organic"
                     ]
                 },
                 {
@@ -950,7 +955,8 @@
                     "rating": 4.7,
                     "company": "BP",
                     "wasteTypes": [
-                        "metal"
+                        "metal",
+                        "oil"
                     ]
                 },
                 {
