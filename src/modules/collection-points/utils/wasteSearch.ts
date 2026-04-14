@@ -6,17 +6,25 @@ import type { CollectionPoint } from '../types'
  */
 export const WASTE_TYPE_CATALOG = [
   {
-    value: 'plastic',
-    label: 'Plástico',
+    value: 'packaging',
+    label: 'Embalagens',
     aliases: [
+      'embalagem',
+      'embalagens',
       'plastico',
+      'plástico',
       'plasticos',
       'plásticos',
-      'pet',
-      'embalagens',
-      'embalagem',
-      'garrafa',
-      'garrafas',
+      'metal',
+      'metais',
+      'lata',
+      'latas',
+      'aluminio',
+      'alumínio',
+      'tetra pak',
+      'pacotes de bebida',
+      'pacote de bebida',
+      'ecoponto amarelo',
     ],
   },
   {
@@ -26,7 +34,7 @@ export const WASTE_TYPE_CATALOG = [
   },
   {
     value: 'paper',
-    label: 'Papel',
+    label: 'Papel e Cartão',
     aliases: [
       'papel',
       'papeis',
@@ -39,21 +47,6 @@ export const WASTE_TYPE_CATALOG = [
       'jornais',
       'revista',
       'revistas',
-    ],
-  },
-  {
-    value: 'metal',
-    label: 'Metal',
-    aliases: [
-      'metal',
-      'metais',
-      'lata',
-      'latas',
-      'aluminio',
-      'alumínio',
-      'ferro',
-      'aço',
-      'aco',
     ],
   },
   {
@@ -209,6 +202,9 @@ export function resolveWasteType(query: string): string | null {
  * @returns Human-readable label or the value itself if not found
  */
 export function getWasteTypeLabel(value: string): string {
+  if (value === 'plastic' || value === 'metal') {
+    return 'Embalagens'
+  }
   const entry = WASTE_TYPE_CATALOG.find((e) => e.value === value)
   return entry?.label ?? value
 }

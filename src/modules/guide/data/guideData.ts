@@ -1,11 +1,4 @@
-import {
-  Battery,
-  FileText,
-  GlassWater,
-  Package,
-  Recycle,
-  Trash2,
-} from 'lucide-solid'
+import { FileText, GlassWater, Package } from 'lucide-solid'
 import type { Component } from 'solid-js'
 
 /** Bin color identifiers used for visual styling */
@@ -141,8 +134,8 @@ export const GUIDE_CATEGORIES: GuideCategory[] = [
     ],
   },
   {
-    id: 'plastic',
-    title: 'Plástico e Embalagens',
+    id: 'packaging',
+    title: 'Embalagens',
     binColor: 'yellow',
     binLabel: 'Ecoponto Amarelo',
     icon: Package,
@@ -153,6 +146,7 @@ export const GUIDE_CATEGORIES: GuideCategory[] = [
       'Embalagens Tetra Pak (leite, sumos)',
       'Iogurtes e embalagens de manteiga',
       'Latas de conservas e bebidas',
+      'Tampas metálicas',
     ],
     cannotRecycle: [
       'Brinquedos de plástico',
@@ -212,119 +206,6 @@ export const GUIDE_CATEGORIES: GuideCategory[] = [
     impactFacts: [
       'O vidro é 100% reciclável e pode ser reutilizado indefinidamente.',
       'Reciclar vidro reduz significativamente as emissões na sua produção.',
-    ],
-  },
-  {
-    id: 'metal',
-    title: 'Metal',
-    binColor: 'gray',
-    binLabel: 'Ecoponto Amarelo',
-    icon: Recycle,
-    canRecycle: [
-      'Latas de bebidas (alumínio)',
-      'Latas de conservas',
-      'Aerossóis vazios',
-      'Papel de alumínio limpo',
-      'Tampas metálicas',
-      'Tabuleiros de alumínio',
-    ],
-    cannotRecycle: [
-      'Latas de tinta ou produtos químicos',
-      'Pilhas e baterias (recolha específica)',
-      'Panelas, tachos e utensílios de cozinha',
-      'Ferramentas e peças metálicas',
-      'Eletrodomésticos',
-    ],
-    tips: [
-      'Esmague as latas para poupar espaço no contentor.',
-      'Enxague as latas de conserva antes de depositar.',
-      'Aerossóis devem estar completamente vazios.',
-      'Metais vão para o ecoponto amarelo, junto com plásticos.',
-    ],
-    commonMistakes: [
-      'Depositar pilhas no ecoponto — devem ir para pilhões.',
-      'Colocar talheres ou panelas no amarelo — não são embalagens.',
-      'Incluir latas de tinta — são resíduos perigosos.',
-      'Esquecer que tampas metálicas de frascos de vidro vão para o amarelo.',
-    ],
-    impactFacts: [
-      'O alumínio reciclado poupa até 95% da energia necessária para produzir alumínio novo.',
-      'Uma lata reciclada pode voltar a ser uma lata nova em poucas semanas.',
-    ],
-  },
-  {
-    id: 'organic',
-    title: 'Orgânico',
-    binColor: 'brown',
-    binLabel: 'Contentor Castanho',
-    icon: Trash2,
-    canRecycle: [
-      'Restos de frutas e legumes',
-      'Cascas de ovos',
-      'Borras de café e saquetas de chá',
-      'Restos de comida cozinhada',
-      'Guardanapos e papel de cozinha sujos',
-      'Pequenos restos de jardim (folhas, ervas)',
-    ],
-    cannotRecycle: [
-      'Óleos de cozinha (recolha específica)',
-      'Cinzas de lareira ou churrasqueira',
-      'Excrementos de animais',
-      'Madeira tratada ou pintada',
-      'Medicamentos (ir à farmácia)',
-    ],
-    tips: [
-      'Use um balde com tampa em casa para recolher orgânicos.',
-      'Quanto mais pequenos os restos, mais rápido se decompõem.',
-      'Evite líquidos em excesso no contentor.',
-      'Estes resíduos podem virar composto para agricultura e jardins.',
-    ],
-    commonMistakes: [
-      'Colocar óleos alimentares no contentor orgânico — devem ser levados a oleões.',
-      'Incluir embalagens biodegradáveis que não são compostáveis.',
-      'Misturar com plásticos ou metais por engano.',
-      'Depositar grandes quantidades de erva ou ramos — ir ao ecocentro.',
-    ],
-    impactFacts: [
-      'Resíduos orgânicos em aterro geram metano, um gás com grande efeito de estufa.',
-      'A compostagem transforma restos em adubo natural, fechando o ciclo.',
-    ],
-  },
-  {
-    id: 'special',
-    title: 'Resíduos Especiais',
-    binColor: 'red',
-    binLabel: 'Pontos de Recolha Específicos',
-    icon: Battery,
-    canRecycle: [
-      'Pilhas e baterias (pilhões)',
-      'Lâmpadas (lojas e ecocentros)',
-      'Equipamentos eletrónicos (REEE)',
-      'Óleos alimentares usados (oleões)',
-      'Medicamentos fora de validade (farmácias)',
-      'Radiografias e tinteiros (pontos específicos)',
-    ],
-    cannotRecycle: [
-      'Não depositar em ecopontos comuns',
-      'Não misturar pilhas com lixo doméstico',
-      'Não deitar óleos pelo ralo ou sanita',
-      'Não colocar eletrónicos no lixo indiferenciado',
-    ],
-    tips: [
-      'Muitas lojas de eletrónica aceitam equipamentos antigos.',
-      'As farmácias têm pontos VALORMED para medicamentos.',
-      'Procure pilhões em supermercados e espaços públicos.',
-      'Leve óleos usados a oleões — estão disponíveis em vários locais.',
-    ],
-    commonMistakes: [
-      'Deitar pilhas no lixo comum — são resíduos perigosos.',
-      'Colocar lâmpadas no vidrão — têm componentes tóxicos.',
-      'Descartar óleos pelo ralo — polui as águas.',
-      'Atirar telemóveis antigos para o lixo — contêm materiais valiosos.',
-    ],
-    impactFacts: [
-      'Pilhas e baterias contêm metais pesados que contaminam solos e águas.',
-      'A recolha correta de eletrónicos permite recuperar materiais raros e valiosos.',
     ],
   },
 ]

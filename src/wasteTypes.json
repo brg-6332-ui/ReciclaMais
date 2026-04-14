@@ -1,22 +1,18 @@
 [
-    {
-        "value": "all",
-        "label": "Todos os Tipos"
-    },
-    {
-        "value": "plastic",
-        "label": "Plástico"
-    },
-    {
-        "value": "glass",
-        "label": "Vidro"
-    },
-    {
-        "value": "paper",
-        "label": "Papel"
-    },
-    {
-        "value": "metal",
-        "label": "Metal"
-    }
+  {
+    "value": "all",
+    "label": "Todos os Tipos"
+  },
+  {
+    "value": "packaging",
+    "label": "Embalagens"
+  },
+  {
+    "value": "glass",
+    "label": "Vidro"
+  },
+  {
+    "value": "paper",
+    "label": "Papel e Cartão"
+  }
 ]

@@ -97,6 +97,21 @@ type POIFile = {
   }
 }
 
+function normalizeWasteTypes(types: string[] | undefined): string[] {
+  if (!Array.isArray(types)) return []
+
+  const mapped = types
+    .filter((type): type is string => typeof type === 'string')
+    .map((type) => type.trim().toLowerCase())
+    .filter((type) => type.length > 0)
+    .map((type) => {
+      if (type === 'plastic' || type === 'metal') return 'packaging'
+      return type
+    })
+
+  return [...new Set(mapped)]
+}
+
 export async function GET() {
   try {
     // Build a GeoJSON FeatureCollection from the bundled POI sample file
@@ -151,7 +166,7 @@ export async function GET() {
                 ? Number(poi.rating)
                 : poi.rating,
           company: poi.company,
-          wasteTypes: poi.wasteTypes,
+          wasteTypes: normalizeWasteTypes(poi.wasteTypes),
         }
 
         const feature: Feature<Point, POIProperties> = {
