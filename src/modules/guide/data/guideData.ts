@@ -1,4 +1,4 @@
-import { FileText, GlassWater, Package } from 'lucide-solid'
+import { Battery, FileText, GlassWater, Package } from 'lucide-solid'
 import type { Component } from 'solid-js'
 
 /** Bin color identifiers used for visual styling */
@@ -206,6 +206,43 @@ export const GUIDE_CATEGORIES: GuideCategory[] = [
     impactFacts: [
       'O vidro é 100% reciclável e pode ser reutilizado indefinidamente.',
       'Reciclar vidro reduz significativamente as emissões na sua produção.',
+    ],
+  },
+  {
+    id: 'special',
+    title: 'Resíduos Especiais',
+    binColor: 'red',
+    binLabel: 'Pontos de Recolha Específicos',
+    icon: Battery,
+    canRecycle: [
+      'Pilhas e baterias (pilhões)',
+      'Lâmpadas (lojas e ecocentros)',
+      'Equipamentos eletrónicos (REEE)',
+      'Óleos alimentares usados (oleões)',
+      'Medicamentos fora de validade (farmácias)',
+      'Radiografias e tinteiros (pontos específicos)',
+    ],
+    cannotRecycle: [
+      'Não depositar em ecopontos comuns',
+      'Não misturar pilhas com lixo doméstico',
+      'Não deitar óleos pelo ralo ou sanita',
+      'Não colocar eletrónicos no lixo indiferenciado',
+    ],
+    tips: [
+      'Muitas lojas de eletrónica aceitam equipamentos antigos.',
+      'As farmácias têm pontos VALORMED para medicamentos.',
+      'Procure pilhões em supermercados e espaços públicos.',
+      'Leve óleos usados a oleões — estão disponíveis em vários locais.',
+    ],
+    commonMistakes: [
+      'Deitar pilhas no lixo comum — são resíduos perigosos.',
+      'Colocar lâmpadas no vidrão — têm componentes tóxicos.',
+      'Descartar óleos pelo ralo — polui as águas.',
+      'Atirar telemóveis antigos para o lixo — contêm materiais valiosos.',
+    ],
+    impactFacts: [
+      'Pilhas e baterias contêm metais pesados que contaminam solos e águas.',
+      'A recolha correta de eletrónicos permite recuperar materiais raros e valiosos.',
     ],
   },
 ]

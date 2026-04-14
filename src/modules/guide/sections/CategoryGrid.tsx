@@ -89,7 +89,7 @@ function CategoryCard(props: {
 
 /**
  * Interactive grid of category cards with selection state.
- * Responsive: 2 cols on mobile, 3 on tablet, 3-4 on desktop.
+ * Responsive: 2 cols on mobile and 2 on desktop (2x2 with 4 categories).
  */
 export function CategoryGrid(props: {
   selectedId: Accessor<string>
@@ -107,7 +107,7 @@ export function CategoryGrid(props: {
           </p>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+        <div class="grid grid-cols-2 gap-4 max-w-4xl mx-auto">
           <For each={GUIDE_CATEGORIES}>
             {(category, index) => (
               <CategoryCard
